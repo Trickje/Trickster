@@ -10,14 +10,16 @@
 #define WINDOWHEIGHT 768
 #include "Renderer.h"
 
-class Engine
-{
-public:
-	Engine();
-	~Engine();
-	bool Initialize();
-	void Update();
-private:
-	GLFWwindow* window;
-	Renderer* renderer;
-};
+namespace Trickster {
+	class Engine
+	{
+	public:
+		Engine();
+		~Engine();
+		bool Initialize();
+		void Update();
+	private:
+		GLFWwindow* window;
+		Renderer* renderer;
+	};
+}

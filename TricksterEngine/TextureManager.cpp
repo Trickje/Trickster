@@ -2,41 +2,42 @@
 
 #include <string>
 #include "Texture.h"
+namespace Trickster {
+	TextureManager* TextureManager::instance = nullptr;
 
-TextureManager* TextureManager::instance = nullptr;
 
 
-
-Texture * TextureManager::GetTexture(const std::string texturePath)
-{
-	auto it = TextureManager::GetInstance()->map.find(texturePath);
-	if(it != TextureManager::GetInstance()->map.end())
+	Texture * TextureManager::GetTexture(const std::string texturePath)
 	{
-		//found
-		return it->second;
+		auto it = TextureManager::GetInstance()->map.find(texturePath);
+		if (it != TextureManager::GetInstance()->map.end())
+		{
+			//found
+			return it->second;
+		}
+		return TextureManager::GetInstance()->map[texturePath] = new Texture(texturePath);
+
 	}
-	return TextureManager::GetInstance()->map[texturePath] = new Texture(texturePath);
-	
-}
 
 
 
 
 
-TextureManager * TextureManager::GetInstance()
-{
-	if(instance == nullptr)
+	TextureManager * TextureManager::GetInstance()
 	{
-		instance = new TextureManager();
+		if (instance == nullptr)
+		{
+			instance = new TextureManager();
+		}
+		return instance;
 	}
-	return instance;
-}
 
-TextureManager::TextureManager()
-{
-}
+	TextureManager::TextureManager()
+	{
+	}
 
 
-TextureManager::~TextureManager()
-{
+	TextureManager::~TextureManager()
+	{
+	}
 }

@@ -1,20 +1,21 @@
 #include "SpriteManager.h"
-
-SpriteManager* SpriteManager::instance = nullptr;
-SpriteManager * SpriteManager::GetInstance()
-{
-	if (instance == nullptr)
+namespace Trickster {
+	SpriteManager* SpriteManager::instance = nullptr;
+	SpriteManager * SpriteManager::GetInstance()
 	{
-		instance = new SpriteManager();
+		if (instance == nullptr)
+		{
+			instance = new SpriteManager();
+		}
+		return instance;
 	}
-	return instance;
-}
 
-SpriteManager::SpriteManager()
-{
-}
+	SpriteManager::SpriteManager()
+	{
+	}
 
 
-SpriteManager::~SpriteManager()
-{
+	SpriteManager::~SpriteManager()
+	{
+	}
 }

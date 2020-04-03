@@ -10,7 +10,7 @@
 #include "Engine.h"
 #include "Logger.h"
 using namespace glm;
-
+using namespace Trickster;
 int main()
 {
 	Engine engine;

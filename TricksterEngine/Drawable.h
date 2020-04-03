@@ -12,12 +12,14 @@
 //
 //
 //TODO: Make a manager class for each of these members so they are not owned by the drawable
-class Drawable
-{
-public:
-	Drawable();
-	~Drawable();
-	virtual void Draw() = 0;
-protected:
-};
+namespace Trickster {
+	class Drawable
+	{
+	public:
+		Drawable();
+		~Drawable();
+		virtual void Draw() = 0;
+	protected:
+	};
 
+}
