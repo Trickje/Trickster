@@ -1,0 +1,15 @@
+﻿  Drawable2D.cpp
+c:\program files (x86)\windows kits\10\include\10.0.17763.0\shared\minwindef.h(130): warning C4005: 'APIENTRY': macro redefinition
+  c:\users\rick\source\repos\tricksterengine\tricksterengine\include\glfw\glfw3.h(123): note: see previous definition of 'APIENTRY'
+  Engine.cpp
+c:\program files (x86)\windows kits\10\include\10.0.17763.0\shared\minwindef.h(130): warning C4005: 'APIENTRY': macro redefinition
+  c:\users\rick\source\repos\tricksterengine\tricksterengine\include\glfw\glfw3.h(123): note: see previous definition of 'APIENTRY'
+c:\users\rick\source\repos\tricksterengine\tricksterengine\engine.cpp(30): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+  Nicolai.cpp
+c:\program files (x86)\windows kits\10\include\10.0.17763.0\shared\minwindef.h(130): warning C4005: 'APIENTRY': macro redefinition
+  c:\users\rick\source\repos\tricksterengine\tricksterengine\include\glfw\glfw3.h(123): note: see previous definition of 'APIENTRY'
+  Renderer.cpp
+c:\program files (x86)\windows kits\10\include\10.0.17763.0\shared\minwindef.h(130): warning C4005: 'APIENTRY': macro redefinition
+  c:\users\rick\source\repos\tricksterengine\tricksterengine\include\glfw\glfw3.h(123): note: see previous definition of 'APIENTRY'
+  Generating Code...
+  TricksterEngine.vcxproj -> C:\Users\rick\source\repos\TricksterEngine\x64\Debug\TricksterEngine.exe
