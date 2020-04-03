@@ -3,3 +3,8 @@
 ################################################################################
 
 /.vs/TricksterEngine/v15
+/Release
+/Debug
+/x64
+/TricksterEngine/x64
+/TricksterEngine/Debug

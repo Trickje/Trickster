@@ -14,7 +14,7 @@ namespace Trickster {
 		m_DrawData = new DrawData2D(
 			&m_Vertices[0], sizeof(m_Vertices));
 		GLCall(m_UniformLoc = glGetUniformLocation(ShaderManager::GetShader("basic.shader")->Get(), "ScreenPos"));
-		m_FilePath = "image.png";
+		m_FilePath = "Resources/image.png";
 		m_DrawData->layout->Push<float>(2);
 		m_DrawData->va->AddBuffer(*m_DrawData->vb, *m_DrawData->layout);
 		m_Size = { 0.f, 0.f };

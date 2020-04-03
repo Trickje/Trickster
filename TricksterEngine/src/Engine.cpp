@@ -65,7 +65,7 @@ namespace Trickster
 
 	void Engine::Update()
 	{
-		std::string str = "image.png";
+		std::string str = "Resources/image.png";
 		Drawable2D* drawable = new Drawable2D(glm::vec2(50.f, 120.f), glm::vec2(40.f, 40.f), str);
 		std::vector<Nicolai*> m_Nicolais;
 		for (int i = 0; i < 1000; i++)
