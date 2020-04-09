@@ -6,8 +6,9 @@
 #include <GLFW/glfw3.h>
 #include <sstream>
 #include <vector>
-
+#ifndef STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_IMPLEMENTATION
+#endif
 #include "IndexBuffer.h"
 #include "Logger.h"
 #include "Shader.h"
@@ -43,8 +44,8 @@ namespace Trickster {
 		GLCall(glEnable(GL_BLEND));
 		GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
-		ShaderManager::GetShader("basic.shader")->Bind();
-		ShaderManager::GetShader("basic.shader")->SetUniform1i("ourTexture", 0);
+		ShaderManager::GetShader("basic")->Bind();
+		ShaderManager::GetShader("basic")->SetUniform1i("ourTexture", 0);
 
 		TextureManager::GetTexture("image.png")->Bind();
 		std::string str = "image.png";

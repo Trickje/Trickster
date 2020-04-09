@@ -14,7 +14,8 @@ namespace Trickster {
 	{
 		//	ShaderProgramSource source = ParseShader(filePath);
 		//	m_RendererID = CreateShader(source.VertexSource, source.FragmentSource);
-		m_RendererID = LoadShaders("Resources/basic.vertexshader", "Resources/basic.fragmentshader");
+		std::string str =  "../../TricksterEngine/TricksterEngine/Resources/";
+		m_RendererID = LoadShaders( std::string(str + filePath + ".vertexshader").c_str(), std::string(str + filePath + ".fragmentshader").c_str());
 	}
 
 

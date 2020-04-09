@@ -24,19 +24,21 @@ namespace Trickster
 	//Must be called at entry point
 	bool Engine::Initialize()
 	{
+		LOG("Initializing GLFW.");
 		// Initialise GLFW
 		if (!glfwInit())
 		{
 			LOG_ERROR("Failed to initialize GLFW\n");
 			return false;
 		}
-		std::srand(time(0));
+		std::srand(static_cast<unsigned int>(time(0)));
 		glfwWindowHint(GLFW_SAMPLES, 4); // 4x antialiasing
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3); // We want OpenGL 3.3
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // To make MacOS happy; should not be needed
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // We don't want the old OpenGL 
 
+		LOG("Opening window.");
 		// Open a window and create its OpenGL context
 		window = glfwCreateWindow(WINDOWWIDTH, WINDOWHEIGHT, "Trickster Engine", nullptr, nullptr);
 		if (window == nullptr)
@@ -46,11 +48,13 @@ namespace Trickster
 			glfwTerminate();
 			return false;
 		}
+		LOG("Initializing GLEW.");
 		glfwMakeContextCurrent(window); // Initialize GLEW
 		glewExperimental = GL_TRUE;
 		glewInit();
 		// Ensure we can capture the escape key being pressed below
 		glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
+		LOG("Initializing Renderer.");
 		renderer = new Renderer(window);
 		if (!renderer->Initialize())
 		{
@@ -65,29 +69,12 @@ namespace Trickster
 
 	void Engine::Update()
 	{
-		std::string str = "Resources/image.png";
-		Drawable2D* drawable = new Drawable2D(glm::vec2(50.f, 120.f), glm::vec2(40.f, 40.f), str);
-		std::vector<Nicolai*> m_Nicolais;
-		for (int i = 0; i < 1000; i++)
-		{
-			m_Nicolais.push_back(new Nicolai(glm::vec2(50.f, 120.f), glm::vec2(40.f, 40.f), str));
-		}
-		do
-		{
-
-			//Draw stuff
-			//
-			if (glfwGetKey(window, GLFW_KEY_SPACE))
-			{
-				m_Nicolais.push_back(new Nicolai(glm::vec2(50.f, 120.f), glm::vec2(40.f, 40.f), str));
-			}
-			for (Nicolai* n : m_Nicolais)
-			{
-				n->OnUpdate();
-			}
-			renderer->Draw();
-		} // Check if the ESC key was pressed or the window was closed
-		while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS &&
-			glfwWindowShouldClose(window) == 0);
+		
+		//Something?
 	}
+	std::string Engine::GetResourcePath()
+	{
+		return "../../TricksterEngine/TricksterEngine/Resources/";
+	}
+
 }

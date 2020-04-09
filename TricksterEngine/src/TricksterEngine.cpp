@@ -9,15 +9,15 @@
 
 #include "Engine.h"
 #include "Logger.h"
-using namespace glm;
-using namespace Trickster;
-int main()
-{
-	Engine engine;
-	if (!engine.Initialize())
-	{
-		LOG_ERROR("Failed to initialize the engine!");
-	}
-	LOG("Hello World");
-	engine.Update();
-}
+//using namespace glm;
+//using namespace Trickster;
+//int main()
+//{
+//	Engine engine;
+//	if (!engine.Initialize())
+//	{
+//		LOG_ERROR("Failed to initialize the engine!");
+//	}
+//	LOG("Hello World");
+//	engine.Update();
+//}

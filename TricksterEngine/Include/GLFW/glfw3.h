@@ -28,7 +28,7 @@
 
 #ifndef _glfw3_h_
 #define _glfw3_h_
-
+#pragma warning(disable : 4005)
 #ifdef __cplusplus
 extern "C" {
 #endif

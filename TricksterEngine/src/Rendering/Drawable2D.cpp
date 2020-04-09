@@ -13,7 +13,7 @@ namespace Trickster {
 	{
 		m_DrawData = new DrawData2D(
 			&m_Vertices[0], sizeof(m_Vertices));
-		GLCall(m_UniformLoc = glGetUniformLocation(ShaderManager::GetShader("basic.shader")->Get(), "ScreenPos"));
+		GLCall(m_UniformLoc = glGetUniformLocation(ShaderManager::GetShader("basic")->Get(), "ScreenPos"));
 		m_FilePath = "Resources/image.png";
 		m_DrawData->layout->Push<float>(2);
 		m_DrawData->va->AddBuffer(*m_DrawData->vb, *m_DrawData->layout);
@@ -27,7 +27,7 @@ namespace Trickster {
 	{
 		m_DrawData = new DrawData2D(
 			&m_Vertices[0], sizeof(m_Vertices));
-		GLCall(m_UniformLoc = glGetUniformLocation(ShaderManager::GetShader("basic.shader")->Get(), "ScreenPos"));
+		GLCall(m_UniformLoc = glGetUniformLocation(ShaderManager::GetShader("basic")->Get(), "ScreenPos"));
 		m_DrawData->layout->Push<float>(2);
 		m_DrawData->va->AddBuffer(*m_DrawData->vb, *m_DrawData->layout);
 		SpriteManager::GetInstance()->m_Drawable2Ds.push_back(this);
@@ -41,7 +41,7 @@ namespace Trickster {
 	void Drawable2D::Draw()
 	{
 		//	LOG("draw");
-		ShaderManager::GetShader("basic.shader")->Bind();
+		ShaderManager::GetShader("basic")->Bind();
 		//glUniform2f(m_UniformLoc, m_Position.x, m_Position.y);
 		glUniform2f(m_UniformLoc, 0.f, 0.f);
 

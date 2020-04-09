@@ -43,6 +43,6 @@ namespace Trickster {
 	{
 		GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RendererID));
 		GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, a_Data.size() * sizeof(unsigned int), &a_Data[0], GL_STREAM_DRAW));
-		m_Count = a_Data.size() / 6;
+		m_Count = static_cast<unsigned int>(a_Data.size()) / 6;
 	}
 }

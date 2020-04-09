@@ -8,7 +8,7 @@
 #include <glm/glm.hpp>
 #define WINDOWWIDTH 1024
 #define WINDOWHEIGHT 768
-#include "Renderer.h"
+#include "Rendering/Renderer.h"
 
 namespace Trickster {
 	class Engine
@@ -18,8 +18,8 @@ namespace Trickster {
 		~Engine();
 		bool Initialize();
 		void Update();
-	private:
 		GLFWwindow* window;
 		Renderer* renderer;
+		static std::string GetResourcePath();
 	};
 }
