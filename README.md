@@ -1,7 +1,7 @@
 # Trickster
 Trickster Engine
 
-This engine is made ONLY for myself. DO NOT USE THIS SOFTWARE IN ANY WAY SHAPE OR FORM.
+This engine is made ONLY for myself. __DO NOT USE THIS SOFTWARE IN *ANY* WAY SHAPE OR FORM.__
 
 
 
