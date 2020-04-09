@@ -8,7 +8,7 @@ This engine is made ONLY for myself. __DO NOT USE THIS SOFTWARE IN *ANY* WAY SHA
 
 
 
-####Feature list:
+#### Feature list:
 - Entry point
 - Window
 - 2D texture handling
@@ -19,7 +19,7 @@ This engine is made ONLY for myself. __DO NOT USE THIS SOFTWARE IN *ANY* WAY SHA
 - Error and warning free
 
 
-To be added:
+#### To be added:
 1. Event handling system
 1. ImGUI
 1. Input polling
