@@ -18,13 +18,13 @@ Feature list:
 
 
 To be added:
-1 Event handling system
-1 ImGUI
-1 Input polling
-1 3D models
-1 Model loading
-1 Render queue
-1 Batch rendering
-1 Ray maths
-1 Camera
-1 Math
+1. Event handling system
+1. ImGUI
+1. Input polling
+1. 3D models
+1. Model loading
+1. Render queue
+1. Batch rendering
+1. Ray maths
+1. Camera
+1. Math
