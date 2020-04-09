@@ -29,7 +29,7 @@ float Trickster::Timer::GetMilliSeconds()
 
 void Timer::Start()
 {
-	m_StartTime = glfwGetTime();  // NOLINT(bugprone-narrowing-conversions)
+	m_StartTime = static_cast<float>(glfwGetTime());  // NOLINT(bugprone-narrowing-conversions)
 	
 	m_Time = m_StartTime;
 }
