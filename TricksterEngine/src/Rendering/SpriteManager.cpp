@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "SpriteManager.h"
 namespace Trickster {
 	SpriteManager* SpriteManager::instance = nullptr;

@@ -1,10 +1,10 @@
+#include "pch.h"
 #include "Application.h"
 
 
 
 #include "../Timer.h"
 #include "Engine.h"
-#include "Logger.h"
 
 using namespace Trickster;
 

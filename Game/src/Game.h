@@ -1,5 +1,6 @@
 #pragma once
-#include "../TricksterEngine.h"
+
+//#include "EntryPoint.h"
 #include "Logger.h"
 #include "Application.h"
 #include "Nicolai.h"
@@ -23,7 +24,7 @@ namespace Trickster {
 	};
 
 	//This Creates the application in the entry point
-	Trickster::Application* CreateApplication() 
+	static Trickster::Application* CreateApplication() 
 	{
 		return new Game();
 	}

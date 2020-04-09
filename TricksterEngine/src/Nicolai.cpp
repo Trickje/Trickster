@@ -1,7 +1,7 @@
+#include "pch.h"
 #include "Nicolai.h"
 
 
-#include "Logger.h"
 #include "SpriteManager.h"
 
 #include "Engine.h"

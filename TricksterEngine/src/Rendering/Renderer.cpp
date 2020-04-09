@@ -1,16 +1,12 @@
+#include "pch.h"
 #include "Renderer.h"
 
-#include <cstdio>
-#include <string>
-#include <fstream>
+
 #include <GLFW/glfw3.h>
-#include <sstream>
-#include <vector>
 #ifndef STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_IMPLEMENTATION
 #endif
 #include "IndexBuffer.h"
-#include "Logger.h"
 #include "Shader.h"
 #include "ShaderManager.h"
 #include "stb_image.h"

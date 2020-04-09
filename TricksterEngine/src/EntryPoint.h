@@ -1,10 +1,9 @@
 #pragma once
-#define GAME
+#ifndef ENTRY
+#define ENTRY
 #include "Logger.h"
-#ifdef GAME
-//#include "Application.h"
+#include "Application.h"
 #include "../../Game/src/Game.h"
-
 int main()
 {
 	

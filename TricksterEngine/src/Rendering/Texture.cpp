@@ -1,8 +1,8 @@
+#include "pch.h"
 #include "Texture.h"
 
 #include "Engine.h"
 #include "stb_image.h"
-#include "Logger.h"
 #include "TextureManager.h"
 namespace Trickster {
 	Texture::Texture(const std::string& path)

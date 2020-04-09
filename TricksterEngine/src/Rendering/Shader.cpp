@@ -1,12 +1,8 @@
+#include "pch.h"
 #include "Shader.h"
 
 #include <GL/glew.h>
 
-#include "Logger.h"
-
-#include <fstream>
-#include <string>
-#include <sstream>
 namespace Trickster {
 
 	Shader::Shader(const std::string& filePath)
