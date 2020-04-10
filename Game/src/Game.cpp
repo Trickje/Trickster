@@ -18,7 +18,7 @@ void Trickster::Game::OnUpdate(float a_DeltaTime)
 {
 	//Draw stuff
 			//
-	if (glfwGetKey(GetEngine()->window, GLFW_KEY_SPACE))
+	if (glfwGetKey((GLFWwindow*)this->m_Window.get(), GLFW_KEY_SPACE))
 	{
 		std::string str = Engine::GetResourcePath() + "image.png";
 		m_Nicolais.push_back(new Nicolai(glm::vec2(50.f, 120.f), glm::vec2(40.f, 40.f), str));

@@ -2,13 +2,35 @@
 #include <Windows.h>
 #include <iostream>
 #include <string>
+
 #include <GL/glew.h>
 
 #define ASSERT(x) if (!(x)) __debugbreak();
+#ifdef _DEBUG
 #define GLCall(x) GLClearError();\
 	x;\
 	ASSERT(GLLogCall(#x, __FILE__, __LINE__))
+#define LOG(x) SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 2);\
+			std::cout << x << std::endl;\
+			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
+#define LOG_WARNING(x) SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 14);\
+			std::cout << x << std::endl;\
+			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
+#define LOG_ERROR(x) SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);\
+			std::cout << x << std::endl;\
+			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
+#define LOG_USELESS(x) SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 9);\
+			std::cout << x << std::endl;\
+			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
+#endif
+#ifndef _DEBUG
+#define GLCall(x) x;
+#define LOG(x) 
+#define LOG_WARNING(x) 
+#define LOG_ERROR(x) 
+#endif
 namespace Trickster {
+	/*
 	static void LOG(std::string a_Str)
 	{
 		HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -32,7 +54,7 @@ namespace Trickster {
 		std::cout << a_CStr << std::endl;
 		SetConsoleTextAttribute(hConsole, 15);
 	};
-
+	
 	static void LOG_ERROR(std::string a_Str)
 	{
 		HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -56,29 +78,37 @@ namespace Trickster {
 		std::cout << a_CStr << std::endl;
 		SetConsoleTextAttribute(hConsole, 15);
 	};
-
+	*/
 	static void LOG_CLEAR()
 	{
+#ifdef _DEBUG
 		system("cls");
+#endif
 	}
 
 
 	static void GLClearError()
 	{
+#ifdef _DEBUG
 		while (glGetError() != GL_NO_ERROR);
+#endif
 	}
 	static bool GLLogCall(const char* function, const char* file, int line)
 	{
+#ifdef _DEBUG
 		while (GLenum error = glGetError())
 		{
 			LOG_ERROR("[OpenGL Error] (" + std::to_string(error) + ")" + ": " + function + " " + file + ": " + std::to_string(line));
 			return false;
 		}
+#endif
+
 		return true;
 	}
 
 	static void GLAPIENTRY DebugMessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
 	{
+#ifdef _DEBUG
 		std::string typeString;
 		std::string severityString;
 
@@ -102,5 +132,6 @@ namespace Trickster {
 		}
 
 		fprintf(stderr, "OGL DEBUG MESSAGE:\n type: %s\n severity: %s\n message: %s\n\n", typeString.c_str(), severityString.c_str(), message);
+#endif
 	}
 }

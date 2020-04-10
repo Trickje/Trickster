@@ -20,7 +20,6 @@ namespace Trickster {
 		std::vector<Nicolai*> m_Nicolais;
 
 
-
 	};
 
 	//This Creates the application in the entry point

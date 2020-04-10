@@ -18,13 +18,13 @@ Timer::~Timer()
 float Timer::GetSeconds() 
 {
 	m_Time = static_cast<float>(glfwGetTime()) - m_StartTime;
-	return m_Time * 0.001f;
+	return m_Time;
 }
 
 float Trickster::Timer::GetMilliSeconds()
 {
 	m_Time = static_cast<float>(glfwGetTime()) - m_StartTime;
-	return m_Time;
+	return m_Time * 1000.f;
 }
 
 void Timer::Start()
@@ -39,5 +39,5 @@ float Timer::Reset()
 	const auto NewTime = static_cast<float>(glfwGetTime());
 	m_Time = NewTime - m_StartTime;
 	m_StartTime = NewTime;
-	return m_Time * 0.001f;
+	return m_Time;
 }

@@ -181,7 +181,7 @@
       <AdditionalDependencies>opengl32.lib;glew32s.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Lib>
-      <AdditionalDependencies>glew32.lib</AdditionalDependencies>
+      <AdditionalDependencies>glew32s.lib</AdditionalDependencies>
     </Lib>
     <Lib>
       <AdditionalLibraryDirectories>C:\Users\rick\source\repos\TricksterEngine\TricksterEngine\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -207,6 +207,7 @@
     <ClCompile Include="src\Rendering\VertexBuffer.cpp" />
     <ClCompile Include="src\Rendering\VertexBufferLayout.cpp" />
     <ClCompile Include="src\Timer.cpp" />
+    <ClCompile Include="WindowsWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Application.h" />
@@ -230,6 +231,8 @@
     <ClInclude Include="src\Rendering\VertexBuffer.h" />
     <ClInclude Include="src\Rendering\VertexBufferLayout.h" />
     <ClInclude Include="src\Timer.h" />
+    <ClInclude Include="src\Window.h" />
+    <ClInclude Include="WindowsWindow.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\basic.fragmentshader" />

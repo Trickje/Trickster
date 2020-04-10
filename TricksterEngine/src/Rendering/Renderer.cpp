@@ -18,6 +18,7 @@
 #include "Drawable2D.h"
 #include "Engine.h"
 #include "SpriteManager.h"
+#include "Window.h"
 namespace Trickster {
 	//#define QUADBASEDUI
 #define TRIANGLEBASEDUI
@@ -25,10 +26,10 @@ namespace Trickster {
 	{
 	}
 
-	Renderer::Renderer(GLFWwindow* a_window)
-	{
-		window = a_window;
-	}
+	//Renderer::Renderer(GLFWwindow* a_window)
+//	{
+		//window = a_window;
+//	}
 
 
 	Renderer::~Renderer()
@@ -50,14 +51,7 @@ namespace Trickster {
 
 	void Renderer::Draw()
 	{
-		glClear(GL_COLOR_BUFFER_BIT);
-		//Render UI
 		DrawUI();
-		//Render Objects
-
-		// Swap buffers
-		glfwSwapBuffers(window);
-		glfwPollEvents();
 	}
 
 

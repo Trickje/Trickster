@@ -5,6 +5,7 @@
 #include <GLFW/glfw3.h>
 #include <vector>
 namespace Trickster {
+	class Window;
 	class Shader;
 	class VertexBuffer;
 	class VertexArray;
@@ -16,13 +17,14 @@ namespace Trickster {
 	{
 	public:
 		Renderer();
-		Renderer(GLFWwindow* a_window);
+	//	Renderer(GLFWwindow* a_window);
 		~Renderer();
 		bool Initialize();
 		void Draw();
 		void DrawUI();
 	private:
-		GLFWwindow* window;
+		//TODO get this window out of this class
+	//	GLFWwindow* window;
 		std::vector<std::future<void>> m_Futures;
 	};
 }

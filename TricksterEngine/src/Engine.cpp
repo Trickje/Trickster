@@ -24,6 +24,7 @@ namespace Trickster
 	//Must be called at entry point
 	bool Engine::Initialize()
 	{
+		/*
 		LOG("Initializing GLFW.");
 		// Initialise GLFW
 		if (!glfwInit())
@@ -54,8 +55,9 @@ namespace Trickster
 		glewInit();
 		// Ensure we can capture the escape key being pressed below
 		glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
+		*/
 		LOG("Initializing Renderer.");
-		renderer = new Renderer(window);
+		renderer = new Renderer();
 		if (!renderer->Initialize())
 		{
 			LOG_ERROR("Failed to initialize the renderer");

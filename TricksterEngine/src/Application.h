@@ -4,6 +4,7 @@
 
 #include "Timer.h"
 #include "Engine.h"
+#include "Window.h"
 
 namespace Trickster {
 	class Application
@@ -17,10 +18,13 @@ namespace Trickster {
 		virtual void OnRender() = 0;
 		virtual void OnEventListen() = 0;
 		virtual void OnEventExecute() = 0;
+		void Draw();
 		bool Update();
 		std::shared_ptr<Engine> GetEngine() const;
 	private:
 		std::shared_ptr<Engine> m_Engine;
+	protected:
+		std::unique_ptr<Window> m_Window;
 		Timer m_Timer;
 	};
 	//To be defined in CLIENT
