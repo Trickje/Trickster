@@ -18,7 +18,6 @@ namespace Trickster {
 		~Engine();
 		bool Initialize();
 		void Update();
-		GLFWwindow* window;
 		Renderer* renderer;
 		static std::string GetResourcePath();
 	};

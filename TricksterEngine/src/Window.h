@@ -22,7 +22,6 @@ namespace Trickster {
 	class Window
 	{
 	public:
-		using EventCallbackFn = std::function<void(Event&)>;
 
 		virtual ~Window(){}
 
@@ -30,13 +29,28 @@ namespace Trickster {
 		virtual void Draw() = 0;
 		virtual unsigned int GetWidth() const = 0;
 		virtual unsigned int GetHeight() const = 0;
-
+		virtual bool ShouldClose() const = 0;
 		//Window attributes
-		virtual void SetEventCallback(const EventCallbackFn& callback) = 0;
+		virtual void EventHandle() = 0;
 		virtual void SetVSync(bool enabled) = 0;
 		virtual bool IsVSync() const = 0;
 
-		static Window* Create(const WindowProps& props = WindowProps());		
+		static Window* Create(const WindowProps& props = WindowProps());
+
+
+		//No variables
+		Event<> OnWindowClose;
+		//Width, Height
+		Event<int, int> OnWindowResize;
+		Event<bool> OnWindowMinimize;
+		Event<bool> OnWindowMaximize;
+		Event<int> OnKeyPressed;
+		Event<int> OnKeyReleased;
+		Event<int, int> OnKeyRepeat;
+		Event<int> OnMouseButtonPressed;
+		Event<int> OnMouseButtonReleased;
+		Event<float, float> OnMouseButtonScrolled;
+		Event<float, float> OnMouseMoved;
 	};
 
 }

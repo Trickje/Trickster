@@ -1,4 +1,5 @@
 #pragma once
+#include <complex>
 #include <string>
 #include <functional>
 
@@ -23,25 +24,53 @@ namespace Trickster
 
 #define EVENT_CLASS_CATEGORY(category) virtual int GetCategoryFlags() const override {return category;}
 
-	
+	template<class... _Types>
 	class Event
 	{
-		friend class EventDispatcher;
+		using Signature = void(_Types...);
+		using EventFn = std::function<Signature>;
+	//	friend class EventDispatcher;
 	public:
-		virtual EventType GetEventType() const = 0;
-		virtual const char* GetName() const = 0;
-		virtual int GetCategoryFlags() const = 0;
-		virtual std::string ToString() const { return GetName(); }
+		void AddListener(EventFn a_Listener)
+		{
+			m_Listeners.push_front(a_Listener);
+		}
+		void Execute(_Types... Args)
+		{
+			for(auto& F : m_Listeners)
+			{
+				F(std::forward<_Types>(Args)...);
+			}
+		}
+		
+		void RemoveListener(EventFn a_Listener)
+		{
+			for(auto& F : m_Listeners)
+			{
+				if(F->target<Signature>() == a_Listener.target<Signature>())
+				{
+					m_Listeners.erase(F);
+				}
+			}
+		}
+
+		
+		EventType GetEventType() const;
+		const char* GetName() const ;
+		int GetCategoryFlags() const;
+		std::string ToString() const { return GetName(); }
 
 		inline bool IsInCategory(EventCategory a_Category)
 		{
 			return GetCategoryFlags() & a_Category;
 		}
-	protected:
-		bool m_Handled = false;
+	//protected:
+	//	bool m_Handled = false;
+	private:
+		std::list<EventFn> m_Listeners;
 	};
 
-	
+	/*
 	class EventDispatcher
 	{
 		template<typename T>
@@ -64,6 +93,6 @@ namespace Trickster
 		Event& m_Event;
 	};
 
-	
+	*/
 	
 }

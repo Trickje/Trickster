@@ -40,6 +40,7 @@ OnStart();
 		LOG_WARNING("Initialization complete!\nTook " + std::to_string(time_passed) + " seconds.");
 	}
 	m_Timer.Reset();
+	
 }
 
 void Application::Draw()
@@ -53,7 +54,7 @@ bool Trickster::Application::Update()
 	//DELTA TIME calculations
 	m_Window->OnUpdate();
 	OnUpdate(DeltaTime);
-	return true;//!glfwWindowShouldClose((GLFWwindow*)m_Window.get());
+	return !m_Window->ShouldClose();
 }
 
 std::shared_ptr<Engine> Application::GetEngine() const

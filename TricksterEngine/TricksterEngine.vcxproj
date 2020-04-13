@@ -207,7 +207,7 @@
     <ClCompile Include="src\Rendering\VertexBuffer.cpp" />
     <ClCompile Include="src\Rendering\VertexBufferLayout.cpp" />
     <ClCompile Include="src\Timer.cpp" />
-    <ClCompile Include="WindowsWindow.cpp" />
+    <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Application.h" />
@@ -232,7 +232,7 @@
     <ClInclude Include="src\Rendering\VertexBufferLayout.h" />
     <ClInclude Include="src\Timer.h" />
     <ClInclude Include="src\Window.h" />
-    <ClInclude Include="WindowsWindow.h" />
+    <ClInclude Include="src\Platform\Windows\WindowsWindow.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\basic.fragmentshader" />
