@@ -17,6 +17,7 @@ This engine is made ONLY for myself. __DO NOT USE THIS SOFTWARE IN *ANY* WAY SHA
 - OpenGL wrapper, sort of
 - Managers for stuff
 - Error and warning free
+- Event system
 
 
 #### To be added:
