@@ -29,11 +29,15 @@ namespace Trickster
 	{
 		using Signature = void(_Types...);
 		using EventFn = std::function<Signature>;
-	//	friend class EventDispatcher;
 	public:
+		static int GetArgNumber()
+		{
+			return sizeof...(_Types);
+		}
+	
 		void AddListener(EventFn a_Listener)
 		{
-			m_Listeners.push_front(a_Listener);
+			m_Listeners.push_back(a_Listener);
 		}
 		void Execute(_Types... Args)
 		{

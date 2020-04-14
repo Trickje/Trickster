@@ -45,11 +45,3 @@ void Trickster::Game::OnRender()
 
 	GetEngine()->renderer->Draw();
 }
-
-void Trickster::Game::OnEventListen()
-{
-}
-
-void Trickster::Game::OnEventExecute()
-{
-}

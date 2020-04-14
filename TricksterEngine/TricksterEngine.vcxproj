@@ -188,6 +188,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Events\EventManager.cpp" />
     <ClCompile Include="src\Application.cpp" />
     <ClCompile Include="src\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -210,6 +211,7 @@
     <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Events\EventManager.h" />
     <ClInclude Include="src\Application.h" />
     <ClInclude Include="src\EntryPoint.h" />
     <ClInclude Include="src\Events\Event.h" />

@@ -14,8 +14,6 @@ namespace Trickster {
 		void OnUpdate(float a_DeltaTime) override;
 		void OnStart() override;
 		void OnRender() override;
-		void OnEventListen() override;
-		void OnEventExecute() override;
 	private:
 		std::vector<Nicolai*> m_Nicolais;
 

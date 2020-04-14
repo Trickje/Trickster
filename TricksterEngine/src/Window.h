@@ -38,19 +38,7 @@ namespace Trickster {
 		static Window* Create(const WindowProps& props = WindowProps());
 
 
-		//No variables
-		Event<> OnWindowClose;
-		//Width, Height
-		Event<int, int> OnWindowResize;
-		Event<bool> OnWindowMinimize;
-		Event<bool> OnWindowMaximize;
-		Event<int> OnKeyPressed;
-		Event<int> OnKeyReleased;
-		Event<int, int> OnKeyRepeat;
-		Event<int> OnMouseButtonPressed;
-		Event<int> OnMouseButtonReleased;
-		Event<float, float> OnMouseButtonScrolled;
-		Event<float, float> OnMouseMoved;
+		
 	};
 
 }

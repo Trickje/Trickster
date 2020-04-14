@@ -13,8 +13,6 @@ int main()
 //	Trickster::LOG_CLEAR();
 	while(app->Update())
 	{
-		app->OnEventListen();
-		app->OnEventExecute();
 		app->OnRender();
 		app->Draw();
 		//if(glfwGetKey(app->,GLFW_KEY_ESCAPE))

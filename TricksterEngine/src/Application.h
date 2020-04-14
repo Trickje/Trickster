@@ -16,8 +16,7 @@ namespace Trickster {
 		virtual void OnUpdate(float a_DeltaTime) = 0;
 		virtual void OnStart() = 0;
 		virtual void OnRender() = 0;
-		virtual void OnEventListen() = 0;
-		virtual void OnEventExecute() = 0;
+		
 		void Draw();
 		bool Update();
 		std::shared_ptr<Engine> GetEngine() const;

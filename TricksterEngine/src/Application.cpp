@@ -5,15 +5,21 @@
 
 #include "../Timer.h"
 #include "Engine.h"
+#include "Events/EventManager.h"
 
 using namespace Trickster;
 
 Application::Application()
 {
-	m_Engine = std::make_shared<Engine>();
-	m_Window = std::unique_ptr<Window>(Window::Create());
 	LOG("Started the timer");
 	m_Timer.Start();
+	m_Engine = std::make_shared<Engine>();
+	m_Window = std::unique_ptr<Window>(Window::Create());
+	EventManager::GetInstance()->OnStart.AddListener(std::bind(&Application::OnStart, this));
+	EventManager::GetInstance()->OnRender.AddListener(std::bind(&Application::OnRender, this));
+	EventManager::GetInstance()->OnUpdate.AddListener(std::bind(&Window::OnUpdate, m_Window.get()));
+	EventManager::GetInstance()->OnUpdate.AddListener(std::bind(&Application::OnUpdate, this, std::placeholders::_1));
+
 }
 
 
@@ -31,7 +37,7 @@ if (!m_Engine->Initialize())
 }
 
 std::srand(static_cast<unsigned int>(time(0)));
-OnStart();
+EventManager::GetInstance()->OnStart.Execute();
 	float time_passed = m_Timer.GetSeconds();
 	if (time_passed < 1.f) {
 		LOG("Initialization complete!\nTook " + std::to_string(time_passed) + " seconds.");
@@ -52,8 +58,7 @@ bool Trickster::Application::Update()
 {
 	float DeltaTime = m_Timer.Reset();
 	//DELTA TIME calculations
-	m_Window->OnUpdate();
-	OnUpdate(DeltaTime);
+	EventManager::GetInstance()->OnUpdate.Execute(DeltaTime);
 	return !m_Window->ShouldClose();
 }
 
