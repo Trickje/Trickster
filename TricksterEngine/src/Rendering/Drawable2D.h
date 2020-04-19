@@ -25,17 +25,15 @@ namespace Trickster {
 	{
 	public:
 		Drawable2D();
-		Drawable2D(const glm::vec2 a_Position, const glm::vec2 a_Size, const std::string& a_FilePath);
+		Drawable2D(const glm::vec2 a_Position, const glm::vec2 a_Scale, const std::string& a_FilePath);
 		virtual ~Drawable2D();
 		virtual void Draw() override;
-		void SetSize(const float a_Width, const float a_Height);
+		void SetScale(const float a_Width, const float a_Height);
 		void SetTexture(const std::string& a_FilePath);
 		glm::vec2 GetSize() const;
 		void SetPosition(const float a_X, const float a_Y);
 		glm::vec2 GetPosition() const;
-
-		//TODO Delete this function
-		std::vector<float> GetVertices();
+		glm::vec2 ToScreenPos();
 
 		glm::vec2 m_Position;
 		glm::vec2 m_Size;
@@ -43,8 +41,12 @@ namespace Trickster {
 		std::string m_FilePath;
 		DrawData2D* m_DrawData;
 
+		glm::vec2 m_Scale;
 		//Location of the ScreenPos uniform in the shader
 		GLint m_UniformLoc;
+		//Location of the Scale uniform in the shader
+		GLint m_ScaleUniformLoc;
+		
 	private:
 		float m_Vertices[12] =
 		{

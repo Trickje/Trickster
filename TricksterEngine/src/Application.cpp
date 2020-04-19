@@ -9,6 +9,7 @@
 
 using namespace Trickster;
 
+Application* Application::m_Application = nullptr;
 Application::Application()
 {
 	LOG("Started the timer");
@@ -19,13 +20,22 @@ Application::Application()
 	EventManager::GetInstance()->OnRender.AddListener(std::bind(&Application::OnRender, this));
 	EventManager::GetInstance()->OnUpdate.AddListener(std::bind(&Window::OnUpdate, m_Window.get()));
 	EventManager::GetInstance()->OnUpdate.AddListener(std::bind(&Application::OnUpdate, this, std::placeholders::_1));
-
+	m_Application = this;
 }
 
 
 Application::~Application()
 {
 //m_Engine implicitly deleted
+}
+
+Application* Application::Get()
+{
+	if(m_Application == nullptr)
+	{
+		LOG_ERROR("Application was not found.");
+	}
+	return m_Application;
 }
 
 void Application::Start()
@@ -65,6 +75,11 @@ bool Trickster::Application::Update()
 std::shared_ptr<Engine> Application::GetEngine() const
 {
 	return m_Engine;
+}
+
+std::shared_ptr<Window> Application::GetWindow() const
+{
+	return m_Window;
 }
 
 

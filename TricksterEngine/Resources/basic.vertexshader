@@ -3,9 +3,10 @@ layout (location = 0) in vec2 aPos;
 
 out vec2 TexCoord;
 uniform vec2 ScreenPos;
+uniform vec2 Scale;
 
 void main()
 {
-    gl_Position = vec4(ScreenPos.x + aPos.x, ScreenPos.y + aPos.y , 0.0, 1.0);
+    gl_Position = vec4(ScreenPos.x + Scale.x * aPos.x, ScreenPos.y + Scale.y * aPos.y , 0.0, 1.0);
     TexCoord = aPos;
 }

@@ -22,12 +22,14 @@ namespace Trickster {
 		SpriteManager::GetInstance()->m_Drawable2Ds.push_back(this);
 	}
 
-	Drawable2D::Drawable2D(const glm::vec2 a_Position, const glm::vec2 a_Size, const std::string& a_FilePath)
-		: m_Position(a_Position), m_Size(a_Size), m_FilePath(a_FilePath)
+	Drawable2D::Drawable2D(const glm::vec2 a_Position, const glm::vec2 a_Scale, const std::string& a_FilePath)
+		: m_Position(a_Position), m_Scale(a_Scale), m_FilePath(a_FilePath)
 	{
 		m_DrawData = new DrawData2D(
 			&m_Vertices[0], sizeof(m_Vertices));
 		GLCall(m_UniformLoc = glGetUniformLocation(ShaderManager::GetShader("basic")->Get(), "ScreenPos"));
+		GLCall(m_ScaleUniformLoc = glGetUniformLocation(ShaderManager::GetShader("basic")->Get(), "Scale"));
+		m_Size = { TextureManager::GetTexture(m_FilePath)->GetWidth(),  TextureManager::GetTexture(m_FilePath)->GetHeight() };
 		m_DrawData->layout->Push<float>(2);
 		m_DrawData->va->AddBuffer(*m_DrawData->vb, *m_DrawData->layout);
 		SpriteManager::GetInstance()->m_Drawable2Ds.push_back(this);
@@ -42,8 +44,11 @@ namespace Trickster {
 	{
 		//	LOG("draw");
 		ShaderManager::GetShader("basic")->Bind();
-		//glUniform2f(m_UniformLoc, m_Position.x, m_Position.y);
-		glUniform2f(m_UniformLoc, 0.f, 0.f);
+		glm::vec2 ScreenPos = ToScreenPos();
+		glUniform2f(m_UniformLoc, ScreenPos.x, ScreenPos.y);
+		//glUniform2f(m_UniformLoc, 0.f, 0.f);
+		const glm::vec2 l_Scale = TextureManager::GetTexture(m_FilePath)->GetScale();
+		glUniform2f(m_ScaleUniformLoc, m_Scale.x * l_Scale.x, m_Scale.y * l_Scale.y);
 
 		TextureManager::GetTexture(m_FilePath)->Bind();
 		m_DrawData->vb->Bind();
@@ -52,10 +57,10 @@ namespace Trickster {
 
 	}
 
-	void Drawable2D::SetSize(const float a_Width, const float a_Height)
+	void Drawable2D::SetScale(const float a_Width, const float a_Height)
 	{
-		m_Size.x = a_Width;
-		m_Size.y = a_Height;
+		m_Scale.x = a_Width;
+		m_Scale.y = a_Height;
 	}
 
 	void Drawable2D::SetTexture(const std::string& a_FilePath)
@@ -77,5 +82,10 @@ namespace Trickster {
 	glm::vec2 Drawable2D::GetPosition() const
 	{
 		return m_Position;
+	}
+
+	glm::vec2 Drawable2D::ToScreenPos()
+	{
+		return {m_Position.x / (Application::Get()->GetWindow()->GetWidth() * 0.5f) - 1.f, m_Position.y / (Application::Get()->GetWindow()->GetHeight() * 0.5f) - 1.f};
 	}
 }

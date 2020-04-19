@@ -32,11 +32,11 @@ void Trickster::Game::OnUpdate(float a_DeltaTime)
 void Trickster::Game::OnStart()
 {
 	std::string str = Engine::GetResourcePath() + "image.png";
-	Drawable2D* drawable = new Drawable2D(glm::vec2(50.f, 120.f), glm::vec2(40.f, 40.f), str);
+	Drawable2D* drawable = new Drawable2D(glm::vec2(50.f, 120.f), glm::vec2(1.f, 1.f), str);
 
-	for (int i = 0; i < 1000; i++)
+	for (int i = 0; i < 10; i++)
 	{
-		m_Nicolais.push_back(new Nicolai(glm::vec2(50.f, 120.f), glm::vec2(40.f, 40.f), str));
+		m_Nicolais.push_back(new Nicolai(glm::vec2(50.f, 120.f), glm::vec2(1.f, 1.f), str));
 	}
 }
 

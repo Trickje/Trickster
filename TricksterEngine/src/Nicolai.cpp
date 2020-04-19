@@ -17,10 +17,10 @@ Nicolai::~Nicolai()
 {
 }
 
-Nicolai::Nicolai(glm::vec2 a_Position, glm::vec2 a_Size, std::string& a_FilePath)
+Nicolai::Nicolai(glm::vec2 a_Position, glm::vec2 a_Scale, std::string& a_FilePath)
 {
 	m_Position = a_Position;
-	m_Size = a_Size;
+	m_Scale = a_Scale;
 	m_FilePath = a_FilePath;
 	float xDir = static_cast<float>(std::rand() % 100) / 50.f - 0.5f;
 	float yDir = static_cast<float>(std::rand() % 100) / 50.f - 0.5f;
