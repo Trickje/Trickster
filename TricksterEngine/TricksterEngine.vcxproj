@@ -188,6 +188,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="src\Events\EventManager.cpp" />
     <ClCompile Include="src\Application.cpp" />
     <ClCompile Include="src\pch.cpp">
@@ -211,6 +212,7 @@
     <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="src\Events\EventManager.h" />
     <ClInclude Include="src\Application.h" />
     <ClInclude Include="src\EntryPoint.h" />

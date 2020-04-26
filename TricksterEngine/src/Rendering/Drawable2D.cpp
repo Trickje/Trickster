@@ -17,7 +17,7 @@ namespace Trickster {
 		m_FilePath = "Resources/image.png";
 		m_DrawData->layout->Push<float>(2);
 		m_DrawData->va->AddBuffer(*m_DrawData->vb, *m_DrawData->layout);
-		m_Size = { 0.f, 0.f };
+		m_Size = { TextureManager::GetTexture(m_FilePath)->GetWidth(),  TextureManager::GetTexture(m_FilePath)->GetHeight() };
 		m_Position = { 0.f, 0.f };
 		SpriteManager::GetInstance()->m_Drawable2Ds.push_back(this);
 	}
@@ -70,7 +70,7 @@ namespace Trickster {
 
 	glm::vec2 Drawable2D::GetSize() const
 	{
-		return m_Size;
+		return { m_Size.x * m_Scale.x, m_Size.y * m_Scale.y };
 	}
 
 	void Drawable2D::SetPosition(float a_X, float a_Y)

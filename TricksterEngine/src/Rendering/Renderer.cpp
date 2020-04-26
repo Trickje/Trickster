@@ -79,12 +79,13 @@ namespace Trickster {
 				SpriteManager::GetInstance()->m_Drawable2Ds[i]->Draw();
 			}
 		}
+		/*
 		for (int i = 0; i < deletos.size(); i++)
 		{
-			LOG_ERROR("HMMM");
-			SpriteManager::GetInstance()->m_Drawable2Ds.erase(SpriteManager::GetInstance()->m_Drawable2Ds.begin() + deletos[i] - i);
+		//	LOG_ERROR("HMMM");
+		//	SpriteManager::GetInstance()->m_Drawable2Ds.erase(SpriteManager::GetInstance()->m_Drawable2Ds.begin() + deletos[i]);
 		}
-
+		*/
 	}
 #endif
 

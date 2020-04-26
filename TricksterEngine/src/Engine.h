@@ -6,8 +6,8 @@
 #include <GLFW/glfw3.h>
 // Include GLM
 #include <glm/glm.hpp>
-#define WINDOWWIDTH 1024
-#define WINDOWHEIGHT 768
+#define WINDOWWIDTH 1280
+#define WINDOWHEIGHT 720
 #include "Rendering/Renderer.h"
 
 namespace Trickster {
