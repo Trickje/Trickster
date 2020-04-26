@@ -12,14 +12,16 @@ namespace Trickster {
 		~Texture();
 		void Bind(unsigned int slot = 0) const;
 		static void Unbind();
-		int GetWidth() const { return m_Width; }
-		int GetHeight() const { return m_Height; }
+		int GetWidth() const;
+		int GetHeight() const;
 		glm::vec2 GetScale() const { return { m_Width / (Application::Get()->GetWindow()->GetWidth() * 0.5f), m_Height / (Application::Get()->GetWindow()->GetHeight() * 0.5f) }; }
 	private:
 		unsigned int m_RendererID;
 		std::string m_FilePath;
 		unsigned char* m_LocalBuffer;
-		int m_Width, m_Height, m_BPP;
+		int m_Width;
+		int m_Height;
+		int m_BPP;
 	};
 
 }

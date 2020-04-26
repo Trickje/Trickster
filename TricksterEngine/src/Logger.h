@@ -2,8 +2,9 @@
 #include <Windows.h>
 #include <iostream>
 #include <string>
-
+#ifdef _DEBUG
 #include <GL/glew.h>
+#endif
 
 #define ASSERT(x) if (!(x)) __debugbreak();
 #ifdef _DEBUG
@@ -27,7 +28,8 @@
 #define GLCall(x) x;
 #define LOG(x) 
 #define LOG_WARNING(x) 
-#define LOG_ERROR(x) 
+#define LOG_ERROR(x)
+#define LOG_USELESS(x)
 #endif
 namespace Trickster {
 	/*
@@ -106,9 +108,9 @@ namespace Trickster {
 		return true;
 	}
 
+#ifdef _DEBUG
 	static void GLAPIENTRY DebugMessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
 	{
-#ifdef _DEBUG
 		std::string typeString;
 		std::string severityString;
 
@@ -132,6 +134,7 @@ namespace Trickster {
 		}
 
 		fprintf(stderr, "OGL DEBUG MESSAGE:\n type: %s\n severity: %s\n message: %s\n\n", typeString.c_str(), severityString.c_str(), message);
+
+	}
 #endif
 	}
-}

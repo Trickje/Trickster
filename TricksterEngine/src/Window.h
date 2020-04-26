@@ -1,6 +1,6 @@
 #pragma once
 #include "pch.h"
-
+#include "Engine.h"
 #include "Events/Event.h"
 
 namespace Trickster {
@@ -12,8 +12,8 @@ namespace Trickster {
 
 		WindowProps(
 			const std::string& a_Title = "Trickster Engine", 
-			unsigned int a_Width = 1280,
-			unsigned int a_Height = 720)
+			unsigned int a_Width = WINDOWWIDTH,
+			unsigned int a_Height = WINDOWHEIGHT)
 			: title(a_Title), width(a_Width), height(a_Height)
 		{
 		}

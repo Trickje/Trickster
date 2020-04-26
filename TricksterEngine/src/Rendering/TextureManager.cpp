@@ -15,8 +15,9 @@ namespace Trickster {
 			//found
 			return it->second;
 		}
-		return TextureManager::GetInstance()->map[texturePath] = new Texture(texturePath);
+		TextureManager::GetInstance()->map.insert(std::pair<std::string, Trickster::Texture*>(texturePath, new Texture(texturePath)));
 
+		return TextureManager::GetInstance()->map[texturePath];
 	}
 
 

@@ -166,7 +166,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(SolutionDir)/TricksterEngine/Include;$(SolutionDir)/TricksterEngine/src/Rendering;$(SolutionDir)/TricksterEngine/src</AdditionalIncludeDirectories>
@@ -181,7 +181,7 @@
       <AdditionalDependencies>opengl32.lib;glew32s.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Lib>
-      <AdditionalDependencies>glew32s.lib</AdditionalDependencies>
+      <AdditionalDependencies>glew32.lib</AdditionalDependencies>
     </Lib>
     <Lib>
       <AdditionalLibraryDirectories>C:\Users\rick\source\repos\TricksterEngine\TricksterEngine\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>

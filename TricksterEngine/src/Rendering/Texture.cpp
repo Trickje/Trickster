@@ -52,4 +52,16 @@ namespace Trickster {
 	{
 		GLCall(glBindTexture(GL_TEXTURE_2D, 0));
 	}
+
+	int Texture::GetWidth() const
+	{
+		m_Width;
+		return m_Width;
+	}
+
+	int Texture::GetHeight() const
+	{
+		m_Height;
+		return m_Height;
+	}
 }

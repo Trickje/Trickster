@@ -14,7 +14,7 @@ namespace Trickster {
 		m_DrawData = new DrawData2D(
 			&m_Vertices[0], sizeof(m_Vertices));
 		GLCall(m_UniformLoc = glGetUniformLocation(ShaderManager::GetShader("basic")->Get(), "ScreenPos"));
-		m_FilePath = "Resources/image.png";
+		m_FilePath = "../../TricksterEngine/TricksterEngine/Resources/image.png";
 		m_DrawData->layout->Push<float>(2);
 		m_DrawData->va->AddBuffer(*m_DrawData->vb, *m_DrawData->layout);
 		m_Size = { TextureManager::GetTexture(m_FilePath)->GetWidth(),  TextureManager::GetTexture(m_FilePath)->GetHeight() };
@@ -86,6 +86,7 @@ namespace Trickster {
 
 	glm::vec2 Drawable2D::ToScreenPos()
 	{
-		return {m_Position.x / (Application::Get()->GetWindow()->GetWidth() * 0.5f) - 1.f, m_Position.y / (Application::Get()->GetWindow()->GetHeight() * 0.5f) - 1.f};
+		return {m_Position.x / (Application::Get()->GetWindow()->GetWidth() * 0.5f) - 1.f
+			, m_Position.y / (Application::Get()->GetWindow()->GetHeight() * 0.5f) - 1.f};
 	}
 }

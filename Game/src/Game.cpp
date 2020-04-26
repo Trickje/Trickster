@@ -36,7 +36,7 @@ void Trickster::Game::OnStart()
 
 	for (int i = 0; i < 10; i++)
 	{
-		m_Nicolais.push_back(new Nicolai(glm::vec2(50.f, 120.f), glm::vec2(1.f, 1.f), str));
+		m_Nicolais.push_back(new Nicolai(glm::vec2(0.f, 0.f), glm::vec2(1.f, 1.f), str));
 	}
 }
 
