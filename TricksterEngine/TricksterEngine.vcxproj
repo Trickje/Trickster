@@ -188,13 +188,13 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Rendering\Drawable3D.cpp" />
     <ClCompile Include="src\Rendering\Camera.cpp" />
     <ClCompile Include="src\Events\EventManager.cpp" />
     <ClCompile Include="src\Application.cpp" />
     <ClCompile Include="src\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="src\Rendering\Drawable.cpp" />
     <ClCompile Include="src\Rendering\Drawable2D.cpp" />
     <ClCompile Include="src\Engine.cpp" />
     <ClCompile Include="src\Rendering\IndexBuffer.cpp" />
@@ -212,13 +212,13 @@
     <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Rendering\Drawable3D.h" />
     <ClInclude Include="src\Rendering\Camera.h" />
     <ClInclude Include="src\Events\EventManager.h" />
     <ClInclude Include="src\Application.h" />
     <ClInclude Include="src\EntryPoint.h" />
     <ClInclude Include="src\Events\Event.h" />
     <ClInclude Include="src\pch.h" />
-    <ClInclude Include="src\Rendering\Drawable.h" />
     <ClInclude Include="src\Rendering\Drawable2D.h" />
     <ClInclude Include="src\Engine.h" />
     <ClInclude Include="src\Rendering\IndexBuffer.h" />
@@ -231,6 +231,7 @@
     <ClInclude Include="src\Rendering\stb_image.h" />
     <ClInclude Include="src\Rendering\Texture.h" />
     <ClInclude Include="src\Rendering\TextureManager.h" />
+    <ClInclude Include="src\Rendering\TinyObjLoader.h" />
     <ClInclude Include="src\Rendering\VertexArray.h" />
     <ClInclude Include="src\Rendering\VertexBuffer.h" />
     <ClInclude Include="src\Rendering\VertexBufferLayout.h" />
@@ -239,6 +240,10 @@
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\3D.fragmentshader" />
+    <None Include="Resources\3D.vertexshader">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </None>
     <None Include="Resources\basic.fragmentshader" />
     <None Include="Resources\basic.vertexshader" />
   </ItemGroup>

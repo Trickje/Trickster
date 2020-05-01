@@ -27,9 +27,6 @@
     <ClCompile Include="src\Nicolai.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Rendering\Drawable.cpp">
-      <Filter>Source Files\Rendering</Filter>
-    </ClCompile>
     <ClCompile Include="src\Rendering\Drawable2D.cpp">
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
@@ -81,6 +78,9 @@
     <ClCompile Include="src\Rendering\Camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Rendering\Drawable3D.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Engine.h">
@@ -91,9 +91,6 @@
     </ClInclude>
     <ClInclude Include="src\Nicolai.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Rendering\Drawable.h">
-      <Filter>Header Files\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="src\Rendering\Drawable2D.h">
       <Filter>Header Files\Rendering</Filter>
@@ -158,6 +155,12 @@
     <ClInclude Include="src\Rendering\Camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Rendering\TinyObjLoader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Rendering\Drawable3D.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\basic.vertexshader">
@@ -166,6 +169,8 @@
     <None Include="Resources\basic.fragmentshader">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="Resources\3D.vertexshader" />
+    <None Include="Resources\3D.fragmentshader" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Resources\image.png">

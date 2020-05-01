@@ -3,7 +3,9 @@
 //#include "EntryPoint.h"
 #include "Logger.h"
 #include "Application.h"
+#include "IronMan.h"
 #include "Nicolai.h"
+#include "Rendering/Camera.h"
 
 namespace Trickster {
 	class Game : public Trickster::Application {
@@ -16,7 +18,8 @@ namespace Trickster {
 		void OnRender() override;
 	private:
 		std::vector<Nicolai*> m_Nicolais;
-
+		IronMan* m_IronMan;
+		Camera* m_Camera;
 
 	};
 

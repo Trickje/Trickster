@@ -1,7 +1,8 @@
 #pragma once
 #include <glm/vec2.hpp>
-
-#include "Drawable.h"
+#include "VertexBuffer.h"
+#include "VertexBufferLayout.h"
+#include "VertexArray.h"
 class VertexBufferLayout;
 class VertexArray;
 class VertexBuffer;
@@ -20,14 +21,13 @@ namespace Trickster {
 		VertexBufferLayout* layout;
 	};
 
-	class Drawable2D :
-		protected Drawable
+	class Drawable2D 
 	{
 	public:
 		Drawable2D();
 		Drawable2D(const glm::vec2 a_Position, const glm::vec2 a_Scale, const std::string& a_FilePath);
 		virtual ~Drawable2D();
-		virtual void Draw() override;
+		virtual void Draw();
 		void SetScale(const float a_Width, const float a_Height);
 		void SetTexture(const std::string& a_FilePath);
 		glm::vec2 GetSize() const;

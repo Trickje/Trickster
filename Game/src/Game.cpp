@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "Game.h"
 
+
+#include "IronMan.h"
 #include "Nicolai.h"
 #include "Rendering/Drawable2D.h"
 using namespace Trickster;
@@ -33,7 +35,11 @@ void Trickster::Game::OnStart()
 {
 	std::string str = Engine::GetResourcePath() + "image.png";
 	//Drawable2D* drawable = new Drawable2D(glm::vec2(50.f, 120.f), glm::vec2(1.f, 1.f), str);
-
+	//m_IronMan = new IronMan("Handgun_obj.obj");
+	m_IronMan = new IronMan("planet_Terrestrial1.obj");
+	m_Camera = new Camera();
+	m_Camera->Move({ 0.f, 0.f, -1000.f });
+	m_Camera->LookAt(m_IronMan->GetPosition());
 	for (int i = 0; i < 10; i++)
 	{
 		m_Nicolais.push_back(new Nicolai(glm::vec2(0.f, 0.f), glm::vec2(1.f, 1.f), str));
@@ -42,6 +48,6 @@ void Trickster::Game::OnStart()
 
 void Trickster::Game::OnRender()
 {
-
+	m_IronMan->Draw(m_Camera);
 	GetEngine()->renderer->Draw();
 }

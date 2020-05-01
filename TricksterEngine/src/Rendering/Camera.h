@@ -7,7 +7,7 @@ class Camera
 public:
 	Camera();
 	~Camera();
-	glm::mat4 LookAt(const glm::vec3& from, const glm::vec3& to, const glm::vec3& tmp = glm::vec3(0, 1, 0));
+	void LookAt(const glm::vec3& a_Target);
 	
 	//Sets the position in the view matrix
 	void SetPosition(const glm::vec3& a_Position);
@@ -62,9 +62,9 @@ private:
 	void SetView(const glm::mat4& a_View);
 	const glm::mat4& CalculateProjection();
 	
-	glm::mat4 m_View;
-	glm::mat4 m_Projection;
-	glm::mat4 m_ViewProjection;
+	glm::mat4 m_View{};
+	glm::mat4 m_Projection{};
+	glm::mat4 m_ViewProjection{};
 	float m_FOV;
 	float m_AspectRatio;
 	bool m_LockRoll;
@@ -72,8 +72,8 @@ private:
 	float m_Near;
 	float m_PI = 3.14159265359f;
 	//To place it on the screen, maybe for multiple cameras
-	glm::vec2 m_Size;		//Width, Height
-	glm::vec2 m_ScreenPos;	//0,0 is bottom left
+	glm::vec2 m_Size{};		//Width, Height
+	glm::vec2 m_ScreenPos{};	//0,0 is bottom left
 	
 };
 

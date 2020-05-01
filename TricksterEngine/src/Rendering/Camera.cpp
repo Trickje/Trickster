@@ -10,6 +10,8 @@ Camera::Camera()
 	m_View = glm::mat4(0.f);
 	m_Projection = glm::mat4(0.f);
 	m_ViewProjection = glm::mat4(0.f);
+	m_Size = glm::vec2(100.f, 100.f);
+	m_ScreenPos = glm::vec2(0.f);
 	m_FOV = 70.f;
 	m_AspectRatio = 1.7777778f;
 	m_LockRoll = true;
@@ -23,10 +25,29 @@ Camera::~Camera()
 	//Delete any raw pointers here
 }
 
-glm::mat4 Camera::LookAt(const glm::vec3& from, const glm::vec3& to, const glm::vec3& tmp)
+void Camera::LookAt(const glm::vec3& a_Target)
 {
-	const glm::vec3 forward = glm::normalize(from - to);
-	const glm::vec3 right = glm::cross(glm::normalize(tmp), forward);
+	const glm::vec3 forward = glm::normalize(GetPosition() - a_Target);
+	const glm::vec3 right = glm::cross(glm::vec3(0, 1, 0), forward);
+	const glm::vec3 up = glm::cross(forward, right);
+	const glm::vec3 pos(GetPosition());
+	m_View = glm::mat4();
+	m_View[0][0] = right.x;
+	m_View[0][1] = right.y;
+	m_View[0][2] = right.z;
+	m_View[1][0] = up.x;
+	m_View[1][1] = up.y;
+	m_View[1][2] = up.z;
+	m_View[2][0] = forward.x;
+	m_View[2][1] = forward.y;
+	m_View[2][2] = forward.z;
+
+	m_View[3][0] = pos.x;
+	m_View[3][1] = pos.y;
+	m_View[3][2] = pos.z;
+	/*
+	const glm::vec3 forward = glm::normalize(GetPosition() - to);
+	const glm::vec3 right = glm::cross(glm::vec3(0, 1, 0), forward);
 	const glm::vec3 up = glm::cross(forward, right);
 
 	glm::mat4 camToWorld;
@@ -45,7 +66,7 @@ glm::mat4 Camera::LookAt(const glm::vec3& from, const glm::vec3& to, const glm::
 	camToWorld[3][1] = from.y;
 	camToWorld[3][2] = from.z;
 	m_View = camToWorld;
-	return camToWorld;
+	*/
 }
 
 void Camera::SetPosition(const glm::vec3& a_Position)

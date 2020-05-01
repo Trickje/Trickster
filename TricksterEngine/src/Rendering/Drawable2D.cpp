@@ -4,9 +4,11 @@
 
 
 #include "Engine.h"
+#include "Shader.h"
 #include "ShaderManager.h"
 #include "TextureManager.h"
 #include "SpriteManager.h"
+#include "Texture.h"
 
 namespace Trickster {
 	Drawable2D::Drawable2D()
