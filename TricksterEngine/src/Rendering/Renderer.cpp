@@ -17,6 +17,7 @@
 #include "VertexBufferLayout.h"
 #include "Drawable2D.h"
 #include "Engine.h"
+#include "Events/EventManager.h"
 #include "SpriteManager.h"
 #include "Window.h"
 namespace Trickster {
@@ -40,12 +41,14 @@ namespace Trickster {
 	{
 		GLCall(glEnable(GL_BLEND));
 		GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
-
+		GLCall(glEnable(GL_DEPTH_TEST));
+		GLCall(glDepthFunc(GL_LESS))
 		ShaderManager::GetShader("basic")->Bind();
 		ShaderManager::GetShader("basic")->SetUniform1i("ourTexture", 0);
 
 		TextureManager::GetTexture("image.png")->Bind();
 		std::string str = "image.png";
+		EventManager::GetInstance()->OnRender.AddListener(std::bind(&Renderer::Draw, this));
 		return true;
 	}
 

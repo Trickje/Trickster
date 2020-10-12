@@ -59,7 +59,8 @@ public:
 	//Rotates around the axis of the camera (up forward and right).
 	//Delta in degrees
 	void Rotate(const float a_DeltaYaw = 0.f, const float a_DeltaPitch = 0.f, const float a_DeltaRoll = 0.f);
-private:
+	glm::mat4 GetProjection()const;
+	private:
 	//Only accessed within this class!
 	//Sets the view
 	void SetView(const glm::mat4& a_View);

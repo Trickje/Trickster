@@ -64,14 +64,13 @@ namespace Trickster {
 		m_ModelMatrix = m_RotationMatrix * m_TranslationMatrix;
 		ShaderManager::GetShader(m_ShaderPath)->Bind();
 		const auto UniformLoc = glGetUniformLocation(ShaderManager::GetShader(m_ShaderPath)->Get(), "MVP");
-		glm::mat4 MVP = a_Camera->GetViewProjection() * m_ModelMatrix;
+		glm::mat4 MVP = a_Camera->GetProjection() * a_Camera->GetView() * m_ModelMatrix;
 		glUniformMatrix4fv(UniformLoc, 1, GL_FALSE, &MVP[0][0]);
 
 		TextureManager::GetTexture(std::string(m_TextureBase + m_TextureFile))->Bind();
 		m_DrawData->vb->Bind();
 		m_DrawData->va->Bind();
 		GLCall(glDrawArrays(GL_TRIANGLES, 0, (GLsizei)m_Vertices.size()));
-
 	}
 
 	void Drawable3D::LoadMesh(const std::string& a_FileName)

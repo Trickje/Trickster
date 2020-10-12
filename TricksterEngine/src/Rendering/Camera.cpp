@@ -15,8 +15,10 @@ Camera::Camera()
 	m_FOV = glm::radians(70.f);
 	m_AspectRatio = 1.7777778f;
 	m_LockRoll = true;
-	m_Far = 100.f;
+	m_Far = 1000.f;
 	m_Near = 0.1f;
+	m_Position = glm::vec3( 0.f, 0.f, 0.f);
+	this->LookAt(m_Position + glm::vec3(0.f, 0.f, 1.f));
 }
 
 
@@ -28,65 +30,7 @@ Camera::~Camera()
 void Camera::LookAt(const glm::vec3& a_Target)
 {
 	m_View = glm::lookAt(m_Position, a_Target, glm::vec3{ 0.f, 1.f, 0.f });
-	/*
-	const glm::vec3 forward = glm::normalize(GetPosition() - a_Target);
-	const glm::vec3 right = glm::cross(glm::vec3(0, 1, 0), forward);
-	const glm::vec3 up = glm::cross(forward, right);
-	const glm::vec3 pos(GetPosition());
-	*/
-	/*
-	glm::mat4 orientation = {
-		glm::vec4(right.x, up.x, forward.x, 0),
-	  glm::vec4(right.y, up.y, forward.y, 0),
-	  glm::vec4(right.z, up.z, forward.z, 0),
-	  glm::vec4(0,       0,       0,     1)
-	};
-	glm::mat4 translation = {
-		glm::vec4(1,      0,      0,   0),
-		glm::vec4(0,      1,      0,   0),
-		glm::vec4(0,      0,      1,   0),
-		glm::vec4(-pos.x, -pos.y, -pos.z, 1)
-	};
-	m_View = (orientation * translation);
-	*/
-	/*
-	m_View = glm::mat4();
-	m_View[0][0] = right.x;
-	m_View[0][1] = right.y;
-	m_View[0][2] = right.z;
-	m_View[1][0] = up.x;
-	m_View[1][1] = up.y;
-	m_View[1][2] = up.z;
-	m_View[2][0] = forward.x;
-	m_View[2][1] = forward.y;
-	m_View[2][2] = forward.z;
-
-	m_View[3][0] = pos.x;
-	m_View[3][1] = pos.y;
-	m_View[3][2] = pos.z;
-	*/
-	/*
-	const glm::vec3 forward = glm::normalize(GetPosition() - to);
-	const glm::vec3 right = glm::cross(glm::vec3(0, 1, 0), forward);
-	const glm::vec3 up = glm::cross(forward, right);
-
-	glm::mat4 camToWorld;
-
-	camToWorld[0][0] = right.x;
-	camToWorld[0][1] = right.y;
-	camToWorld[0][2] = right.z;
-	camToWorld[1][0] = up.x;
-	camToWorld[1][1] = up.y;
-	camToWorld[1][2] = up.z;
-	camToWorld[2][0] = forward.x;
-	camToWorld[2][1] = forward.y;
-	camToWorld[2][2] = forward.z;
-
-	camToWorld[3][0] = from.x;
-	camToWorld[3][1] = from.y;
-	camToWorld[3][2] = from.z;
-	m_View = camToWorld;
-	*/
+	
 }
 
 void Camera::SetPosition(const glm::vec3& a_Position)
@@ -214,4 +158,9 @@ void Camera::Rotate(const float a_DeltaYaw, const float a_DeltaPitch, const floa
 	m_View = glm::rotate(m_View, glm::radians(a_DeltaPitch), GetRight());
 	m_View = glm::rotate(m_View, glm::radians(a_DeltaRoll), GetForward());
 	
+}
+
+glm::mat4 Camera::GetProjection()const 
+{
+	return glm::perspective(this->m_FOV, this->m_AspectRatio, m_Near, m_Far);
 }
