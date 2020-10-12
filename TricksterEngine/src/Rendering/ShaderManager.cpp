@@ -2,6 +2,8 @@
 #include "ShaderManager.h"
 
 
+
+#include "Events/EventManager.h"
 #include "Shader.h"
 
 
@@ -33,6 +35,12 @@ namespace Trickster {
 			instance = new ShaderManager();
 		}
 		return instance;
+	}
+
+	void ShaderManager::Initialize()
+	{
+		GetShader("basic");
+		GetShader("3D");
 	}
 
 	ShaderManager::ShaderManager()

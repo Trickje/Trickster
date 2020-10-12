@@ -1,6 +1,9 @@
 #include "pch.h"
 #include "Drawable3D.h"
 
+#include <glm/ext/matrix_transform.inl>
+
+
 
 #include "Camera.h"
 #include "ShaderManager.h"
@@ -11,7 +14,7 @@
 
 namespace Trickster {
 	Drawable3D::Drawable3D()
-		: m_ModelMatrix(glm::mat4(1.0))
+		: m_ModelMatrix(glm::mat4(1.0)), m_RotationMatrix(glm::mat4(1.0f)), m_TranslationMatrix(glm::mat4(1.0f))
 	{
 		m_DrawData = std::make_shared<DrawData>();
 		m_ShaderPath = "";
@@ -19,7 +22,7 @@ namespace Trickster {
 
 	Drawable3D::Drawable3D(const std::string& a_ModelFileName, const glm::vec3& a_Position, const glm::vec3& a_Scale,
 		const std::string& a_ShaderFileName)
-		: m_ModelMatrix(glm::mat4(1.0))
+		: m_ModelMatrix(glm::mat4(1.0)), m_RotationMatrix(glm::mat4(1.0f)), m_TranslationMatrix(glm::mat4(1.0f))
 	{
 		Initialize(a_ModelFileName, a_Position, a_Scale, a_ShaderFileName);
 		
@@ -35,10 +38,15 @@ namespace Trickster {
 	{
 		//Initializes data
 		m_DrawData = std::make_shared<DrawData>();
-		m_ModelMatrix = glm::mat4(1.0);
+		m_ModelMatrix = glm::mat4(1.0f);
+		m_RotationMatrix = glm::mat4(1.0f);
+		m_TranslationMatrix = glm::mat4(1.0f);
+		m_Yaw = 0.f;
+		m_Pitch = 0.f;
+		m_Roll = 0.f;
 		//Fills in data
-		m_TextureBase = "../Game/Models/";
-		m_TextureFile = "Terrestrial1.jpg";
+		m_TextureBase = "Models/";
+		//m_TextureFile = "Terrestrial1.jpg";
 		LoadMesh(a_ModelFileName);
 		SetPosition(a_Position);
 		SetShaderPath(a_ShaderFileName);
@@ -53,12 +61,13 @@ namespace Trickster {
 
 	void Drawable3D::Draw(Camera* a_Camera)
 	{
+		m_ModelMatrix = m_RotationMatrix * m_TranslationMatrix;
 		ShaderManager::GetShader(m_ShaderPath)->Bind();
 		const auto UniformLoc = glGetUniformLocation(ShaderManager::GetShader(m_ShaderPath)->Get(), "MVP");
 		glm::mat4 MVP = a_Camera->GetViewProjection() * m_ModelMatrix;
 		glUniformMatrix4fv(UniformLoc, 1, GL_FALSE, &MVP[0][0]);
 
-		TextureManager::GetTexture(m_TextureBase + m_TextureFile)->Bind();
+		TextureManager::GetTexture(std::string(m_TextureBase + m_TextureFile))->Bind();
 		m_DrawData->vb->Bind();
 		m_DrawData->va->Bind();
 		GLCall(glDrawArrays(GL_TRIANGLES, 0, (GLsizei)m_Vertices.size()));
@@ -72,7 +81,7 @@ namespace Trickster {
 		std::vector<tinyobj::shape_t> shapes;
 		std::vector<tinyobj::material_t> materials;
 
-		std::string basedir = "../Game/Models/";
+		std::string basedir = "Models/";
 		std::string FilePath = basedir + a_FileName;
 
 		
@@ -106,16 +115,17 @@ namespace Trickster {
 					tinyobj::real_t vx = attrib.vertices[3 * idx.vertex_index + 0];
 					tinyobj::real_t vy = attrib.vertices[3 * idx.vertex_index + 1];
 					tinyobj::real_t vz = attrib.vertices[3 * idx.vertex_index + 2];
-				//	tinyobj::real_t nx = attrib.normals[3 * idx.normal_index + 0];
-				//	tinyobj::real_t ny = attrib.normals[3 * idx.normal_index + 1];
-				//	tinyobj::real_t nz = attrib.normals[3 * idx.normal_index + 2];
+					tinyobj::real_t nx = attrib.normals[3 * idx.normal_index + 0];
+					tinyobj::real_t ny = attrib.normals[3 * idx.normal_index + 1];
+					tinyobj::real_t nz = attrib.normals[3 * idx.normal_index + 2];
 					tinyobj::real_t tx = attrib.texcoords[2 * idx.texcoord_index + 0];
 					tinyobj::real_t ty = attrib.texcoords[2 * idx.texcoord_index + 1];
 					// Optional: vertex colors
-					 tinyobj::real_t red = attrib.colors[3*idx.vertex_index+0];
-					 tinyobj::real_t green = attrib.colors[3*idx.vertex_index+1];
-					 tinyobj::real_t blue = attrib.colors[3*idx.vertex_index+2];
-					 std::shared_ptr<Vertex> vertex = std::make_shared<Vertex>();
+					// tinyobj::real_t red = attrib.colors[3*idx.vertex_index+0];
+					// tinyobj::real_t green = attrib.colors[3*idx.vertex_index+1];
+					// tinyobj::real_t blue = attrib.colors[3*idx.vertex_index+2];
+					/*
+					 Vertex* vertex = new Vertex();
 					
 					vertex->position.x = vx;
 					vertex->position.y = vy;
@@ -127,7 +137,12 @@ namespace Trickster {
 
 					vertex->tex.x = tx;
 					vertex->tex.y = ty;
-					m_Vertices.push_back(vertex);
+					*/
+					if(ty > 0.5f)
+					{
+						//LOG(ty);
+					}
+					m_Vertices.push_back({vx, vy,vz,nx,ny,nz,tx,ty});
 				}
 				index_offset += (size_t)fv;
 
@@ -137,26 +152,31 @@ namespace Trickster {
 		}
 		//
 		MakeBuffers();
+		for(int i = 0; i < materials.size(); i++)
+		{
+			m_TextureFile = materials[i].diffuse_texname;
+			TextureManager::GetTexture(m_TextureBase + m_TextureFile);
+		}
 
 	}
 
 	void Drawable3D::SetPosition(const glm::vec3& a_Position)
 	{
-		m_ModelMatrix[3][0] = a_Position.x;
-		m_ModelMatrix[3][1] = a_Position.y;
-		m_ModelMatrix[3][2] = a_Position.z;
+		m_TranslationMatrix[3][0] = a_Position.x;
+		m_TranslationMatrix[3][1] = a_Position.y;
+		m_TranslationMatrix[3][2] = a_Position.z;
 	}
 
 	glm::vec3 Drawable3D::GetPosition() const
 	{
-		return glm::vec3(m_ModelMatrix[3][0], m_ModelMatrix[3][1], m_ModelMatrix[3][2]);
+		return glm::vec3(m_TranslationMatrix[3][0], m_TranslationMatrix[3][1], m_TranslationMatrix[3][2]);
 	}
 
 	void Drawable3D::Move(const glm::vec3& a_Offset)
 	{
-		m_ModelMatrix[3][0] += a_Offset.x;
-		m_ModelMatrix[3][1] += a_Offset.y;
-		m_ModelMatrix[3][2] += a_Offset.z;
+		m_TranslationMatrix[3][0] += a_Offset.x;
+		m_TranslationMatrix[3][1] += a_Offset.y;
+		m_TranslationMatrix[3][2] += a_Offset.z;
 	}
 
 	glm::vec3 Drawable3D::GetForward() const
@@ -203,14 +223,22 @@ namespace Trickster {
 		m_ModelMatrix[2][3] = a_Scale.z;
 	}
 
+	void Drawable3D::CalculateRotationMatrix()
+	{
+		m_RotationMatrix = glm::identity<glm::mat4>();
+		m_RotationMatrix = glm::rotate(m_RotationMatrix, glm::radians(m_Yaw), glm::vec3(0.f,1.f,0.f));
+		m_RotationMatrix = glm::rotate(m_RotationMatrix, glm::radians(m_Pitch), glm::vec3(1.f, 0.f, 0.f));
+		m_RotationMatrix = glm::rotate(m_RotationMatrix, glm::radians(m_Roll), glm::vec3(0.f, 0.f, 1.f));
+	}
+
 	void Drawable3D::MakeBuffers()
 	{
-		m_DrawData->vb = std::make_shared<VertexBuffer>(&m_Vertices[0], (int)m_Vertices.size());
-		m_DrawData->layout = std::make_shared<VertexBufferLayout>();
+		m_DrawData->vb =new VertexBuffer(&m_Vertices[0], (unsigned int)m_Vertices.size() * 8 * sizeof(float));
+		m_DrawData->layout = new VertexBufferLayout();
 		m_DrawData->layout->Push<float>(3);
-		m_DrawData->layout->Push<float>(3);
+		m_DrawData->layout->Push<float>(3, true);
 		m_DrawData->layout->Push<float>(2);
-		m_DrawData->va = std::make_shared<VertexArray>();
+		m_DrawData->va = new VertexArray();
 		m_DrawData->va->AddBuffer(*m_DrawData->vb, *m_DrawData->layout);
 		
 	}

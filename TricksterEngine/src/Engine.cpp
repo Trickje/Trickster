@@ -2,12 +2,7 @@
 #include "Engine.h"
 
 #include <ctime>
-
-
 #include "Renderer.h"
-#include "Drawable2D.h"
-#include "Nicolai.h"
-#include <thread>
 
 namespace Trickster
 {
@@ -33,7 +28,7 @@ namespace Trickster
 
 		glDebugMessageCallback(DebugMessageCallback, 0);
 
-		glClearColor(0.0f, 0.1f, 0.0f, 1.0f);
+		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 		return true;
 	}
 
@@ -44,7 +39,7 @@ namespace Trickster
 	}
 	std::string Engine::GetResourcePath()
 	{
-		return "../../TricksterEngine/TricksterEngine/Resources/";
+		return "Resources/";
 	}
 
 }

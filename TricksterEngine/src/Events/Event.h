@@ -2,6 +2,7 @@
 #include <complex>
 #include <string>
 #include <functional>
+#include <list>
 
 namespace Trickster
 {
@@ -74,29 +75,6 @@ namespace Trickster
 		std::list<EventFn> m_Listeners;
 	};
 
-	/*
-	class EventDispatcher
-	{
-		template<typename T>
-		using EventFn = std::function<bool(T&)>;
-	public:
-		EventDispatcher(Event& a_Event)
-		: m_Event(a_Event)
-		{
-			
-		}
-		template <typename T>
-		bool Dispatch(EventFn<T> func)
-		{
-			if(m_Event.GetEventType() == T::GetStaticType())
-			{
-				m_Event.m_Handled = func(*(T*)&m_Event);
-			}
-		}
-	private:
-		Event& m_Event;
-	};
-
-	*/
+	
 	
 }

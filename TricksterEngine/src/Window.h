@@ -1,8 +1,8 @@
 #pragma once
-#include "pch.h"
 #include "Engine.h"
 #include "Events/Event.h"
-
+#define WINDOWWIDTH 1280
+#define WINDOWHEIGHT 720
 namespace Trickster {
 	struct WindowProps
 	{

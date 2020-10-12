@@ -6,6 +6,7 @@
 
 #include "Engine.h"
 #include "TextureManager.h"
+#include "Window.h"
 using namespace Trickster;
 Nicolai::Nicolai()
 {

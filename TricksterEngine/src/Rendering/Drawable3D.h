@@ -13,15 +13,18 @@ class Camera;
 namespace Trickster {
 	struct Vertex
 	{
-		glm::vec3 position;
-		glm::vec3 color;
-		glm::vec2 tex;
+			float x, y, z, nx, ny, nz, u, v;
 	};
-	struct DrawData
+	static union
 	{
-		std::shared_ptr<VertexBuffer> vb;
-		std::shared_ptr<VertexBufferLayout> layout;
-		std::shared_ptr<VertexArray> va;
+		Vertex v;
+		float value[8];
+	};
+	struct DrawData 
+	{
+		VertexBuffer* vb;
+		VertexBufferLayout* layout;
+		VertexArray* va;
 	};
 	class Drawable3D
 	{
@@ -55,6 +58,7 @@ namespace Trickster {
 		void SetScale(const glm::vec3& a_Scale);
 
 	private:
+		void CalculateRotationMatrix();
 		std::string m_TextureBase;
 		std::string m_TextureFile;
 		std::string m_ShaderPath;
@@ -74,8 +78,12 @@ Scale	|   x    |   y   |       z        |  1.f  |
 	-------------------------------
 		 */
 		glm::mat4 m_ModelMatrix;
+		glm::mat4 m_RotationMatrix;
+		float m_Yaw, m_Pitch, m_Roll;
+		glm::mat4 m_TranslationMatrix;
 		std::shared_ptr<DrawData> m_DrawData;
-		std::vector<std::shared_ptr<Vertex>> m_Vertices;	//Mesh
+		std::vector<Vertex> m_Vertices;	//Mesh
+		
 		
 	};
 

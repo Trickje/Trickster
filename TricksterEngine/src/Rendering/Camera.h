@@ -1,6 +1,6 @@
 #pragma once
 #include <glm/mat4x4.hpp>
-
+#include <glm/ext/matrix_clip_space.hpp>
 
 class Camera
 {
@@ -56,6 +56,9 @@ public:
 	//Gets the View Projection. Multiply this by the Model matrix (Projection * View * Model)
 	//Call this after you did the recalculation. (Which is done OnUpdate)
 	const glm::mat4& GetViewProjection()const;
+	//Rotates around the axis of the camera (up forward and right).
+	//Delta in degrees
+	void Rotate(const float a_DeltaYaw = 0.f, const float a_DeltaPitch = 0.f, const float a_DeltaRoll = 0.f);
 private:
 	//Only accessed within this class!
 	//Sets the view
@@ -65,6 +68,7 @@ private:
 	glm::mat4 m_View{};
 	glm::mat4 m_Projection{};
 	glm::mat4 m_ViewProjection{};
+	glm::vec3 m_Position{};
 	float m_FOV;
 	float m_AspectRatio;
 	bool m_LockRoll;
@@ -84,6 +88,7 @@ inline void Camera::SetView(const glm::mat4 & a_View)
 
 inline const glm::mat4 & Camera::CalculateProjection()
 {
+	/*
 	const auto Scale = 1 / tan((m_FOV * 0.0174532925f) * 0.5f * m_PI / 180);
 	m_Projection = glm::mat4(0.f);
 	m_Projection[0][0] = Scale; // scale the x coordinates of the projected point 
@@ -92,6 +97,7 @@ inline const glm::mat4 & Camera::CalculateProjection()
 	m_Projection[2][3] = -m_Far * m_Near / (m_Far - m_Near); // used to remap z [0,1] 
 	m_Projection[3][2] = -1; // set w = -z 
 	m_Projection[3][3] = 0;
-	return m_Projection;
+	*/
+	return glm::perspective(45.0f, 4.0f/3.0f, 0.1f, 100.f);
 }
 

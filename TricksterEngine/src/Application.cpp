@@ -6,6 +6,7 @@
 #include "../Timer.h"
 #include "Engine.h"
 #include "Events/EventManager.h"
+#include "ShaderManager.h"
 
 using namespace Trickster;
 
@@ -20,6 +21,7 @@ Application::Application()
 	EventManager::GetInstance()->OnRender.AddListener(std::bind(&Application::OnRender, this));
 	EventManager::GetInstance()->OnUpdate.AddListener(std::bind(&Window::OnUpdate, m_Window.get()));
 	EventManager::GetInstance()->OnUpdate.AddListener(std::bind(&Application::OnUpdate, this, std::placeholders::_1));
+	EventManager::GetInstance()->OnStart.AddListener(std::bind(&ShaderManager::Initialize, ShaderManager::GetInstance()));
 	m_Application = this;
 }
 

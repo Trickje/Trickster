@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "Camera.h"
-
+#include <glm/gtc/matrix_transform.hpp>
 #include "Events/EventManager.h"
 
 
@@ -12,7 +12,7 @@ Camera::Camera()
 	m_ViewProjection = glm::mat4(0.f);
 	m_Size = glm::vec2(100.f, 100.f);
 	m_ScreenPos = glm::vec2(0.f);
-	m_FOV = 70.f;
+	m_FOV = glm::radians(70.f);
 	m_AspectRatio = 1.7777778f;
 	m_LockRoll = true;
 	m_Far = 100.f;
@@ -27,10 +27,29 @@ Camera::~Camera()
 
 void Camera::LookAt(const glm::vec3& a_Target)
 {
+	m_View = glm::lookAt(m_Position, a_Target, glm::vec3{ 0.f, 1.f, 0.f });
+	/*
 	const glm::vec3 forward = glm::normalize(GetPosition() - a_Target);
 	const glm::vec3 right = glm::cross(glm::vec3(0, 1, 0), forward);
 	const glm::vec3 up = glm::cross(forward, right);
 	const glm::vec3 pos(GetPosition());
+	*/
+	/*
+	glm::mat4 orientation = {
+		glm::vec4(right.x, up.x, forward.x, 0),
+	  glm::vec4(right.y, up.y, forward.y, 0),
+	  glm::vec4(right.z, up.z, forward.z, 0),
+	  glm::vec4(0,       0,       0,     1)
+	};
+	glm::mat4 translation = {
+		glm::vec4(1,      0,      0,   0),
+		glm::vec4(0,      1,      0,   0),
+		glm::vec4(0,      0,      1,   0),
+		glm::vec4(-pos.x, -pos.y, -pos.z, 1)
+	};
+	m_View = (orientation * translation);
+	*/
+	/*
 	m_View = glm::mat4();
 	m_View[0][0] = right.x;
 	m_View[0][1] = right.y;
@@ -45,6 +64,7 @@ void Camera::LookAt(const glm::vec3& a_Target)
 	m_View[3][0] = pos.x;
 	m_View[3][1] = pos.y;
 	m_View[3][2] = pos.z;
+	*/
 	/*
 	const glm::vec3 forward = glm::normalize(GetPosition() - to);
 	const glm::vec3 right = glm::cross(glm::vec3(0, 1, 0), forward);
@@ -71,14 +91,12 @@ void Camera::LookAt(const glm::vec3& a_Target)
 
 void Camera::SetPosition(const glm::vec3& a_Position)
 {
-	m_View[3][0] = a_Position.x;
-	m_View[3][1] = a_Position.y;
-	m_View[3][2] = a_Position.z;
+	m_Position = a_Position;
 }
 
 glm::vec3 Camera::GetPosition() const
 {
-	return glm::vec3(m_View[3][0], m_View[3][1], m_View[3][2]);
+	return m_Position;
 }
 
 void Camera::SetScreenPos(const glm::vec2& a_Position)
@@ -182,10 +200,18 @@ void Camera::SetFar(const float a_Far)
 
 void Camera::RecalculateViewProjection()
 {
-	m_ViewProjection = this->CalculateProjection() * m_View;
+	m_ViewProjection = this->CalculateProjection() * m_View ;
 }
 
 const glm::mat4& Camera::GetViewProjection()const
 {
 	return m_ViewProjection;
+}
+
+void Camera::Rotate(const float a_DeltaYaw, const float a_DeltaPitch, const float a_DeltaRoll)
+{
+	m_View = glm::rotate(m_View, glm::radians(a_DeltaYaw), GetUp());
+	m_View = glm::rotate(m_View, glm::radians(a_DeltaPitch), GetRight());
+	m_View = glm::rotate(m_View, glm::radians(a_DeltaRoll), GetForward());
+	
 }
