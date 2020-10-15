@@ -19,6 +19,7 @@ Camera::Camera()
 	m_Near = 0.1f;
 	m_Position = glm::vec3( 0.f, 0.f, 0.f);
 	this->LookAt(m_Position + glm::vec3(0.f, 0.f, 1.f));
+	
 }
 
 

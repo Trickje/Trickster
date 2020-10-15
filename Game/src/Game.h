@@ -19,7 +19,7 @@ namespace Trickster {
 	private:
 		std::vector<Nicolai*> m_Nicolais;
 		IronMan* m_IronMan;
-		Camera* m_Camera;
+		std::shared_ptr<Camera> m_Camera;
 
 	};
 

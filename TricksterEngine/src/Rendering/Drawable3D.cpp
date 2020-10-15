@@ -6,6 +6,7 @@
 
 
 #include "Camera.h"
+#include "MeshManager.h"
 #include "ShaderManager.h"
 #include "TinyObjLoader.h"
 #include "Shader.h"
@@ -13,13 +14,14 @@
 #include "TextureManager.h"
 
 namespace Trickster {
+	//Don't use this constructor!!
 	Drawable3D::Drawable3D()
 		: m_ModelMatrix(glm::mat4(1.0)), m_RotationMatrix(glm::mat4(1.0f)), m_TranslationMatrix(glm::mat4(1.0f))
 	{
 		m_DrawData = std::make_shared<DrawData>();
 		m_ShaderPath = "";
 	}
-
+	
 	Drawable3D::Drawable3D(const std::string& a_ModelFileName, const glm::vec3& a_Position, const glm::vec3& a_Scale,
 		const std::string& a_ShaderFileName)
 		: m_ModelMatrix(glm::mat4(1.0)), m_RotationMatrix(glm::mat4(1.0f)), m_TranslationMatrix(glm::mat4(1.0f))
@@ -44,9 +46,10 @@ namespace Trickster {
 		m_Yaw = 0.f;
 		m_Pitch = 0.f;
 		m_Roll = 0.f;
+		//Subscribes to be managed by the MeshManager
+		MeshManager::GetInstance()->m_Drawable3Ds.push_back(std::shared_ptr<Drawable3D>(this));
 		//Fills in data
 		m_TextureBase = "Models/";
-		//m_TextureFile = "Terrestrial1.jpg";
 		LoadMesh(a_ModelFileName);
 		SetPosition(a_Position);
 		SetShaderPath(a_ShaderFileName);
@@ -59,7 +62,8 @@ namespace Trickster {
 	}
 
 
-	void Drawable3D::Draw(Camera* a_Camera)
+	//This is handled by the engine. Don't manually draw it
+	void Drawable3D::Draw(std::shared_ptr<Camera> a_Camera)
 	{
 		m_ModelMatrix = m_RotationMatrix * m_TranslationMatrix;
 		ShaderManager::GetShader(m_ShaderPath)->Bind();
@@ -220,6 +224,14 @@ namespace Trickster {
 		m_ModelMatrix[0][3] = a_Scale.x;
 		m_ModelMatrix[1][3] = a_Scale.y;
 		m_ModelMatrix[2][3] = a_Scale.z;
+	}
+
+	void Drawable3D::Rotate(const float a_DeltaYaw, const float a_DeltaPitch, const float a_DeltaRoll)
+	{
+		m_ModelMatrix = glm::rotate(m_ModelMatrix, glm::radians(a_DeltaYaw), GetUp());
+		m_ModelMatrix = glm::rotate(m_ModelMatrix, glm::radians(a_DeltaPitch), GetRight());
+		m_ModelMatrix = glm::rotate(m_ModelMatrix, glm::radians(a_DeltaRoll), GetForward());
+
 	}
 
 	void Drawable3D::CalculateRotationMatrix()

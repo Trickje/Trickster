@@ -39,7 +39,8 @@ namespace Trickster {
 
 	void ShaderManager::Initialize()
 	{
-		GetShader("basic");
+		GetShader("basic")->Bind();
+		GetShader("basic")->SetUniform1i("ourTexture", 0);
 		GetShader("3D");
 	}
 

@@ -18,6 +18,7 @@
 #include "Drawable2D.h"
 #include "Engine.h"
 #include "Events/EventManager.h"
+#include "MeshManager.h"
 #include "SpriteManager.h"
 #include "Window.h"
 namespace Trickster {
@@ -43,17 +44,24 @@ namespace Trickster {
 		GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 		GLCall(glEnable(GL_DEPTH_TEST));
 		GLCall(glDepthFunc(GL_LESS))
-		ShaderManager::GetShader("basic")->Bind();
-		ShaderManager::GetShader("basic")->SetUniform1i("ourTexture", 0);
-
+		
 		TextureManager::GetTexture("image.png")->Bind();
-		std::string str = "image.png";
 		EventManager::GetInstance()->OnRender.AddListener(std::bind(&Renderer::Draw, this));
 		return true;
 	}
 
 	void Renderer::Draw()
 	{
+		std::vector<std::shared_ptr<Drawable3D>> drawables = MeshManager::GetInstance()->m_Drawable3Ds;
+
+		if(drawables.empty())
+		{
+			LOG_WARNING("Empty mesh list")
+		}
+		for(int i = 0; i < drawables.size(); i++)
+		{
+			drawables[i]->Draw(MeshManager::GetInstance()->GetCamera());
+		}
 		DrawUI();
 	}
 
@@ -65,7 +73,7 @@ namespace Trickster {
 
 		if (SpriteManager::GetInstance()->m_Drawable2Ds.empty())
 		{
-			LOG_ERROR("oopsie");
+			LOG_WARNING("Empty UI list");
 			return;
 		}
 		bool shouldDraw = false;

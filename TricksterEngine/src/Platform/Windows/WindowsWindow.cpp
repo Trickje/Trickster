@@ -105,7 +105,7 @@ void Trickster::WindowsWindow::Draw()
 {
 
 	//Render Objects
-	
+	EventManager::GetInstance()->OnRender.Execute();
 	// Swap buffers
 	glfwSwapBuffers(m_Window);
 	glfwPollEvents();

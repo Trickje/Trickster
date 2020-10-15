@@ -37,7 +37,7 @@ namespace Trickster {
 		//Sets the shader path
 		void SetShaderPath(const std::string& a_FilePath);
 		//Draws the model to a camera
-		void Draw(Camera* a_Camera);
+		void Draw(std::shared_ptr<Camera> a_Camera);
 		//Loads the mesh with the given file path
 		void LoadMesh(const std::string& a_FileName);
 		//Sets the position in world space
@@ -56,6 +56,9 @@ namespace Trickster {
 		void LookAt(const glm::vec3& target, const glm::vec3& tmp = glm::vec3(0, 1, 0));
 		//Sets the scale of the model
 		void SetScale(const glm::vec3& a_Scale);
+		//Rotates around the axis of the object (up forward and right).
+		//Delta in degrees
+		void Rotate(const float a_DeltaYaw = 0.f, const float a_DeltaPitch = 0.f, const float a_DeltaRoll = 0.f);
 
 	private:
 		void CalculateRotationMatrix();
