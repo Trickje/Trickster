@@ -18,14 +18,14 @@ This engine is made ONLY for myself. __DO NOT USE THIS SOFTWARE IN *ANY* WAY SHA
 - Managers for stuff
 - Error and warning free
 - Event system
+- Model loading
+- 3D models
+- Input polling
 
 
 #### To be added:
 1. Event handling system
-1. ImGUI
-1. Input polling
-1. 3D models
-1. Model loading
+1. ImGUI OR my own GUI classes :))
 1. Render queue
 1. Batch rendering
 1. Ray maths
