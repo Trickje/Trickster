@@ -73,7 +73,7 @@ namespace Trickster {
 
 		if (SpriteManager::GetInstance()->m_Drawable2Ds.empty())
 		{
-			LOG_WARNING("Empty UI list");
+			//LOG_WARNING("Empty UI list");
 			return;
 		}
 		bool shouldDraw = false;

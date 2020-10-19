@@ -65,6 +65,7 @@ namespace Trickster {
 	//This is handled by the engine. Don't manually draw it
 	void Drawable3D::Draw(std::shared_ptr<Camera> a_Camera)
 	{
+		CalculateRotationMatrix();
 		m_ModelMatrix = m_RotationMatrix * m_TranslationMatrix;
 		ShaderManager::GetShader(m_ShaderPath)->Bind();
 		const auto UniformLoc = glGetUniformLocation(ShaderManager::GetShader(m_ShaderPath)->Get(), "MVP");
@@ -228,10 +229,14 @@ namespace Trickster {
 
 	void Drawable3D::Rotate(const float a_DeltaYaw, const float a_DeltaPitch, const float a_DeltaRoll)
 	{
-		m_ModelMatrix = glm::rotate(m_ModelMatrix, glm::radians(a_DeltaYaw), GetUp());
-		m_ModelMatrix = glm::rotate(m_ModelMatrix, glm::radians(a_DeltaPitch), GetRight());
-		m_ModelMatrix = glm::rotate(m_ModelMatrix, glm::radians(a_DeltaRoll), GetForward());
-
+		//m_RotationMatrix = glm::rotate(m_RotationMatrix, glm::radians(a_DeltaYaw), GetUp());
+		//m_RotationMatrix = glm::rotate(m_RotationMatrix, glm::radians(a_DeltaPitch), GetRight());
+		//m_RotationMatrix = glm::rotate(m_RotationMatrix, glm::radians(a_DeltaRoll), GetForward());
+		
+		m_Yaw += a_DeltaYaw;
+		m_Pitch += a_DeltaPitch;
+		m_Roll += a_DeltaRoll;
+		
 	}
 
 	void Drawable3D::CalculateRotationMatrix()

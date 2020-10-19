@@ -2,9 +2,13 @@
 #include "WindowsWindow.h"
 
 #include "Events/EventManager.h"
+#include <functional>
+
+#include "stb_image.h"
 
 using namespace Trickster;
 static bool s_GLFWInitialized = false;
+
 Window* Window::Create(const WindowProps& props)
 {
 	return new WindowsWindow(props);
@@ -75,7 +79,14 @@ WindowsWindow::~WindowsWindow()
 void WindowsWindow::OnUpdate()
 {
 	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
-
+	if(GetKeyDown(Keys::CTRL))
+	{
+		SetFullscreen(true);
+	}
+	if(GetKeyDown(Keys::TAB))
+	{
+		SetFullscreen(false);
+	}
 }
 
 void WindowsWindow::EventHandle()
@@ -116,6 +127,199 @@ bool WindowsWindow::ShouldClose() const
 	return glfwWindowShouldClose(m_Window);
 }
 
+bool Trickster::WindowsWindow::GetKeyDown(int Key)
+{
+	if(Key > 53)
+	{
+		LOG_ERROR("Trying to get a key out of bounds, " + std::to_string(Key) + " out of 53.");
+		return false;
+	}
+	return Keys[Key];
+}
+
+void Trickster::WindowsWindow::SetKeyDown(int Key, bool a_bool)
+{
+	switch(Key)
+	{
+	case GLFW_KEY_Q:
+		Keys[Keys::Q] = a_bool;
+		break;
+	case GLFW_KEY_W:
+		Keys[Keys::W] = a_bool;
+		break;
+	case GLFW_KEY_E:
+		Keys[Keys::E] = a_bool;
+		break;
+	case GLFW_KEY_R:
+		Keys[Keys::R] = a_bool;
+		break;
+	case GLFW_KEY_T:
+		Keys[Keys::T] = a_bool;
+		break;
+	case GLFW_KEY_Y:
+		Keys[Keys::Y] = a_bool;
+		break;
+	case GLFW_KEY_U:
+		Keys[Keys::U] = a_bool;
+		break;
+	case GLFW_KEY_I:
+		Keys[Keys::I] = a_bool;
+		break;
+	case GLFW_KEY_O:
+		Keys[Keys::O] = a_bool;
+		break;
+	case GLFW_KEY_P:
+		Keys[Keys::P] = a_bool;
+		break;
+	case GLFW_KEY_A:
+		Keys[Keys::A] = a_bool;
+		break;
+	case GLFW_KEY_S:
+		Keys[Keys::S] = a_bool;
+		break;
+	case GLFW_KEY_D:
+		Keys[Keys::D] = a_bool;
+		break;
+	case GLFW_KEY_F:
+		Keys[Keys::F] = a_bool;
+		break;
+	case GLFW_KEY_G:
+		Keys[Keys::G] = a_bool;
+		break;
+	case GLFW_KEY_H:
+		Keys[Keys::H] = a_bool;
+		break;
+	case GLFW_KEY_J:
+		Keys[Keys::J] = a_bool;
+		break;
+	case GLFW_KEY_K:
+		Keys[Keys::K] = a_bool;
+		break;
+	case GLFW_KEY_L:
+		Keys[Keys::L] = a_bool;
+		break;
+	case GLFW_KEY_Z:
+		Keys[Keys::Z] = a_bool;
+		break;
+	case GLFW_KEY_X:
+		Keys[Keys::X] = a_bool;
+		break;
+	case GLFW_KEY_C:
+		Keys[Keys::C] = a_bool;
+		break;
+	case GLFW_KEY_V:
+		Keys[Keys::V] = a_bool;
+		break;
+	case GLFW_KEY_B:
+		Keys[Keys::B] = a_bool;
+		break;
+	case GLFW_KEY_N:
+		Keys[Keys::N] = a_bool;
+		break;
+	case GLFW_KEY_M:
+		Keys[Keys::M] = a_bool;
+		break;
+	case GLFW_KEY_TAB:
+		Keys[Keys::TAB] = a_bool;
+		break;
+	case GLFW_KEY_CAPS_LOCK:
+		Keys[Keys::CAPSLOCK] = a_bool;
+		break;
+	case GLFW_KEY_LEFT_SHIFT:
+		Keys[Keys::SHIFT] = a_bool;
+		break;
+	case GLFW_KEY_RIGHT_SHIFT:
+		Keys[Keys::SHIFT] = a_bool;
+		break;
+	case GLFW_KEY_LEFT_CONTROL:
+		Keys[Keys::CTRL] = a_bool;
+		break;
+	case GLFW_KEY_RIGHT_CONTROL:
+		Keys[Keys::CTRL] = a_bool;
+		break;
+	case GLFW_KEY_LEFT_ALT:
+		Keys[Keys::ALT] = a_bool;
+		break;
+	case GLFW_KEY_RIGHT_ALT:
+		Keys[Keys::ALT] = a_bool;
+		break;
+	case GLFW_KEY_SPACE:
+		Keys[Keys::SPACE] = a_bool;
+		break;
+	case GLFW_KEY_1:
+		Keys[Keys::ONE] = a_bool;
+		break;
+	case GLFW_KEY_2:
+		Keys[Keys::TWO] = a_bool;
+		break;
+	case GLFW_KEY_3:
+		Keys[Keys::THREE] = a_bool;
+		break;
+	case GLFW_KEY_4:
+		Keys[Keys::FOUR] = a_bool;
+		break;
+	case GLFW_KEY_5:
+		Keys[Keys::FIVE] = a_bool;
+		break;
+	case GLFW_KEY_6:
+		Keys[Keys::SIX] = a_bool;
+		break;
+	case GLFW_KEY_7:
+		Keys[Keys::SEVEN] = a_bool;
+		break;
+	case GLFW_KEY_8:
+		Keys[Keys::EIGHT] = a_bool;
+		break;
+	case GLFW_KEY_9:
+		Keys[Keys::NINE] = a_bool;
+		break;
+	case GLFW_KEY_0:
+		Keys[Keys::ZERO] = a_bool;
+		break;
+	case GLFW_KEY_MINUS:
+		Keys[Keys::MINUS] = a_bool;
+		break;
+	case GLFW_KEY_EQUAL:
+		Keys[Keys::EQUALS] = a_bool;
+		break;
+	case GLFW_KEY_BACKSPACE:
+		Keys[Keys::BACKSPACE] = a_bool;
+		break;
+	case GLFW_KEY_COMMA:
+		Keys[Keys::LESS_THAN] = a_bool;
+		break;
+	case GLFW_KEY_PERIOD:
+		Keys[Keys::GREATER_THAN] = a_bool;
+		break;
+	case GLFW_KEY_SLASH:
+		Keys[Keys::SLASH] = a_bool;
+		break;
+	case GLFW_KEY_ESCAPE:
+		Keys[Keys::ESC] = a_bool;
+		break;
+	case GLFW_KEY_ENTER:
+		Keys[Keys::ENTER] = a_bool;
+		break;
+	
+	}
+}
+
+void Trickster::WindowsWindow::SetFullscreen(bool a_Fullscreen)
+{
+	if (a_Fullscreen) {
+		glfwSetWindowMonitor(m_Window, glfwGetPrimaryMonitor(), 0, 0, GetWidth(), GetHeight(), GLFW_DONT_CARE);
+	}else
+	{
+		glfwSetWindowMonitor(m_Window, nullptr, m_PosX, m_PosY, GetWidth(), GetHeight(), GLFW_DONT_CARE);
+		glfwSetWindowAttrib(m_Window, GLFW_DECORATED, GLFW_TRUE);
+	}
+}
+
+void Trickster::WindowsWindow::GetCursorPos(double* x, double* y)
+{
+	glfwGetCursorPos(m_Window,x, y);
+}
+
 void WindowsWindow::Init(const WindowProps& props)
 {
 	m_Title = props.title;
@@ -133,6 +337,15 @@ void WindowsWindow::Init(const WindowProps& props)
 	m_Window = glfwCreateWindow((int)props.width, (int)props.height, m_Title.c_str(), nullptr, nullptr);
 	glfwMakeContextCurrent(m_Window);
 	glfwSetWindowUserPointer(m_Window, this);
+	//Loading in the icon
+	int i_Width, i_Height, i_BPP;
+	GLFWimage image[1];
+	unsigned char* i_LocalBuffer = stbi_load("Resources/Icon/icon.png", &i_Width, &i_Height, &i_BPP, 0);
+	image[0].height = i_Height;
+	image[0].width = i_Width;
+	image[0].pixels = i_LocalBuffer;
+	glfwSetWindowIcon(m_Window, 1, image);
+	glfwGetWindowPos(m_Window, &m_PosX, &m_PosY);
 
 	LOG("Initializing GLEW.");
 	glewExperimental = GL_TRUE;
@@ -141,6 +354,8 @@ void WindowsWindow::Init(const WindowProps& props)
 
 	SetVSync(true);
 	//Listener to the windowclose.
+	EventManager::GetInstance()->OnKeyPressed.AddListener(std::bind(&WindowsWindow::SetKeyDown, this, std::placeholders::_1, true));
+	EventManager::GetInstance()->OnKeyReleased.AddListener(std::bind(&WindowsWindow::SetKeyDown, this, std::placeholders::_1, false));
 	EventManager::GetInstance()->OnWindowClose.AddListener(std::bind(&WindowsWindow::Shutdown, this));
 }
 
