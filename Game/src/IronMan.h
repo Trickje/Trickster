@@ -1,5 +1,8 @@
 #pragma once
+#include <string>
+
 #include "Rendering/Drawable3D.h"
+#include <glm/vec3.hpp>
 
 class IronMan :
 	public Trickster::Drawable3D

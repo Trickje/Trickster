@@ -5,7 +5,6 @@
 #include <functional>
 
 #include "stb_image.h"
-
 using namespace Trickster;
 static bool s_GLFWInitialized = false;
 
@@ -129,9 +128,9 @@ bool WindowsWindow::ShouldClose() const
 
 bool Trickster::WindowsWindow::GetKeyDown(int Key)
 {
-	if(Key > 53)
+	if(Key >= 54)
 	{
-		LOG_ERROR("Trying to get a key out of bounds, " + std::to_string(Key) + " out of 53.");
+		LOG_ERROR("Trying to get a key out of bounds, " + std::to_string(Key + 1) + " out of 53.");
 		return false;
 	}
 	return Keys[Key];
@@ -320,6 +319,43 @@ void Trickster::WindowsWindow::GetCursorPos(double* x, double* y)
 	glfwGetCursorPos(m_Window,x, y);
 }
 
+bool Trickster::WindowsWindow::GetClick(int MouseKey)
+{
+	if(MouseKey >= 8)
+	{
+		LOG_ERROR("Trying to get a key out of bounds, " + std::to_string(MouseKey + 1) + " out of 53.");
+	}
+	return MouseKeys[MouseKey];
+}
+
+void Trickster::WindowsWindow::SetClick(int MouseKey, bool value)
+{
+	switch(MouseKey)
+	{
+	case GLFW_MOUSE_BUTTON_1:
+		MouseKeys[Mouse::Left] = value;
+		break;
+	case GLFW_MOUSE_BUTTON_MIDDLE:
+		MouseKeys[Mouse::Middle] = value;
+		break;
+	case GLFW_MOUSE_BUTTON_RIGHT:
+		MouseKeys[Mouse::Right] = value;
+		break;
+	case GLFW_MOUSE_BUTTON_4:
+		MouseKeys[Mouse::Four] = value;
+		break;
+	case GLFW_MOUSE_BUTTON_5:
+		MouseKeys[Mouse::Five] = value;
+		break;
+		
+	}
+	if(MouseKey >= 8)
+	{
+		LOG_ERROR("Not supposed to happen");
+	}
+	MouseKeys[MouseKey] = value;
+}
+
 void WindowsWindow::Init(const WindowProps& props)
 {
 	m_Title = props.title;
@@ -357,6 +393,8 @@ void WindowsWindow::Init(const WindowProps& props)
 	EventManager::GetInstance()->OnKeyPressed.AddListener(std::bind(&WindowsWindow::SetKeyDown, this, std::placeholders::_1, true));
 	EventManager::GetInstance()->OnKeyReleased.AddListener(std::bind(&WindowsWindow::SetKeyDown, this, std::placeholders::_1, false));
 	EventManager::GetInstance()->OnWindowClose.AddListener(std::bind(&WindowsWindow::Shutdown, this));
+	EventManager::GetInstance()->OnMouseButtonPressed.AddListener(std::bind(&WindowsWindow::SetClick, this, std::placeholders::_1, true));
+	EventManager::GetInstance()->OnMouseButtonReleased.AddListener(std::bind(&WindowsWindow::SetClick, this, std::placeholders::_1, false));
 }
 
 void WindowsWindow::Shutdown()

@@ -13,7 +13,7 @@
 	ASSERT(GLLogCall(#x, __FILE__, __LINE__))
 #define LOG(x) SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 2);\
 			std::cout << x << std::endl;\
-			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
+			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15); 
 #define LOG_WARNING(x) SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 14);\
 			std::cout << x << std::endl;\
 			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
@@ -88,7 +88,7 @@ namespace Trickster {
 #endif
 	}
 
-
+	
 	static void GLClearError()
 	{
 #ifdef _DEBUG

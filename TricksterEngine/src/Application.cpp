@@ -7,7 +7,7 @@
 #include "Engine.h"
 #include "Events/EventManager.h"
 #include "ShaderManager.h"
-
+#include <Logger.h>
 using namespace Trickster;
 
 Application* Application::m_Application = nullptr;

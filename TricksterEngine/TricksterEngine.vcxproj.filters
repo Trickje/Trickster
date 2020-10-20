@@ -84,6 +84,9 @@
     <ClCompile Include="src\Rendering\MeshManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\ClickableBox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Engine.h">
@@ -165,6 +168,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Rendering\MeshManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ClickableBox.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

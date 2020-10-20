@@ -3,6 +3,7 @@
 //#include "EntryPoint.h"
 #include "Logger.h"
 #include "Application.h"
+#include "ClickableBox.h"
 #include "IronMan.h"
 #include "Nicolai.h"
 #include "Rendering/Camera.h"
@@ -20,6 +21,7 @@ namespace Trickster {
 		std::vector<Nicolai*> m_Nicolais;
 		IronMan* m_IronMan;
 		std::shared_ptr<Camera> m_Camera;
+		ClickableBox* box;
 
 	};
 

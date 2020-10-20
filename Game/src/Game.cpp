@@ -2,6 +2,8 @@
 #include <EntryPoint.h>
 
 
+
+#include "ClickableBox.h"
 #include "Events/EventManager.h"
 #include "IronMan.h"
 #include "Rendering/MeshManager.h"
@@ -23,6 +25,8 @@ void Trickster::Game::OnStart()
 	m_Camera->SetPosition({ 0.f, 0.f, -10.f });
 	m_Camera->LookAt(m_IronMan->GetPosition());
 	m_IronMan->Rotate(0.f, 20.f, 0.f);
+	box = new ClickableBox(0.f, 0.f, 400.f, 2000.f);
+	
 }
 
 void Trickster::Game::OnUpdate(float a_DeltaTime)

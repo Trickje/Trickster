@@ -1,7 +1,8 @@
-#include "pch.h"
+//#include "pch.h"
 #include "IronMan.h"
 
-
+#include <string>
+#include <glm/vec3.hpp>
 
 IronMan::IronMan(const std::string & a_ModelFileName, const glm::vec3 & a_Position, const glm::vec3 & a_Scale, const std::string & a_ShaderFileName)
 {

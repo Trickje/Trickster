@@ -27,13 +27,16 @@ namespace Trickster {
 		void SetKeyDown(int Key, bool a_bool) override;
 		void SetFullscreen(bool a_Fullscreen) override;
 		void GetCursorPos(double* x, double* y) override;
+		bool GetClick(int MouseKey) override;
+		void SetClick(int MouseKey, bool value) override;
 	private:
 		virtual void Init(const WindowProps& props);
 		virtual void Shutdown();
 		
 		GLFWwindow* m_Window;
 		
-		bool Keys[53];
+		bool Keys[54];
+		bool MouseKeys[8];
 		std::string m_Title;
 		unsigned int m_Width, m_Height;
 		int m_PosX, m_PosY;

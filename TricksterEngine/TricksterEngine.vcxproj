@@ -195,6 +195,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\ClickableBox.cpp" />
     <ClCompile Include="src\Rendering\MeshManager.cpp" />
     <ClCompile Include="src\Rendering\Drawable3D.cpp" />
     <ClCompile Include="src\Rendering\Camera.cpp" />
@@ -220,6 +221,7 @@
     <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\ClickableBox.h" />
     <ClInclude Include="src\Rendering\MeshManager.h" />
     <ClInclude Include="src\Rendering\Drawable3D.h" />
     <ClInclude Include="src\Rendering\Camera.h" />

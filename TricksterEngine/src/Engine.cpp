@@ -3,7 +3,7 @@
 
 #include <ctime>
 #include "Renderer.h"
-
+#include <Logger.h>
 namespace Trickster
 {
 
