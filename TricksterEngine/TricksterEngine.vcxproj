@@ -219,6 +219,7 @@
     <ClCompile Include="src\Rendering\VertexBufferLayout.cpp" />
     <ClCompile Include="src\Timer.cpp" />
     <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp" />
+    <ClCompile Include="src\Rendering\UIClickable.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ClickableBox.h" />
@@ -249,6 +250,7 @@
     <ClInclude Include="src\Timer.h" />
     <ClInclude Include="src\Window.h" />
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h" />
+    <ClInclude Include="src\Rendering\UIClickable.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\3D.fragmentshader" />

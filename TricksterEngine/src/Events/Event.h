@@ -47,6 +47,16 @@ namespace Trickster
 				F(std::forward<_Types>(Args)...);
 			}
 		}
+		void ExecuteAndClear(_Types... Args)
+		{
+			
+			Execute(Args ...);
+			m_Listeners.clear();
+			if(!m_Listeners.empty())
+			{
+				LOG_ERROR("Failed to remove all subscribers from TickOnce!");
+			};
+		}
 		
 		void RemoveListener(EventFn a_Listener)
 		{

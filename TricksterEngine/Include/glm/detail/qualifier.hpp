@@ -1,5 +1,6 @@
 #pragma once
-
+#pragma warning(push)
+#pragma warning(disable:26812)
 #include "setup.hpp"
 
 namespace glm
@@ -228,3 +229,4 @@ namespace detail
 	};
 }//namespace detail
 }//namespace glm
+#pragma warning(pop)

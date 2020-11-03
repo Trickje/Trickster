@@ -7,9 +7,12 @@
 #include "Events/EventManager.h"
 #include "IronMan.h"
 #include "Rendering/MeshManager.h"
+#include "Rendering/UIClickable.h"
 using namespace Trickster;
 Trickster::Game::Game()
 {
+	m_IronMan = nullptr;
+	box = nullptr;
 }
 
 Trickster::Game::~Game()
@@ -25,7 +28,7 @@ void Trickster::Game::OnStart()
 	m_Camera->SetPosition({ 0.f, 0.f, -10.f });
 	m_Camera->LookAt(m_IronMan->GetPosition());
 	m_IronMan->Rotate(0.f, 20.f, 0.f);
-	box = new ClickableBox(0.f, 0.f, 400.f, 2000.f);
+	box = new UIClickable("Resources/image.png", { 0.f ,0.f }, 600.f, 100.f);
 	
 }
 
@@ -61,7 +64,12 @@ void Trickster::Game::OnUpdate(float a_DeltaTime)
 }
 
 
-void Trickster::Game::OnRender()
+void Game::OnRender()
 {
 	//this should be empty
+}
+
+bool Game::IsTickBased()
+{
+	return m_TickBased;
 }

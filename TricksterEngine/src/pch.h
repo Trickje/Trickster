@@ -2,7 +2,6 @@
 
 
 
-
 #include <iostream>
 #include <memory>
 #include <functional>
@@ -19,4 +18,3 @@
 #include <Logger.h>
 #include <Events/EventManager.h>
 #include <Windows.h>
-

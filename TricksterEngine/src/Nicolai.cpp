@@ -10,7 +10,7 @@
 using namespace Trickster;
 Nicolai::Nicolai()
 {
-	
+	m_Direction = {};
 }
 
 

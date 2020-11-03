@@ -64,7 +64,7 @@ public:
 	//Only accessed within this class!
 	//Sets the view
 	void SetView(const glm::mat4& a_View);
-	const glm::mat4& CalculateProjection();
+	glm::mat4 CalculateProjection();
 	
 	glm::mat4 m_View{};
 	glm::mat4 m_Projection{};
@@ -87,7 +87,7 @@ inline void Camera::SetView(const glm::mat4 & a_View)
 	m_View = a_View;
 }
 
-inline const glm::mat4 & Camera::CalculateProjection()
+inline glm::mat4  Camera::CalculateProjection()
 {
 	/*
 	const auto Scale = 1 / tan((m_FOV * 0.0174532925f) * 0.5f * m_PI / 180);

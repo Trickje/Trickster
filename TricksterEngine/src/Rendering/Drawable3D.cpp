@@ -105,6 +105,12 @@ namespace Trickster {
 		if (!ret) {
 		//	exit(1);
 		}
+#pragma warning(push)
+#pragma warning(disable: 4101)
+#pragma warning (disable : 26451)
+#pragma warning (disable : 26495)
+#pragma warning (disable : 26812)
+#pragma warning (disable : 4834)
 		// Loop over shapes
 		for (size_t s = 0; s < (size_t)shapes.size(); s++) {
 			// Loop over faces(polygon)
@@ -154,7 +160,7 @@ namespace Trickster {
 				shapes[s].mesh.material_ids[f];
 			}
 		}
-		//
+#pragma warning(pop)
 		MakeBuffers();
 		for(int i = 0; i < materials.size(); i++)
 		{

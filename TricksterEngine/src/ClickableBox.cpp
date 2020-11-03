@@ -18,10 +18,17 @@ ClickableBox::~ClickableBox()
 
 void ClickableBox::OnUpdate()
 {
-	if (IsHovered() && Trickster::Application::Get()->GetWindow()->GetClick(Trickster::Mouse::Left) && !IsAlreadyClicked && m_Clickable)
+	if (IsHovered() && Trickster::Application::Get()->GetWindow()->GetClick(Trickster::Mouse::Left) && !IsAlreadyClicked && !AwaitingClick && m_Clickable)
 	{
-		IsAlreadyClicked = true;
-		LOG("Clicked");
+		if(Trickster::Application::Get()->IsTickBased())
+		{
+			IsAlreadyClicked = true;
+			AwaitingClick = true;
+			Trickster::EventManager::GetInstance()->TickOnce.AddListener(std::bind(&ClickableBox::OnClick, this));
+		}
+		else {
+			OnClick();
+		}
 	}
 	if(!Trickster::Application::Get()->GetWindow()->GetClick(Trickster::Mouse::Left))
 	{
@@ -33,7 +40,8 @@ bool ClickableBox::IsHovered()
 {
 	double x, y;
 	Trickster::Application::Get()->GetWindow()->GetCursorPos(&x, &y);
-	if(WidthContains(x) && HeightContains(y))
+	
+	if(WidthContains(x) && HeightContains(Trickster::Application::Get()->GetWindow()->GetHeight() - y))
 	{
 		return true;
 	}
@@ -78,10 +86,21 @@ void ClickableBox::SetClickable(bool a_Value)
 bool ClickableBox::WidthContains(double x)
 {
 	
-	return ((m_Pos.x + m_Width) > x && x > m_Pos.x);
+	return ((static_cast<double>(m_Pos.x) + static_cast<double>(m_Width)) > x && x > static_cast<double>(m_Pos.x));
 }
 
 bool ClickableBox::HeightContains(double y)
 {
-	return ((m_Pos.y+ m_Height) > y && y > m_Pos.y);
+	return ((static_cast<double>(m_Pos.y)+ static_cast<double>(m_Height)) > y && y > static_cast<double>(m_Pos.y));
+}
+
+void ClickableBox::OnClick()
+{
+
+
+
+	if(Trickster::Application::Get()->IsTickBased())
+	{
+		AwaitingClick = false;
+	}
 }

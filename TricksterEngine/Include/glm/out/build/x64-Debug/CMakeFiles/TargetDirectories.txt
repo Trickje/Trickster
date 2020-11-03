@@ -1,0 +1,2 @@
+C:/Users/rick/source/repos/TricksterEngine/TricksterEngine/Include/glm/out/build/x64-Debug/CMakeFiles/edit_cache.dir
+C:/Users/rick/source/repos/TricksterEngine/TricksterEngine/Include/glm/out/build/x64-Debug/CMakeFiles/rebuild_cache.dir

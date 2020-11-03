@@ -31,7 +31,11 @@ namespace Trickster {
 		Event<int> OnMouseButtonPressed;
 		Event<int> OnMouseButtonReleased;
 		Event<float, float> OnMouseButtonScrolled;
-		Event<float, float> OnMouseMoved; 
+		Event<float, float> OnMouseMoved;
+		Event<> Tick;
+		Event<> TickOnce;
+		Event<> PreTick;
+		Event<> PostTick;
 	private:
 		static EventManager* instance;
 		EventManager();

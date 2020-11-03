@@ -58,6 +58,7 @@ EventManager::GetInstance()->OnStart.Execute();
 		LOG_WARNING("Initialization complete!\nTook " + std::to_string(time_passed) + " seconds.");
 	}
 	m_Timer.Reset();
+	CurrentTickTime = 0.f;
 	
 }
 
@@ -71,6 +72,15 @@ bool Trickster::Application::Update()
 	float DeltaTime = m_Timer.Reset();
 	//DELTA TIME calculations
 	EventManager::GetInstance()->OnUpdate.Execute(DeltaTime);
+	CurrentTickTime += DeltaTime;
+	while(CurrentTickTime >= TickTime)
+	{
+		CurrentTickTime -= TickTime;
+		EventManager::GetInstance()->PreTick.Execute();
+		EventManager::GetInstance()->Tick.Execute();
+		EventManager::GetInstance()->TickOnce.ExecuteAndClear();
+		EventManager::GetInstance()->PostTick.Execute();
+	}
 	return !m_Window->ShouldClose();
 }
 

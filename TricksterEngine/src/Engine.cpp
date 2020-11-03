@@ -9,6 +9,7 @@ namespace Trickster
 
 	Engine::Engine()
 	{
+		renderer = nullptr;
 	}
 
 

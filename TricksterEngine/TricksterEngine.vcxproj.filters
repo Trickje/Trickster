@@ -87,6 +87,9 @@
     <ClCompile Include="src\ClickableBox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Rendering\UIClickable.cpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Engine.h">
@@ -172,6 +175,9 @@
     </ClInclude>
     <ClInclude Include="src\ClickableBox.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Rendering\UIClickable.h">
+      <Filter>Header Files\Rendering</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
