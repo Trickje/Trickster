@@ -84,11 +84,14 @@
     <ClCompile Include="src\Rendering\MeshManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\ClickableBox.cpp">
+    <ClCompile Include="src\UI\ClickableBox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Rendering\UIClickable.cpp">
+    <ClCompile Include="src\UI\UIClickable.cpp">
       <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UI\ProgressBar.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -173,11 +176,14 @@
     <ClInclude Include="src\Rendering\MeshManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\ClickableBox.h">
+    <ClInclude Include="src\UI\ClickableBox.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Rendering\UIClickable.h">
+    <ClInclude Include="src\UI\UIClickable.h">
       <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UI\ProgressBar.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

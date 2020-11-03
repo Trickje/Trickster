@@ -195,7 +195,8 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\ClickableBox.cpp" />
+    <ClCompile Include="src\UI\ProgressBar.cpp" />
+    <ClCompile Include="src\UI\ClickableBox.cpp" />
     <ClCompile Include="src\Rendering\MeshManager.cpp" />
     <ClCompile Include="src\Rendering\Drawable3D.cpp" />
     <ClCompile Include="src\Rendering\Camera.cpp" />
@@ -219,10 +220,11 @@
     <ClCompile Include="src\Rendering\VertexBufferLayout.cpp" />
     <ClCompile Include="src\Timer.cpp" />
     <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp" />
-    <ClCompile Include="src\Rendering\UIClickable.cpp" />
+    <ClCompile Include="src\UI\UIClickable.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\ClickableBox.h" />
+    <ClInclude Include="src\UI\ProgressBar.h" />
+    <ClInclude Include="src\UI\ClickableBox.h" />
     <ClInclude Include="src\Rendering\MeshManager.h" />
     <ClInclude Include="src\Rendering\Drawable3D.h" />
     <ClInclude Include="src\Rendering\Camera.h" />
@@ -250,7 +252,7 @@
     <ClInclude Include="src\Timer.h" />
     <ClInclude Include="src\Window.h" />
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h" />
-    <ClInclude Include="src\Rendering\UIClickable.h" />
+    <ClInclude Include="src\UI\UIClickable.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\3D.fragmentshader" />

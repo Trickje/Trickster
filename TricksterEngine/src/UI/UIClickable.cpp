@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "Rendering/UIClickable.h"
+#include "UIClickable.h"
 
 UIClickable::~UIClickable()
 {

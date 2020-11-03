@@ -3,11 +3,12 @@
 //#include "EntryPoint.h"
 #include "Logger.h"
 #include "Application.h"
-#include "ClickableBox.h"
+#include "UI/ClickableBox.h"
+#include "UI/ProgressBar.h"
 #include "IronMan.h"
 #include "Nicolai.h"
 #include "Rendering/Camera.h"
-#include "Rendering/UIClickable.h"
+#include "UI/UIClickable.h"
 
 namespace Trickster {
 	class Game : public Trickster::Application {
@@ -25,6 +26,7 @@ namespace Trickster {
 		std::shared_ptr<Camera> m_Camera;
 		UIClickable* box;
 		bool m_TickBased = true;
+		ProgressBar* bar;
 	};
 
 	//This Creates the application in the entry point
