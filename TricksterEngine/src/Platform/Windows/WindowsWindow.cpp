@@ -318,7 +318,7 @@ void Trickster::WindowsWindow::SetKeyDown(int Key, bool a_bool)
 void Trickster::WindowsWindow::SetFullscreen(bool a_Fullscreen)
 {
 	if (a_Fullscreen) {
-		glfwSetWindowMonitor(m_Window, glfwGetPrimaryMonitor(), 0, 0, GetWidth(), GetHeight(), GLFW_DONT_CARE);
+		glfwSetWindowMonitor(m_Window, glfwGetPrimaryMonitor(), 0, 0, static_cast<int>(GetWidth()), static_cast<int>(GetHeight()), GLFW_DONT_CARE);
 	}else
 	{
 		glfwSetWindowMonitor(m_Window, nullptr, m_PosX, m_PosY, GetWidth(), GetHeight(), GLFW_DONT_CARE);
@@ -336,6 +336,7 @@ bool Trickster::WindowsWindow::GetClick(int MouseKey)
 	if(MouseKey >= 8)
 	{
 		LOG_ERROR("Trying to get a key out of bounds, " + std::to_string(MouseKey + 1) + " out of 53.");
+		return false;
 	}
 	return MouseKeys[MouseKey];
 }
@@ -364,14 +365,15 @@ void Trickster::WindowsWindow::SetClick(int MouseKey, bool value)
 	if(MouseKey >= 8)
 	{
 		LOG_ERROR("Not supposed to happen");
+		return;
 	}
 	MouseKeys[MouseKey] = value;
 }
 
-void Trickster::WindowsWindow::Resize(float a_Width, float a_Height)
+void Trickster::WindowsWindow::Resize(int a_Width, int a_Height)
 {
-	m_Width = a_Width;
-	m_Height = a_Height;
+	m_Width = static_cast<unsigned int>(a_Width);
+	m_Height = static_cast<unsigned int>(a_Height);
 	//int left, top, right, bottom;
 	//glfwGetWindowFrameSize(m_Window, &left, &top, &right, &bottom);
 	glViewport(0, 0, m_Width, m_Height);
@@ -390,7 +392,7 @@ void WindowsWindow::Init(const WindowProps& props)
 		ASSERT(success);
 		s_GLFWInitialized = true;
 	}
-	m_Window = glfwCreateWindow((int)props.width, (int)props.height, m_Title.c_str(), nullptr, nullptr);
+	m_Window = glfwCreateWindow(static_cast<int>(props.width), static_cast<int>(props.height), m_Title.c_str(), nullptr, nullptr);
 	glfwMakeContextCurrent(m_Window);
 	glfwSetWindowUserPointer(m_Window, this);
 	//Loading in the icon

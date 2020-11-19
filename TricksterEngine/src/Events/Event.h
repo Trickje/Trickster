@@ -50,7 +50,7 @@ namespace Trickster
 		void ExecuteAndClear(_Types... Args)
 		{
 			
-			Execute(Args ...);
+			Execute(Args...);
 			m_Listeners.clear();
 			if(!m_Listeners.empty())
 			{
