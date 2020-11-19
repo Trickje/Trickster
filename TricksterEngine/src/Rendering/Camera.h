@@ -2,6 +2,8 @@
 #include <glm/mat4x4.hpp>
 #include <glm/ext/matrix_clip_space.hpp>
 
+#include "Application.h"
+
 class Camera
 {
 public:
@@ -99,6 +101,7 @@ inline glm::mat4  Camera::CalculateProjection()
 	m_Projection[3][2] = -1; // set w = -z 
 	m_Projection[3][3] = 0;
 	*/
-	return glm::perspective(45.0f, 4.0f/3.0f, 0.1f, 100.f);
+	m_Projection = glm::perspective(m_FOV, static_cast<float>(Trickster::Application::Get()->GetWindow()->GetWidth()) / static_cast<float>(Trickster::Application::Get()->GetWindow()->GetHeight()), m_Near, m_Far);
+	return m_Projection;
 }
 

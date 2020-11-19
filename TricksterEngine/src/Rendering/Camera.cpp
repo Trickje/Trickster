@@ -10,7 +10,7 @@ Camera::Camera()
 	m_View = glm::mat4(0.f);
 	m_Projection = glm::mat4(0.f);
 	m_ViewProjection = glm::mat4(0.f);
-	m_Size = glm::vec2(100.f, 100.f);
+	m_Size = glm::vec2(150.f, 100.f);
 	m_ScreenPos = glm::vec2(0.f);
 	m_FOV = glm::radians(70.f);
 	m_AspectRatio = 1.7777778f;
@@ -19,6 +19,7 @@ Camera::Camera()
 	m_Near = 0.1f;
 	m_Position = glm::vec3( 0.f, 0.f, 0.f);
 	this->LookAt(m_Position + glm::vec3(0.f, 0.f, 1.f));
+	CalculateProjection();
 	
 }
 
@@ -163,5 +164,5 @@ void Camera::Rotate(const float a_DeltaYaw, const float a_DeltaPitch, const floa
 
 glm::mat4 Camera::GetProjection()const 
 {
-	return glm::perspective(this->m_FOV, this->m_AspectRatio, m_Near, m_Far);
+	return m_Projection;
 }

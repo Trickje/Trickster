@@ -46,6 +46,7 @@ namespace Trickster {
 		GLint m_UniformLoc;
 		//Location of the Scale uniform in the shader
 		GLint m_ScaleUniformLoc;
+		bool m_Transparent;
 		
 	private:
 		float m_Vertices[12] =

@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "Application.h"
-
+#include <thread>
 
 
 #include "../Timer.h"
@@ -47,7 +47,6 @@ if (!m_Engine->Initialize())
 {
 	LOG_ERROR("Failed to initialize the engine!");
 }
-
 std::srand(static_cast<unsigned int>(time(0)));
 EventManager::GetInstance()->OnStart.Execute();
 	float time_passed = m_Timer.GetSeconds();

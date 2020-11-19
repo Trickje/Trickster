@@ -40,13 +40,10 @@ namespace Trickster {
 
 	bool Renderer::Initialize()
 	{
-		GLCall(glEnable(GL_BLEND));
-		GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
-		GLCall(glEnable(GL_DEPTH_TEST));
-		GLCall(glDepthFunc(GL_LESS))
 		
 		TextureManager::GetTexture("image.png")->Bind();
 		EventManager::GetInstance()->OnRender.AddListener(std::bind(&Renderer::Draw, this));
+		EventManager::GetInstance()->OnRender.AddListener(std::bind(&Renderer::DrawTransparent, this));
 		return true;
 	}
 
@@ -65,6 +62,17 @@ namespace Trickster {
 		DrawUI();
 	}
 
+	void Renderer::DrawTransparent()
+	{
+		auto drawables = SpriteManager::GetInstance()->m_Drawable2Ds;
+		for(auto& drawable : drawables)
+		{
+			if(drawable->m_Transparent)
+			{
+				drawable->Draw();
+			}
+		}
+	}
 
 
 #ifdef TRIANGLEBASEDUI
@@ -87,7 +95,9 @@ namespace Trickster {
 			else
 			{
 				shouldDraw = true;
-				SpriteManager::GetInstance()->m_Drawable2Ds[i]->Draw();
+				if (!SpriteManager::GetInstance()->m_Drawable2Ds[i]->m_Transparent) {
+					SpriteManager::GetInstance()->m_Drawable2Ds[i]->Draw();
+				}
 			}
 		}
 		/*

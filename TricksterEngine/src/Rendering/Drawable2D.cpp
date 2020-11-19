@@ -21,6 +21,14 @@ namespace Trickster {
 		m_DrawData->va->AddBuffer(*m_DrawData->vb, *m_DrawData->layout);
 		m_Size = { TextureManager::GetTexture(m_FilePath)->GetWidth(),  TextureManager::GetTexture(m_FilePath)->GetHeight() };
 		m_Position = { 0.f, 0.f };
+		if (TextureManager::GetTexture(m_FilePath)->GetBPP() == 4)
+		{
+			m_Transparent = true;
+		}
+		else
+		{
+			m_Transparent = false;
+		}
 		SpriteManager::GetInstance()->m_Drawable2Ds.push_back(this);
 	}
 
@@ -34,6 +42,13 @@ namespace Trickster {
 		m_Size = { TextureManager::GetTexture(m_FilePath)->GetWidth(),  TextureManager::GetTexture(m_FilePath)->GetHeight() };
 		m_DrawData->layout->Push<float>(2);
 		m_DrawData->va->AddBuffer(*m_DrawData->vb, *m_DrawData->layout);
+		if(TextureManager::GetTexture(m_FilePath)->GetBPP() == 4)
+		{
+			m_Transparent = true;
+		}else
+		{
+			m_Transparent = false;
+		}
 		SpriteManager::GetInstance()->m_Drawable2Ds.push_back(this);
 	}
 
@@ -44,11 +59,9 @@ namespace Trickster {
 
 	void Drawable2D::Draw()
 	{
-		//	LOG("draw");
 		ShaderManager::GetShader("basic")->Bind();
 		glm::vec2 ScreenPos = ToScreenPos();
 		glUniform2f(m_UniformLoc, ScreenPos.x, ScreenPos.y);
-		//glUniform2f(m_UniformLoc, 0.f, 0.f);
 		const glm::vec2 l_Scale = TextureManager::GetTexture(m_FilePath)->GetScale();
 		glUniform2f(m_ScaleUniformLoc, m_Scale.x * l_Scale.x, m_Scale.y * l_Scale.y);
 

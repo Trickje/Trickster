@@ -20,9 +20,16 @@ WindowsWindow::WindowsWindow(const WindowProps& props)
 		});
 	
 	glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* a_Window, int a_Width, int a_Height) {
+	//	EventManager::GetInstance()->OnWindowResize.Execute(a_Width, a_Height);
+		});
+	glfwSetFramebufferSizeCallback(m_Window, [](GLFWwindow* a_Window, int a_Width, int a_Height) {
 		EventManager::GetInstance()->OnWindowResize.Execute(a_Width, a_Height);
 		});
-	
+	glfwSetWindowRefreshCallback(m_Window, [](GLFWwindow* a_Window)
+	{
+			WindowsWindow& data = *(WindowsWindow*)glfwGetWindowUserPointer(a_Window);
+			data.Draw();
+	});
 	glfwSetKeyCallback(m_Window, [](GLFWwindow* a_Window, int a_Key, int a_Keycode, int a_Action, int a_Modifier) {
 		//This is data from the actual window, don't ask why you do this.
 		WindowsWindow& data = *(WindowsWindow*)glfwGetWindowUserPointer(a_Window);
@@ -77,7 +84,6 @@ WindowsWindow::~WindowsWindow()
 
 void WindowsWindow::OnUpdate()
 {
-	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 	if(GetKeyDown(Keys::CTRL))
 	{
 		SetFullscreen(true);
@@ -91,6 +97,7 @@ void WindowsWindow::OnUpdate()
 void WindowsWindow::EventHandle()
 {
 
+	glfwPollEvents();
 	
 }
 
@@ -114,11 +121,16 @@ bool WindowsWindow::IsVSync() const
 void Trickster::WindowsWindow::Draw()
 {
 
+	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 	//Render Objects
 	EventManager::GetInstance()->OnRender.Execute();
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	EventManager::GetInstance()->OnRenderTransparent.Execute();
+	glDisable(GL_BLEND);
 	// Swap buffers
 	glfwSwapBuffers(m_Window);
-	glfwPollEvents();
 }
 
 bool WindowsWindow::ShouldClose() const
@@ -356,6 +368,14 @@ void Trickster::WindowsWindow::SetClick(int MouseKey, bool value)
 	MouseKeys[MouseKey] = value;
 }
 
+void Trickster::WindowsWindow::Resize(float a_Width, float a_Height)
+{
+	m_Width = a_Width;
+	m_Height = a_Height;
+	//int left, top, right, bottom;
+	//glfwGetWindowFrameSize(m_Window, &left, &top, &right, &bottom);
+	glViewport(0, 0, m_Width, m_Height);
+}
 void WindowsWindow::Init(const WindowProps& props)
 {
 	m_Title = props.title;
@@ -387,7 +407,8 @@ void WindowsWindow::Init(const WindowProps& props)
 	glewExperimental = GL_TRUE;
 	glewInit();
 	glfwSetInputMode(m_Window, GLFW_STICKY_KEYS, GL_TRUE);
-
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LESS);
 	SetVSync(true);
 	//Listener to the windowclose.
 	EventManager::GetInstance()->OnKeyPressed.AddListener(std::bind(&WindowsWindow::SetKeyDown, this, std::placeholders::_1, true));
@@ -395,6 +416,7 @@ void WindowsWindow::Init(const WindowProps& props)
 	EventManager::GetInstance()->OnWindowClose.AddListener(std::bind(&WindowsWindow::Shutdown, this));
 	EventManager::GetInstance()->OnMouseButtonPressed.AddListener(std::bind(&WindowsWindow::SetClick, this, std::placeholders::_1, true));
 	EventManager::GetInstance()->OnMouseButtonReleased.AddListener(std::bind(&WindowsWindow::SetClick, this, std::placeholders::_1, false));
+	EventManager::GetInstance()->OnWindowResize.AddListener(std::bind(&WindowsWindow::Resize, this, std::placeholders::_1, std::placeholders::_2));
 }
 
 void WindowsWindow::Shutdown()

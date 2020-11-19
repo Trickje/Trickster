@@ -73,4 +73,8 @@ namespace Trickster {
 		m_Height;
 		return m_Height;
 	}
+	int Texture::GetBPP() const
+	{
+		return m_BPP;
+	}
 }

@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "UIClickable.h"
-
+using namespace Trickster;
 UIClickable::~UIClickable()
 {
 	
@@ -30,4 +30,15 @@ void UIClickable::OnClick()
 {
 	ClickableBox::OnClick();
 	LOG("Click");
+}
+
+bool Trickster::UIClickable::isClicked()
+{
+	return m_Clicked;
+}
+
+void UIClickable::SetPosition(const glm::vec2& a_Position)
+{
+	ClickableBox::SetPosition(a_Position);
+	m_Drawable->SetPosition(a_Position.x, a_Position.y);
 }

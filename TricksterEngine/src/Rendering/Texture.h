@@ -14,6 +14,7 @@ namespace Trickster {
 		static void Unbind();
 		int GetWidth() const;
 		int GetHeight() const;
+		int GetBPP() const;
 		glm::vec2 GetScale() const { return { m_Width / (Application::Get()->GetWindow()->GetWidth() * 0.5f), m_Height / (Application::Get()->GetWindow()->GetHeight() * 0.5f) }; }
 	private:
 		unsigned int m_RendererID;

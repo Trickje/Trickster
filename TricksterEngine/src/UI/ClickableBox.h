@@ -24,5 +24,6 @@ protected:
 	bool IsAlreadyClicked = false;
 	bool m_Clickable = true;
 	bool AwaitingClick = false;
+	bool m_Clicked = false;
 };
 

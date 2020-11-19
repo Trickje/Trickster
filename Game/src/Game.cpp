@@ -14,6 +14,8 @@ Trickster::Game::Game()
 {
 	m_IronMan = nullptr;
 	box = nullptr;
+	bar = nullptr;
+	box2 = nullptr;
 }
 
 Trickster::Game::~Game()
@@ -30,14 +32,25 @@ void Trickster::Game::OnStart()
 	m_Camera->LookAt(m_IronMan->GetPosition());
 	m_IronMan->Rotate(0.f, 20.f, 0.f);
 	box = new UIClickable("Resources/image.png", { 0.f ,0.f }, 600.f, 100.f);
+	box->SetPosition({ (Application::Get()->GetWindow()->GetWidth() / 2.f) - 100.f, Application::Get()->GetWindow()->GetHeight() / 2.f });
+	box2 = new UIClickable("Resources/image.png", {( Application::Get()->GetWindow()->GetWidth() / 2.f) - 100.f, Application::Get()->GetWindow()->GetHeight() / 2.f  - box->GetHeight()},  100, box->GetHeight());
 	bar = new ProgressBar();
-	bar->SetPercentage(0.f);
-	
+
+	bar->SetPosition({ 50.f, 30.f });
+	bar->SetSize({20.f, 5.f});
+	//bar->SetColorFront({1.f, 0.f, 0.f});
+	//bar->SetColorBack({0.f, 1.f, 0.f});
+	bar->SetPercentage(1.f);
+	//bar->SetPosition({ Application::GetWindow()->GetWidth() - (bar->GetSize().x * bar->GetScale().x ), Application::GetWindow()->GetHeight() - (bar->GetSize().y * bar->GetScale().y)});
 }
 
 void Trickster::Game::OnUpdate(float a_DeltaTime)
 {
-	bar->SetPercentage(bar->GetPercentage() + ((1.f / 5.f) * a_DeltaTime));
+	bar->SetPosition({ bar->GetPosition().x, bar->GetPosition().y + 5.f * a_DeltaTime});
+	if(box->isClicked())
+	{
+		bar->SetPercentage(bar->GetPercentage() -0.2f);
+	}
 	float speed = 10.f;
 	if(m_Window->GetKeyDown(Keys::W))
 	{

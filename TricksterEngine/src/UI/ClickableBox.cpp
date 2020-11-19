@@ -18,6 +18,7 @@ ClickableBox::~ClickableBox()
 
 void ClickableBox::OnUpdate()
 {
+	m_Clicked = false;
 	if (IsHovered() && Trickster::Application::Get()->GetWindow()->GetClick(Trickster::Mouse::Left) && !IsAlreadyClicked && !AwaitingClick && m_Clickable)
 	{
 		if(Trickster::Application::Get()->IsTickBased())
@@ -96,7 +97,7 @@ bool ClickableBox::HeightContains(double y)
 
 void ClickableBox::OnClick()
 {
-
+	m_Clicked = true;
 
 
 	if(Trickster::Application::Get()->IsTickBased())

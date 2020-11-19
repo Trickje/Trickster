@@ -1,5 +1,6 @@
 #pragma once
 #include <glm/vec2.hpp>
+#include <glm/vec3.hpp>
 #include <Rendering/VertexBuffer.h>
 
 
@@ -15,9 +16,24 @@ namespace Trickster {
 		void SetPercentage(float a_Percentage);
 		float GetPercentage();
 		void Draw();
+		//A percentage of the screen, 0-100
+		void SetPosition(const glm::vec2& a_Position);
+		const glm::vec2& GetPosition();
+		void SetSize(const glm::vec2& a_Size);
+		const glm::vec2& GetSize();
+		void SetScale(const glm::vec2& a_Scale);
+		const glm::vec2& GetScale();
+		void SetColorFront(const glm::vec3& a_Color);
+		const glm::vec3& GetColorFront();
+		void SetColorBack(const glm::vec3& a_Color);
+		const glm::vec3& GetColorBack();
+		
 	private:
+		void FillVertices();
 		glm::vec2 ToScreenPos();
 		glm::vec2 m_Position;
+		glm::vec3 m_ColorFront;
+		glm::vec3 m_ColorBack;
 		glm::vec2 m_Size;
 		//Texture file path
 		std::string m_FilePath;

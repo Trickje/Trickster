@@ -37,7 +37,6 @@ namespace Trickster {
 		Timer m_Timer;
 		float TickTime = 0.6f;
 		float CurrentTickTime;
-		
 	};
 	//To be defined in CLIENT
 	Application* CreateApplication();

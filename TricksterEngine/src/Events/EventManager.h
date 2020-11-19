@@ -19,6 +19,7 @@ namespace Trickster {
 
 		
 		Event<> OnRender;
+		Event<> OnRenderTransparent;
 		Event<float> OnUpdate;
 		Event<> OnStart;
 		Event<> OnWindowClose;

@@ -16,6 +16,7 @@ namespace Trickster {
 		~Renderer();
 		bool Initialize();
 		void Draw();
+		void DrawTransparent();
 		void DrawUI();
 	private:
 		std::vector<std::future<void>> m_Futures;

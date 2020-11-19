@@ -25,6 +25,7 @@ namespace Trickster {
 		IronMan* m_IronMan;
 		std::shared_ptr<Camera> m_Camera;
 		UIClickable* box;
+		UIClickable* box2;
 		bool m_TickBased = true;
 		ProgressBar* bar;
 	};

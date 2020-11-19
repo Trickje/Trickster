@@ -29,6 +29,7 @@ namespace Trickster {
 		void GetCursorPos(double* x, double* y) override;
 		bool GetClick(int MouseKey) override;
 		void SetClick(int MouseKey, bool value) override;
+		void Resize(float a_Width, float a_Height) override;
 	private:
 		virtual void Init(const WindowProps& props);
 		virtual void Shutdown();

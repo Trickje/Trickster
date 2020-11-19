@@ -15,11 +15,8 @@ int main()
 	{
 		app->OnRender();
 		app->Draw();
-		//if(glfwGetKey(app->,GLFW_KEY_ESCAPE))
-		//{
-			
-		//	glfwSetWindowShouldClose(app->GetEngine()->window, 1);
-		//}
+		app->GetWindow()->EventHandle();
+	
 	}
 	delete app;
 	return 0;
