@@ -27,7 +27,12 @@ This engine is made ONLY for myself. __DO NOT USE THIS SOFTWARE IN *ANY* WAY SHA
 
 #### To be added:
 1. ImGUI OR my own GUI classes :))
-1. Render queue
+1. GUI docking
+1. Window Features
+1. Text rendering
 1. Batch rendering
+1. PBR Set up
+1. Render queue
 1. Ray maths
 1. Math
+1. Vulkan (maybe)
