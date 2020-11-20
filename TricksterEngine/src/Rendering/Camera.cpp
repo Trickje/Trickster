@@ -16,7 +16,7 @@ Camera::Camera()
 	m_AspectRatio = 1.7777778f;
 	m_LockRoll = true;
 	m_Far = 1000.f;
-	m_Near = 0.1f;
+	m_Near = 0.0001f;
 	yaw = -90.f;
 	pitch = 0.f;
 	roll = 0.f;
