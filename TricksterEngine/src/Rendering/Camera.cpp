@@ -22,6 +22,7 @@ Camera::Camera()
 	roll = 0.f;
 	//this->LookAt(m_Position + glm::vec3(0.f, 0.f, 1.f));
 	CalculateProjection();
+	Rotate();
 	
 }
 
@@ -176,11 +177,7 @@ void Camera::Rotate(const float a_DeltaYaw, const float a_DeltaPitch, const floa
 	m_Forward = glm::normalize(direction);
 	m_Right = glm::cross(m_Forward, {0.f, 1.f, 0.f});
 	m_Up = glm::cross(m_Right, m_Forward);
-	LOG(m_Forward.z);
 	LookAt(m_Position + m_Forward);
-	//m_View = glm::rotate(m_View, glm::radians(a_DeltaYaw), GetUp());
-	//m_View = glm::rotate(m_View, glm::radians(a_DeltaPitch), GetRight());
-	//m_View = glm::rotate(m_View, glm::radians(a_DeltaRoll), GetForward());
 	
 }
 
