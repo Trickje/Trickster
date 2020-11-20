@@ -17,8 +17,10 @@ Camera::Camera()
 	m_LockRoll = true;
 	m_Far = 1000.f;
 	m_Near = 0.1f;
-	m_Position = glm::vec3( 0.f, 0.f, 0.f);
-	this->LookAt(m_Position + glm::vec3(0.f, 0.f, 1.f));
+	yaw = -90.f;
+	pitch = 0.f;
+	roll = 0.f;
+	//this->LookAt(m_Position + glm::vec3(0.f, 0.f, 1.f));
 	CalculateProjection();
 	
 }
@@ -31,13 +33,15 @@ Camera::~Camera()
 
 void Camera::LookAt(const glm::vec3& a_Target)
 {
-	m_View = glm::lookAt(m_Position, a_Target, glm::vec3{ 0.f, 1.f, 0.f });
+	m_View = glm::lookAt(m_Position, a_Target, m_Up);
 	
 }
 
 void Camera::SetPosition(const glm::vec3& a_Position)
 {
-	m_Position = a_Position;
+	m_Position.x = a_Position.x;
+	m_Position.y = a_Position.y;
+	m_Position.z = a_Position.z;
 }
 
 glm::vec3 Camera::GetPosition() const
@@ -67,9 +71,11 @@ bool Camera::GetLockRoll() const
 
 void Camera::Move(const glm::vec3& a_Offset)
 {
-	m_View[3][0] += a_Offset.x;
-	m_View[3][1] += a_Offset.y;
-	m_View[3][2] += a_Offset.z;
+	//m_View[3][0] += a_Offset.x;
+	//m_View[3][1] += a_Offset.y;
+	//m_View[3][2] += a_Offset.z;
+	m_Position += a_Offset;
+	LookAt(m_Position + m_Forward);
 }
 
 void Camera::MoveScreen(const glm::vec2 & a_Offset)
@@ -105,17 +111,17 @@ const glm::mat4 & Camera::GetView() const
 
 glm::vec3 Camera::GetUp() const
 {
-	return glm::vec3(m_View[1][0], m_View[1][1], m_View[1][2]);
+	return m_Up;
 }
 
 glm::vec3 Camera::GetRight() const
 {
-	return glm::vec3(m_View[0][0], m_View[0][1], m_View[0][2]);
+	return m_Right;
 }
 
 glm::vec3 Camera::GetForward() const
 {
-	return glm::vec3(m_View[2][0], m_View[2][1], m_View[2][2]);
+	return m_Forward;
 }
 
 void Camera::SetScreenSize(const glm::vec2 & a_Size)
@@ -156,13 +162,44 @@ const glm::mat4& Camera::GetViewProjection()const
 
 void Camera::Rotate(const float a_DeltaYaw, const float a_DeltaPitch, const float a_DeltaRoll)
 {
-	m_View = glm::rotate(m_View, glm::radians(a_DeltaYaw), GetUp());
-	m_View = glm::rotate(m_View, glm::radians(a_DeltaPitch), GetRight());
-	m_View = glm::rotate(m_View, glm::radians(a_DeltaRoll), GetForward());
+	glm::vec3 direction;
+	yaw += a_DeltaYaw;
+	pitch += a_DeltaPitch;
+	direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+	direction.y = sin(glm::radians(pitch));
+	direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+
+	if (pitch > 89.0f)
+		pitch = 89.0f;
+	if (pitch < -89.0f)
+		pitch = -89.0f;
+	m_Forward = glm::normalize(direction);
+	m_Right = glm::cross(m_Forward, {0.f, 1.f, 0.f});
+	m_Up = glm::cross(m_Right, m_Forward);
+	LOG(m_Forward.z);
+	LookAt(m_Position + m_Forward);
+	//m_View = glm::rotate(m_View, glm::radians(a_DeltaYaw), GetUp());
+	//m_View = glm::rotate(m_View, glm::radians(a_DeltaPitch), GetRight());
+	//m_View = glm::rotate(m_View, glm::radians(a_DeltaRoll), GetForward());
 	
 }
 
 glm::mat4 Camera::GetProjection()const 
 {
 	return m_Projection;
+}
+
+void Camera::MouseMove(float a_X, float a_Y)
+{
+	if (firstMouse)
+	{
+		m_LastMousePos.x = a_X;
+		m_LastMousePos.y = a_Y;
+		firstMouse = false;
+	}
+	float x = a_X - m_LastMousePos.x;
+	float y = m_LastMousePos.y - a_Y;
+	m_LastMousePos.x = a_X;
+	m_LastMousePos.y = a_Y;
+	Rotate(x * m_SensitivityX * 0.1f, y * m_SensitivityY * 0.1f);
 }

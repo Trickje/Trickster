@@ -62,6 +62,8 @@ public:
 	//Delta in degrees
 	void Rotate(const float a_DeltaYaw = 0.f, const float a_DeltaPitch = 0.f, const float a_DeltaRoll = 0.f);
 	glm::mat4 GetProjection()const;
+	//Moves a normal camera around based on the x and y delta
+	void MouseMove(float a_X, float a_Y);
 	private:
 	//Only accessed within this class!
 	//Sets the view
@@ -78,9 +80,17 @@ public:
 	float m_Far;
 	float m_Near;
 	float m_PI = 3.14159265359f;
+	float m_SensitivityX = 1.f;
+	float m_SensitivityY = 1.f;
+	glm::vec2 m_LastMousePos{};
 	//To place it on the screen, maybe for multiple cameras
 	glm::vec2 m_Size{};		//Width, Height
 	glm::vec2 m_ScreenPos{};	//0,0 is bottom left
+	glm::vec3 m_Forward{};
+	glm::vec3 m_Right{};
+	glm::vec3 m_Up{};
+	float yaw, pitch, roll;
+	bool firstMouse = true;
 	
 };
 

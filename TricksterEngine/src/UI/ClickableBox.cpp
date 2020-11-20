@@ -3,6 +3,9 @@
 
 #include "Application.h"
 #include <Logger.h>
+
+#include "Input.h"
+
 ClickableBox::ClickableBox(float X, float Y, float a_Width, float a_Height)
 {
 	this->m_Pos = { X,Y };
@@ -19,7 +22,7 @@ ClickableBox::~ClickableBox()
 void ClickableBox::OnUpdate()
 {
 	m_Clicked = false;
-	if (IsHovered() && Trickster::Application::Get()->GetWindow()->GetClick(Trickster::Mouse::Left) && !IsAlreadyClicked && !AwaitingClick && m_Clickable)
+	if (IsHovered() && Trickster::Input::GetClick(Trickster::Mouse::Left) && !IsAlreadyClicked && !AwaitingClick && m_Clickable)
 	{
 		if(Trickster::Application::Get()->IsTickBased())
 		{
@@ -31,7 +34,7 @@ void ClickableBox::OnUpdate()
 			OnClick();
 		}
 	}
-	if(!Trickster::Application::Get()->GetWindow()->GetClick(Trickster::Mouse::Left))
+	if(!Trickster::Input::GetClick(Trickster::Mouse::Left))
 	{
 		IsAlreadyClicked = false;
 	}
@@ -39,10 +42,9 @@ void ClickableBox::OnUpdate()
 
 bool ClickableBox::IsHovered()
 {
-	double x, y;
-	Trickster::Application::Get()->GetWindow()->GetCursorPos(&x, &y);
+	glm::vec2 mousePos = Trickster::Input::GetMousePos();
 	
-	if(WidthContains(x) && HeightContains(Trickster::Application::Get()->GetWindow()->GetHeight() - y))
+	if(WidthContains(mousePos.x) && HeightContains(static_cast<float>(Trickster::Application::Get()->GetWindow()->GetHeight()) - mousePos.y))
 	{
 		return true;
 	}

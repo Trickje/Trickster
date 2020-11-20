@@ -23,21 +23,17 @@ namespace Trickster {
 		bool IsVSync() const override;
 		void Draw() override;
 		bool ShouldClose() const override;
-		bool GetKeyDown(int Key) override;
-		void SetKeyDown(int Key, bool a_bool) override;
+		void SetKeyDown(int Key, bool a_bool);
 		void SetFullscreen(bool a_Fullscreen) override;
-		void GetCursorPos(double* x, double* y) override;
-		bool GetClick(int MouseKey) override;
 		void SetClick(int MouseKey, bool value) override;
 		void Resize(int a_Width, int a_Height) override;
+		void* GetRaw() override;
 	private:
 		virtual void Init(const WindowProps& props);
 		virtual void Shutdown();
 		
 		GLFWwindow* m_Window;
 		
-		bool Keys[54];
-		bool MouseKeys[8];
 		std::string m_Title;
 		unsigned int m_Width, m_Height;
 		int m_PosX, m_PosY;

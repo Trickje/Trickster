@@ -4,6 +4,8 @@
 #include "Events/EventManager.h"
 #include <functional>
 
+
+#include "Input.h"
 #include "stb_image.h"
 using namespace Trickster;
 static bool s_GLFWInitialized = false;
@@ -84,11 +86,11 @@ WindowsWindow::~WindowsWindow()
 
 void WindowsWindow::OnUpdate()
 {
-	if(GetKeyDown(Keys::CTRL))
+	if(Input::GetKeyDown(Keys::CTRL))
 	{
 		SetFullscreen(true);
 	}
-	if(GetKeyDown(Keys::TAB))
+	if(Input::GetKeyDown(Keys::TAB))
 	{
 		SetFullscreen(false);
 	}
@@ -138,178 +140,169 @@ bool WindowsWindow::ShouldClose() const
 	return glfwWindowShouldClose(m_Window);
 }
 
-bool Trickster::WindowsWindow::GetKeyDown(int Key)
-{
-	if(Key >= 54)
-	{
-		LOG_ERROR("Trying to get a key out of bounds, " + std::to_string(Key + 1) + " out of 53.");
-		return false;
-	}
-	return Keys[Key];
-}
 
 void Trickster::WindowsWindow::SetKeyDown(int Key, bool a_bool)
 {
 	switch(Key)
 	{
 	case GLFW_KEY_Q:
-		Keys[Keys::Q] = a_bool;
+		Input::SetKeyDown(Keys::Q, a_bool);
 		break;
 	case GLFW_KEY_W:
-		Keys[Keys::W] = a_bool;
+		Input::SetKeyDown(Keys::W, a_bool);
 		break;
 	case GLFW_KEY_E:
-		Keys[Keys::E] = a_bool;
+		Input::SetKeyDown(Keys::E, a_bool);
 		break;
 	case GLFW_KEY_R:
-		Keys[Keys::R] = a_bool;
+		Input::SetKeyDown(Keys::R, a_bool);
 		break;
 	case GLFW_KEY_T:
-		Keys[Keys::T] = a_bool;
+		Input::SetKeyDown(Keys::T, a_bool);
 		break;
 	case GLFW_KEY_Y:
-		Keys[Keys::Y] = a_bool;
+		Input::SetKeyDown(Keys::Y, a_bool);
 		break;
 	case GLFW_KEY_U:
-		Keys[Keys::U] = a_bool;
+		Input::SetKeyDown(Keys::U, a_bool);
 		break;
 	case GLFW_KEY_I:
-		Keys[Keys::I] = a_bool;
+		Input::SetKeyDown(Keys::I, a_bool);
 		break;
 	case GLFW_KEY_O:
-		Keys[Keys::O] = a_bool;
+		Input::SetKeyDown(Keys::O, a_bool);
 		break;
 	case GLFW_KEY_P:
-		Keys[Keys::P] = a_bool;
+		Input::SetKeyDown(Keys::P, a_bool);
 		break;
 	case GLFW_KEY_A:
-		Keys[Keys::A] = a_bool;
+		Input::SetKeyDown(Keys::A, a_bool);
 		break;
 	case GLFW_KEY_S:
-		Keys[Keys::S] = a_bool;
+		Input::SetKeyDown(Keys::S, a_bool);
 		break;
 	case GLFW_KEY_D:
-		Keys[Keys::D] = a_bool;
+		Input::SetKeyDown(Keys::D, a_bool);
 		break;
 	case GLFW_KEY_F:
-		Keys[Keys::F] = a_bool;
+		Input::SetKeyDown(Keys::F, a_bool);
 		break;
 	case GLFW_KEY_G:
-		Keys[Keys::G] = a_bool;
+		Input::SetKeyDown(Keys::G, a_bool);
 		break;
 	case GLFW_KEY_H:
-		Keys[Keys::H] = a_bool;
+		Input::SetKeyDown(Keys::H, a_bool);
 		break;
 	case GLFW_KEY_J:
-		Keys[Keys::J] = a_bool;
+		Input::SetKeyDown(Keys::J, a_bool);
 		break;
 	case GLFW_KEY_K:
-		Keys[Keys::K] = a_bool;
+		Input::SetKeyDown(Keys::K, a_bool);
 		break;
 	case GLFW_KEY_L:
-		Keys[Keys::L] = a_bool;
+		Input::SetKeyDown(Keys::L, a_bool);
 		break;
 	case GLFW_KEY_Z:
-		Keys[Keys::Z] = a_bool;
+		Input::SetKeyDown(Keys::Z, a_bool);
 		break;
 	case GLFW_KEY_X:
-		Keys[Keys::X] = a_bool;
+		Input::SetKeyDown(Keys::X, a_bool);
 		break;
 	case GLFW_KEY_C:
-		Keys[Keys::C] = a_bool;
+		Input::SetKeyDown(Keys::C, a_bool);
 		break;
 	case GLFW_KEY_V:
-		Keys[Keys::V] = a_bool;
+		Input::SetKeyDown(Keys::V, a_bool);
 		break;
 	case GLFW_KEY_B:
-		Keys[Keys::B] = a_bool;
+		Input::SetKeyDown(Keys::B, a_bool);
 		break;
 	case GLFW_KEY_N:
-		Keys[Keys::N] = a_bool;
+		Input::SetKeyDown(Keys::N, a_bool);
 		break;
 	case GLFW_KEY_M:
-		Keys[Keys::M] = a_bool;
+		Input::SetKeyDown(Keys::M, a_bool);
 		break;
 	case GLFW_KEY_TAB:
-		Keys[Keys::TAB] = a_bool;
+		Input::SetKeyDown(Keys::TAB, a_bool);
 		break;
 	case GLFW_KEY_CAPS_LOCK:
-		Keys[Keys::CAPSLOCK] = a_bool;
+		Input::SetKeyDown(Keys::CAPSLOCK, a_bool);
 		break;
 	case GLFW_KEY_LEFT_SHIFT:
-		Keys[Keys::SHIFT] = a_bool;
+		Input::SetKeyDown(Keys::SHIFT, a_bool);
 		break;
 	case GLFW_KEY_RIGHT_SHIFT:
-		Keys[Keys::SHIFT] = a_bool;
+		Input::SetKeyDown(Keys::SHIFT, a_bool);
 		break;
 	case GLFW_KEY_LEFT_CONTROL:
-		Keys[Keys::CTRL] = a_bool;
+		Input::SetKeyDown(Keys::CTRL, a_bool);
 		break;
 	case GLFW_KEY_RIGHT_CONTROL:
-		Keys[Keys::CTRL] = a_bool;
+		Input::SetKeyDown(Keys::CTRL, a_bool);
 		break;
 	case GLFW_KEY_LEFT_ALT:
-		Keys[Keys::ALT] = a_bool;
+		Input::SetKeyDown(Keys::ALT, a_bool);
 		break;
 	case GLFW_KEY_RIGHT_ALT:
-		Keys[Keys::ALT] = a_bool;
+		Input::SetKeyDown(Keys::ALT, a_bool);
 		break;
 	case GLFW_KEY_SPACE:
-		Keys[Keys::SPACE] = a_bool;
+		Input::SetKeyDown(Keys::SPACE, a_bool);
 		break;
 	case GLFW_KEY_1:
-		Keys[Keys::ONE] = a_bool;
+		Input::SetKeyDown(Keys::ONE, a_bool);
 		break;
 	case GLFW_KEY_2:
-		Keys[Keys::TWO] = a_bool;
+		Input::SetKeyDown(Keys::TWO, a_bool);
 		break;
 	case GLFW_KEY_3:
-		Keys[Keys::THREE] = a_bool;
+		Input::SetKeyDown(Keys::THREE, a_bool);
 		break;
 	case GLFW_KEY_4:
-		Keys[Keys::FOUR] = a_bool;
+		Input::SetKeyDown(Keys::FOUR, a_bool);
 		break;
 	case GLFW_KEY_5:
-		Keys[Keys::FIVE] = a_bool;
+		Input::SetKeyDown(Keys::FIVE, a_bool);
 		break;
 	case GLFW_KEY_6:
-		Keys[Keys::SIX] = a_bool;
+		Input::SetKeyDown(Keys::SIX, a_bool);
 		break;
 	case GLFW_KEY_7:
-		Keys[Keys::SEVEN] = a_bool;
+		Input::SetKeyDown(Keys::SEVEN, a_bool);
 		break;
 	case GLFW_KEY_8:
-		Keys[Keys::EIGHT] = a_bool;
+		Input::SetKeyDown(Keys::EIGHT, a_bool);
 		break;
 	case GLFW_KEY_9:
-		Keys[Keys::NINE] = a_bool;
+		Input::SetKeyDown(Keys::NINE, a_bool);
 		break;
 	case GLFW_KEY_0:
-		Keys[Keys::ZERO] = a_bool;
+		Input::SetKeyDown(Keys::ZERO, a_bool);
 		break;
 	case GLFW_KEY_MINUS:
-		Keys[Keys::MINUS] = a_bool;
+		Input::SetKeyDown(Keys::MINUS, a_bool);
 		break;
 	case GLFW_KEY_EQUAL:
-		Keys[Keys::EQUALS] = a_bool;
+		Input::SetKeyDown(Keys::EQUALS, a_bool);
 		break;
 	case GLFW_KEY_BACKSPACE:
-		Keys[Keys::BACKSPACE] = a_bool;
+		Input::SetKeyDown(Keys::BACKSPACE, a_bool);
 		break;
 	case GLFW_KEY_COMMA:
-		Keys[Keys::LESS_THAN] = a_bool;
+		Input::SetKeyDown(Keys::LESS_THAN, a_bool);
 		break;
 	case GLFW_KEY_PERIOD:
-		Keys[Keys::GREATER_THAN] = a_bool;
+		Input::SetKeyDown(Keys::GREATER_THAN, a_bool);
 		break;
 	case GLFW_KEY_SLASH:
-		Keys[Keys::SLASH] = a_bool;
+		Input::SetKeyDown(Keys::SLASH, a_bool);
 		break;
 	case GLFW_KEY_ESCAPE:
-		Keys[Keys::ESC] = a_bool;
+		Input::SetKeyDown(Keys::ESC, a_bool);
 		break;
 	case GLFW_KEY_ENTER:
-		Keys[Keys::ENTER] = a_bool;
+		Input::SetKeyDown(Keys::ENTER, a_bool);
 		break;
 	
 	}
@@ -326,48 +319,35 @@ void Trickster::WindowsWindow::SetFullscreen(bool a_Fullscreen)
 	}
 }
 
-void Trickster::WindowsWindow::GetCursorPos(double* x, double* y)
-{
-	glfwGetCursorPos(m_Window,x, y);
-}
-
-bool Trickster::WindowsWindow::GetClick(int MouseKey)
-{
-	if(MouseKey >= 8)
-	{
-		LOG_ERROR("Trying to get a key out of bounds, " + std::to_string(MouseKey + 1) + " out of 53.");
-		return false;
-	}
-	return MouseKeys[MouseKey];
-}
 
 void Trickster::WindowsWindow::SetClick(int MouseKey, bool value)
 {
-	switch(MouseKey)
-	{
-	case GLFW_MOUSE_BUTTON_1:
-		MouseKeys[Mouse::Left] = value;
-		break;
-	case GLFW_MOUSE_BUTTON_MIDDLE:
-		MouseKeys[Mouse::Middle] = value;
-		break;
-	case GLFW_MOUSE_BUTTON_RIGHT:
-		MouseKeys[Mouse::Right] = value;
-		break;
-	case GLFW_MOUSE_BUTTON_4:
-		MouseKeys[Mouse::Four] = value;
-		break;
-	case GLFW_MOUSE_BUTTON_5:
-		MouseKeys[Mouse::Five] = value;
-		break;
-		
-	}
-	if(MouseKey >= 8)
+
+	if (MouseKey >= 8)
 	{
 		LOG_ERROR("Not supposed to happen");
 		return;
 	}
-	MouseKeys[MouseKey] = value;
+	
+	switch(MouseKey)
+	{
+	case GLFW_MOUSE_BUTTON_1:
+		Input::SetClick(Mouse::Left, value);
+		break;
+	case GLFW_MOUSE_BUTTON_MIDDLE:
+		Input::SetClick(Mouse::Middle, value);
+		break;
+	case GLFW_MOUSE_BUTTON_RIGHT:
+		Input::SetClick(Mouse::Right, value);
+		break;
+	case GLFW_MOUSE_BUTTON_4:
+		Input::SetClick(Mouse::Four, value);
+		break;
+	case GLFW_MOUSE_BUTTON_5:
+		Input::SetClick(Mouse::Five, value);
+		break;
+		
+	}
 }
 
 void Trickster::WindowsWindow::Resize(int a_Width, int a_Height)
@@ -377,6 +357,10 @@ void Trickster::WindowsWindow::Resize(int a_Width, int a_Height)
 	//int left, top, right, bottom;
 	//glfwGetWindowFrameSize(m_Window, &left, &top, &right, &bottom);
 	glViewport(0, 0, m_Width, m_Height);
+}
+void* Trickster::WindowsWindow::GetRaw()
+{
+	return m_Window;
 }
 void WindowsWindow::Init(const WindowProps& props)
 {
@@ -411,6 +395,7 @@ void WindowsWindow::Init(const WindowProps& props)
 	glfwSetInputMode(m_Window, GLFW_STICKY_KEYS, GL_TRUE);
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
+	glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	SetVSync(true);
 	//Listener to the windowclose.
 	EventManager::GetInstance()->OnKeyPressed.AddListener(std::bind(&WindowsWindow::SetKeyDown, this, std::placeholders::_1, true));
