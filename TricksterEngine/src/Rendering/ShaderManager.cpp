@@ -1,9 +1,5 @@
 #include "pch.h"
 #include "ShaderManager.h"
-
-
-
-#include "Events/EventManager.h"
 #include "Shader.h"
 
 

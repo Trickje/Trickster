@@ -1,12 +1,8 @@
 #include "pch.h"
 #include "WindowsWindow.h"
-
-#include "Events/EventManager.h"
-#include <functional>
-
-
 #include "Input.h"
-#include "stb_image.h"
+
+
 using namespace Trickster;
 static bool s_GLFWInitialized = false;
 
@@ -395,7 +391,7 @@ void WindowsWindow::Init(const WindowProps& props)
 	glfwSetInputMode(m_Window, GLFW_STICKY_KEYS, GL_TRUE);
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
-	glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	//glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	SetVSync(true);
 	//Listener to the windowclose.
 	EventManager::GetInstance()->OnKeyPressed.AddListener(std::bind(&WindowsWindow::SetKeyDown, this, std::placeholders::_1, true));

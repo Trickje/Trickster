@@ -1,13 +1,8 @@
 #include "pch.h"
 #include "Application.h"
-#include <thread>
 
-
-#include "../Timer.h"
-#include "Engine.h"
-#include "Events/EventManager.h"
+#include "Window.h"
 #include "ShaderManager.h"
-#include <Logger.h>
 using namespace Trickster;
 
 Application* Application::m_Application = nullptr;

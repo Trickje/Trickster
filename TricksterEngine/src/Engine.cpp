@@ -1,9 +1,7 @@
 #include "pch.h"
 #include "Engine.h"
 
-#include <ctime>
-#include "Renderer.h"
-#include <Logger.h>
+#include "Rendering/Renderer.h"
 namespace Trickster
 {
 

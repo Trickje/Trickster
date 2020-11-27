@@ -3,7 +3,7 @@
 #define ENTRY
 #include "Logger.h"
 #include "Application.h"
-#include "../../Game/src/Game.h"
+#include "Window.h"
 int main()
 {
 	

@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "UIClickable.h"
+#include "Rendering/Drawable2D.h"
 using namespace Trickster;
 UIClickable::~UIClickable()
 {

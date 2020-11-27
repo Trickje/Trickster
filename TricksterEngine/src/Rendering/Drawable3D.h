@@ -1,24 +1,12 @@
 #pragma once
-#include <glm/mat4x4.hpp>
-
-
-#include "VertexArray.h"
-#include "VertexBuffer.h"
-#include "VertexBufferLayout.h"
-#include <shared_mutex>
-
-#define TINYOBJLOADER_IMPLEMENTATION
-class Camera;
-
 namespace Trickster {
+	class VertexArray;
+	class VertexBuffer;
+	class VertexBufferLayout;
+	class Camera;
 	struct Vertex
 	{
 			float x, y, z, nx, ny, nz, u, v;
-	};
-	static union
-	{
-		Vertex v;
-		float value[8];
 	};
 	struct DrawData 
 	{

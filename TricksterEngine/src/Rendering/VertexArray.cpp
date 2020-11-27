@@ -2,7 +2,6 @@
 #include "VertexArray.h"
 #include "VertexBuffer.h"
 #include "VertexBufferLayout.h"
-#include <GL/glew.h>
 
 namespace Trickster {
 	VertexArray::VertexArray()

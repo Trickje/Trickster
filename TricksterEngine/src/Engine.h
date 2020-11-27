@@ -1,7 +1,6 @@
 #pragma once
-#include "Rendering/Renderer.h"
-
 namespace Trickster {
+	class Renderer;
 	class Engine
 	{
 	public:

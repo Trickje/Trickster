@@ -1,16 +1,23 @@
 #include "pch.h"
 
 #include "Drawable2D.h"
-
-
-#include "Engine.h"
 #include "Shader.h"
 #include "ShaderManager.h"
 #include "TextureManager.h"
 #include "SpriteManager.h"
 #include "Texture.h"
+#include "Window.h"
+#include "VertexBuffer.h"
+#include "VertexBufferLayout.h"
+#include "VertexArray.h"
 
 namespace Trickster {
+	DrawData2D::DrawData2D(void* data, int size)
+	{
+		vb = new VertexBuffer(data, size);
+		va = new VertexArray();
+		layout = new VertexBufferLayout();
+	};
 	Drawable2D::Drawable2D()
 	{
 		m_DrawData = new DrawData2D(

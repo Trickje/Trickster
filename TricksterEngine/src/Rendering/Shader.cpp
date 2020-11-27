@@ -1,8 +1,6 @@
 #include "pch.h"
 #include "Shader.h"
 
-#include <GL/glew.h>
-
 namespace Trickster {
 
 	Shader::Shader(const std::string& filePath)

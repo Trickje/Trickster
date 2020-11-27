@@ -1,8 +1,4 @@
 #pragma once
-#include "Engine.h"
-#include "Events/Event.h"
-#define WINDOWWIDTH 1280
-#define WINDOWHEIGHT 720
 namespace Trickster {
 
 	struct WindowProps
@@ -13,8 +9,8 @@ namespace Trickster {
 
 		WindowProps(
 			const std::string& a_Title = "Trickster Engine", 
-			unsigned int a_Width = WINDOWWIDTH,
-			unsigned int a_Height = WINDOWHEIGHT)
+			unsigned int a_Width = 1280,
+			unsigned int a_Height = 720)
 			: title(a_Title), width(a_Width), height(a_Height)
 		{
 		}

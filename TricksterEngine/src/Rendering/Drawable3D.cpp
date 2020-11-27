@@ -1,17 +1,14 @@
 #include "pch.h"
 #include "Drawable3D.h"
-
-#include <glm/ext/matrix_transform.inl>
-
-
-
 #include "Camera.h"
 #include "MeshManager.h"
 #include "ShaderManager.h"
-#include "TinyObjLoader.h"
 #include "Shader.h"
 #include "Texture.h"
 #include "TextureManager.h"
+#include "VertexArray.h"
+#include "VertexBuffer.h"
+#include "VertexBufferLayout.h"
 
 namespace Trickster {
 	//Don't use this constructor!!

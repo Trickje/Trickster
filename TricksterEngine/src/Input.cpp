@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Input.h"
+#include "Window.h"
 
-#include "Application.h"
 using namespace Trickster;
 Input* Input::instance = new Input();
 bool Trickster::Input::GetKeyDownImpl(int Key)

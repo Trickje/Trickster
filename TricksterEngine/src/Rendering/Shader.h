@@ -1,6 +1,4 @@
 #pragma once
-#include <string>
-#include <unordered_map>
 
 namespace Trickster {
 	struct ShaderProgramSource

@@ -1,6 +1,4 @@
 #pragma once
-#include <map>
-#include <string>
 namespace Trickster {
 	class Shader;
 	class ShaderManager

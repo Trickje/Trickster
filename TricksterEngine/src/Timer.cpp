@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "Timer.h"
 
-#include <GLFW/glfw3.h>
 
 
 using namespace Trickster;

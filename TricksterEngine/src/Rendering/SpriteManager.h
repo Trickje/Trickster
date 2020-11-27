@@ -1,5 +1,4 @@
 #pragma once
-#include <vector>
 namespace Trickster {
 	class Drawable2D;
 	class SpriteManager

@@ -1,9 +1,6 @@
 #include "pch.h"
 #include "Texture.h"
-
-#include "Engine.h"
-#include "stb_image.h"
-#include "TextureManager.h"
+#include "Window.h"
 namespace Trickster {
 	Texture::Texture(const std::string& path)
 		: m_FilePath(path), m_LocalBuffer(nullptr),
@@ -77,4 +74,9 @@ namespace Trickster {
 	{
 		return m_BPP;
 	}
+	glm::vec2 Texture::GetScale() const
+	{
+		return	{ m_Width / (Application::Get()->GetWindow()->GetWidth() * 0.5f), m_Height / (Application::Get()->GetWindow()->GetHeight() * 0.5f) };
+	}
+
 }

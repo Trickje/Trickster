@@ -1,13 +1,8 @@
 #pragma once
-#include <glm/vec2.hpp>
-#include <glm/vec3.hpp>
-#include <Rendering/VertexBuffer.h>
-
-
-#include "Rendering/VertexArray.h"
-#include "Rendering/VertexBufferLayout.h"
-
 namespace Trickster {
+	class VertexBuffer;
+	class VertexBufferLayout;
+	class VertexArray;
 	class ProgressBar
 	{
 	public:

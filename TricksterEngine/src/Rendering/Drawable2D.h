@@ -1,21 +1,12 @@
 #pragma once
-#include <glm/vec2.hpp>
-#include "VertexBuffer.h"
-#include "VertexBufferLayout.h"
-#include "VertexArray.h"
-class VertexBufferLayout;
-class VertexArray;
-class VertexBuffer;
-class Drawable;
 namespace Trickster {
+	class VertexBufferLayout;
+	class VertexArray;
+	class VertexBuffer;
+	class Drawable;
 	struct DrawData2D
 	{
-		DrawData2D(void* data, int size)
-		{
-			vb = new VertexBuffer(data, size);
-			va = new VertexArray();
-			layout = new VertexBufferLayout();
-		};
+		DrawData2D(void* data, int size);
 		VertexBuffer* vb;
 		VertexArray* va;
 		VertexBufferLayout* layout;

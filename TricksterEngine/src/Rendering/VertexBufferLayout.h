@@ -1,6 +1,4 @@
 #pragma once
-#include <GL/glew.h>
-#include <vector>
 namespace Trickster {
 	struct VertexBufferElement
 	{

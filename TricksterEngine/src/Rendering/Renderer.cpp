@@ -1,23 +1,9 @@
 #include "pch.h"
 #include "Renderer.h"
 
-
-#include <GLFW/glfw3.h>
-#ifndef STB_IMAGE_IMPLEMENTATION
-#define STB_IMAGE_IMPLEMENTATION
-#endif
-#include "IndexBuffer.h"
-#include "Shader.h"
-#include "ShaderManager.h"
-#include "stb_image.h"
 #include "Texture.h"
 #include "TextureManager.h"
-#include "VertexArray.h"
-#include "VertexBuffer.h"
-#include "VertexBufferLayout.h"
 #include "Drawable2D.h"
-#include "Engine.h"
-#include "Events/EventManager.h"
 #include "MeshManager.h"
 #include "SpriteManager.h"
 #include "Window.h"
@@ -88,17 +74,11 @@ namespace Trickster {
 		std::vector<int> deletos;
 		for (int i = 0; i < SpriteManager::GetInstance()->m_Drawable2Ds.size(); i++)
 		{
-			if (SpriteManager::GetInstance()->m_Drawable2Ds[i]->GetPosition().x - 0.5f * SpriteManager::GetInstance()->m_Drawable2Ds[i]->GetSize().x > WINDOWWIDTH || SpriteManager::GetInstance()->m_Drawable2Ds[i]->GetPosition().y - 0.5F * SpriteManager::GetInstance()->m_Drawable2Ds[i]->GetSize().y > WINDOWHEIGHT)
-			{
-				deletos.push_back(i);
-			}
-			else
-			{
 				shouldDraw = true;
 				if (!SpriteManager::GetInstance()->m_Drawable2Ds[i]->m_Transparent) {
 					SpriteManager::GetInstance()->m_Drawable2Ds[i]->Draw();
 				}
-			}
+			
 		}
 		/*
 		for (int i = 0; i < deletos.size(); i++)

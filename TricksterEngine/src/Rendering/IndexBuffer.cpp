@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "IndexBuffer.h"
 
-#include <GL/glew.h>
 
 namespace Trickster {
 	IndexBuffer::IndexBuffer(const unsigned int* data, unsigned int count)

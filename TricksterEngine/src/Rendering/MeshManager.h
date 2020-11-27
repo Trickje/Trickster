@@ -1,8 +1,8 @@
 #pragma once
 
-class Camera;
 
 namespace Trickster {
+	class Camera;
 	class Drawable3D;
 	class MeshManager
 	{

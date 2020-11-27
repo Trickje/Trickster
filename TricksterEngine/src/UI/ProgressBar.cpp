@@ -1,11 +1,13 @@
 #include "pch.h"
 #include "ProgressBar.h"
-#include <GL/GL.h>
-
-
-#include "Application.h"
 #include "ShaderManager.h"
 #include "Shader.h"
+
+#include <Rendering/VertexBuffer.h>
+#include "Rendering/VertexArray.h"
+#include "Rendering/VertexBufferLayout.h"
+#include "Window.h"
+
 using namespace Trickster;
 
 ProgressBar::ProgressBar() : m_Position(), m_ColorFront(), m_ColorBack(), m_Size(),  m_Percentage(), m_Scale()

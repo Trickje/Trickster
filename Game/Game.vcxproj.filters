@@ -21,6 +21,9 @@
     <ClCompile Include="src\IronMan.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\pch.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Game.h">
@@ -30,6 +33,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\pch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -42,5 +48,14 @@
     <Image Include="Resources\Icon\icon.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="Models\Terrestrial1.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Models\Terrestrial1.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Models\planet_Terrestrial1.mtl" />
   </ItemGroup>
 </Project>

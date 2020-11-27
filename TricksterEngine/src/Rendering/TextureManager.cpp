@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "TextureManager.h"
-
 #include "Texture.h"
 namespace Trickster {
 	TextureManager* TextureManager::instance = nullptr;

@@ -1,9 +1,4 @@
 #pragma once
-#include <glm/vec2.hpp>
-
-#include "Application.h"
-#include "Engine.h"
-#include "Renderer.h"
 namespace Trickster {
 	class Texture
 	{
@@ -15,7 +10,7 @@ namespace Trickster {
 		int GetWidth() const;
 		int GetHeight() const;
 		int GetBPP() const;
-		glm::vec2 GetScale() const { return { m_Width / (Application::Get()->GetWindow()->GetWidth() * 0.5f), m_Height / (Application::Get()->GetWindow()->GetHeight() * 0.5f) }; }
+		glm::vec2 GetScale() const;
 	private:
 		unsigned int m_RendererID;
 		std::string m_FilePath;

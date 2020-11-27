@@ -1,9 +1,7 @@
 #pragma once
-#include <glm/vec2.hpp>
-
 #include "ClickableBox.h"
-#include "Rendering/Drawable2D.h"
 namespace Trickster {
+	class Drawable2D;
 	class UIClickable : public ClickableBox
 	{
 	public:
