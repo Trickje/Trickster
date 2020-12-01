@@ -12,3 +12,4 @@ Profiler::~Profiler()
 {
 	LOG("[Profiler] " + m_Name + ": " + std::to_string(m_Timer.GetSeconds()) + " seconds." );
 }
+ 
