@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "WindowsWindow.h"
-#include "Input.h"
+#include "Core/Input.h"
 
 
 using namespace Trickster;

@@ -1,12 +1,12 @@
 #include "pch.h"
 #include "Game.h"
-#include <EntryPoint.h>
+#include <Core/EntryPoint.h>
 
 
 
 #include "UI/ClickableBox.h"
 #include "Events/EventManager.h"
-#include "Input.h"
+#include "Core/Input.h"
 #include "IronMan.h"
 #include "Rendering/MeshManager.h"
 #include "UI/UIClickable.h"

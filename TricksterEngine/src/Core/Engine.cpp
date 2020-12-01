@@ -18,6 +18,7 @@ namespace Trickster
 	//Must be called at entry point
 	bool Engine::Initialize()
 	{
+		Profiler profiler("Engine Initialize");
 		LOG("Initializing Renderer.");
 		renderer = new Renderer();
 		if (!renderer->Initialize())

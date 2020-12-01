@@ -37,10 +37,11 @@
 
 
 //My header files
-#include <Timer.h>
-#include <Logger.h>
+#include <Core/Timer.h>
+#include <Core/Logger.h>
+#include <Core/Profiler.h>
 #include <Events/EventManager.h>
 #include <Events/Event.h>
-#include <Engine.h>
+#include <Core/Engine.h>
 #include <Renderer.h>
-#include <Application.h>
+#include <Core/Application.h>

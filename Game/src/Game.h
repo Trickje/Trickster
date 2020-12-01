@@ -1,8 +1,8 @@
 #pragma once
 
 //#include "EntryPoint.h"
-#include "Logger.h"
-#include "Application.h"
+#include "Core/Logger.h"
+#include "Core/Application.h"
 #include "UI/ClickableBox.h"
 #include "UI/ProgressBar.h"
 #include "IronMan.h"

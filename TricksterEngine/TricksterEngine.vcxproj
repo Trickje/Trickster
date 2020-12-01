@@ -195,19 +195,20 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\Input.cpp" />
+    <ClCompile Include="src\Core\Profiler.cpp" />
+    <ClCompile Include="src\Core\Input.cpp" />
     <ClCompile Include="src\UI\ProgressBar.cpp" />
     <ClCompile Include="src\UI\ClickableBox.cpp" />
     <ClCompile Include="src\Rendering\MeshManager.cpp" />
     <ClCompile Include="src\Rendering\Drawable3D.cpp" />
     <ClCompile Include="src\Rendering\Camera.cpp" />
     <ClCompile Include="src\Events\EventManager.cpp" />
-    <ClCompile Include="src\Application.cpp" />
+    <ClCompile Include="src\Core\Application.cpp" />
     <ClCompile Include="src\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\Rendering\Drawable2D.cpp" />
-    <ClCompile Include="src\Engine.cpp" />
+    <ClCompile Include="src\Core\Engine.cpp" />
     <ClCompile Include="src\Rendering\IndexBuffer.cpp" />
     <ClCompile Include="src\Nicolai.cpp" />
     <ClCompile Include="src\Rendering\Renderer.cpp" />
@@ -219,26 +220,27 @@
     <ClCompile Include="src\Rendering\VertexArray.cpp" />
     <ClCompile Include="src\Rendering\VertexBuffer.cpp" />
     <ClCompile Include="src\Rendering\VertexBufferLayout.cpp" />
-    <ClCompile Include="src\Timer.cpp" />
+    <ClCompile Include="src\Core\Timer.cpp" />
     <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp" />
     <ClCompile Include="src\UI\UIClickable.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Input.h" />
+    <ClInclude Include="src\Core\Profiler.h" />
+    <ClInclude Include="src\Core\Input.h" />
     <ClInclude Include="src\UI\ProgressBar.h" />
     <ClInclude Include="src\UI\ClickableBox.h" />
     <ClInclude Include="src\Rendering\MeshManager.h" />
     <ClInclude Include="src\Rendering\Drawable3D.h" />
     <ClInclude Include="src\Rendering\Camera.h" />
     <ClInclude Include="src\Events\EventManager.h" />
-    <ClInclude Include="src\Application.h" />
-    <ClInclude Include="src\EntryPoint.h" />
+    <ClInclude Include="src\Core\Application.h" />
+    <ClInclude Include="src\Core\EntryPoint.h" />
     <ClInclude Include="src\Events\Event.h" />
     <ClInclude Include="src\pch.h" />
     <ClInclude Include="src\Rendering\Drawable2D.h" />
-    <ClInclude Include="src\Engine.h" />
+    <ClInclude Include="src\Core\Engine.h" />
     <ClInclude Include="src\Rendering\IndexBuffer.h" />
-    <ClInclude Include="src\Logger.h" />
+    <ClInclude Include="src\Core\Logger.h" />
     <ClInclude Include="src\Nicolai.h" />
     <ClInclude Include="src\Rendering\Renderer.h" />
     <ClInclude Include="src\Rendering\Shader.h" />
@@ -251,8 +253,8 @@
     <ClInclude Include="src\Rendering\VertexArray.h" />
     <ClInclude Include="src\Rendering\VertexBuffer.h" />
     <ClInclude Include="src\Rendering\VertexBufferLayout.h" />
-    <ClInclude Include="src\Timer.h" />
-    <ClInclude Include="src\Window.h" />
+    <ClInclude Include="src\Core\Timer.h" />
+    <ClInclude Include="src\Rendering\Window.h" />
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h" />
     <ClInclude Include="src\UI\UIClickable.h" />
   </ItemGroup>

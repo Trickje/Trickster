@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "ClickableBox.h"
-#include "Input.h"
+#include "Core/Input.h"
 #include "Window.h"
 
 ClickableBox::ClickableBox(float X, float Y, float a_Width, float a_Height)
