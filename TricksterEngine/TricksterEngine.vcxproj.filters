@@ -21,9 +21,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Nicolai.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\Rendering\Drawable2D.cpp">
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
@@ -99,11 +96,11 @@
     <ClCompile Include="src\Core\Profiler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Core\Jobsystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Nicolai.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\Rendering\Drawable2D.h">
       <Filter>Header Files\Rendering</Filter>
     </ClInclude>
@@ -195,6 +192,21 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Core\Profiler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Core\Jobsystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Events\JobEvents.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Events\InputEvents.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Events\WindowEvents.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Events\GameLoopEvents.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

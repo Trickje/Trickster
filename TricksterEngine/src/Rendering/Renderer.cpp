@@ -28,8 +28,8 @@ namespace Trickster {
 	{
 		
 		TextureManager::GetTexture("image.png")->Bind();
-		EventManager::GetInstance()->OnRender.AddListener(std::bind(&Renderer::Draw, this));
-		EventManager::GetInstance()->OnRender.AddListener(std::bind(&Renderer::DrawTransparent, this));
+		EventManager::GetInstance()->GameLoopEvents.OnRender.AddListener(std::bind(&Renderer::Draw, this));
+		EventManager::GetInstance()->GameLoopEvents.OnRender.AddListener(std::bind(&Renderer::DrawTransparent, this));
 		return true;
 	}
 

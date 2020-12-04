@@ -25,7 +25,7 @@ ProgressBar::ProgressBar() : m_Position(), m_ColorFront(), m_ColorBack(), m_Size
 	m_Size = { 90.f, 10.f };
 	m_ColorFront = {0.f, 1.f, 0.f};
 	m_ColorBack = { 0.7f, 0.f, 0.f };
-	EventManager::GetInstance()->OnRender.AddListener(std::bind(&ProgressBar::Draw, this));
+	EventManager::GetInstance()->GameLoopEvents.OnRender.AddListener(std::bind(&ProgressBar::Draw, this));
 	FillVertices();
 }
 

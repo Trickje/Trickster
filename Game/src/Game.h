@@ -6,7 +6,6 @@
 #include "UI/ClickableBox.h"
 #include "UI/ProgressBar.h"
 #include "IronMan.h"
-#include "Nicolai.h"
 #include "Rendering/Camera.h"
 #include "UI/UIClickable.h"
 
@@ -21,7 +20,6 @@ namespace Trickster {
 		void OnRender() override;
 		bool IsTickBased() override;
 	private:
-		std::vector<Nicolai*> m_Nicolais;
 		IronMan* m_IronMan;
 		std::shared_ptr<Camera> m_Camera;
 		UIClickable* box;

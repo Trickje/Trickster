@@ -195,6 +195,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Core\Jobsystem.cpp" />
     <ClCompile Include="src\Core\Profiler.cpp" />
     <ClCompile Include="src\Core\Input.cpp" />
     <ClCompile Include="src\UI\ProgressBar.cpp" />
@@ -210,7 +211,6 @@
     <ClCompile Include="src\Rendering\Drawable2D.cpp" />
     <ClCompile Include="src\Core\Engine.cpp" />
     <ClCompile Include="src\Rendering\IndexBuffer.cpp" />
-    <ClCompile Include="src\Nicolai.cpp" />
     <ClCompile Include="src\Rendering\Renderer.cpp" />
     <ClCompile Include="src\Rendering\Shader.cpp" />
     <ClCompile Include="src\Rendering\ShaderManager.cpp" />
@@ -225,8 +225,13 @@
     <ClCompile Include="src\UI\UIClickable.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Core\Jobsystem.h" />
     <ClInclude Include="src\Core\Profiler.h" />
     <ClInclude Include="src\Core\Input.h" />
+    <ClInclude Include="src\Events\GameLoopEvents.h" />
+    <ClInclude Include="src\Events\InputEvents.h" />
+    <ClInclude Include="src\Events\JobEvents.h" />
+    <ClInclude Include="src\Events\WindowEvents.h" />
     <ClInclude Include="src\UI\ProgressBar.h" />
     <ClInclude Include="src\UI\ClickableBox.h" />
     <ClInclude Include="src\Rendering\MeshManager.h" />
@@ -241,7 +246,6 @@
     <ClInclude Include="src\Core\Engine.h" />
     <ClInclude Include="src\Rendering\IndexBuffer.h" />
     <ClInclude Include="src\Core\Logger.h" />
-    <ClInclude Include="src\Nicolai.h" />
     <ClInclude Include="src\Rendering\Renderer.h" />
     <ClInclude Include="src\Rendering\Shader.h" />
     <ClInclude Include="src\Rendering\ShaderManager.h" />

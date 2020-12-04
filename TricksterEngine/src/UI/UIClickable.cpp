@@ -19,7 +19,7 @@ UIClickable::UIClickable(const std::string& a_FilePath, const glm::vec2& a_Pos, 
 UIClickable::UIClickable(float X, float Y, float a_Width, float a_Height): ClickableBox(X, Y, a_Width, a_Height)
 {
 	
-	Trickster::EventManager::GetInstance()->OnUpdate.AddListener(std::bind(&UIClickable::OnUpdate, this));
+	Trickster::EventManager::GetInstance()->GameLoopEvents.OnUpdate.AddListener(std::bind(&UIClickable::OnUpdate, this));
 }
 
 void UIClickable::OnUpdate()

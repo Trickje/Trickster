@@ -1,6 +1,9 @@
 #pragma once
 #include "Event.h"
-
+#include "GameLoopEvents.h"
+#include "InputEvents.h"
+#include "JobEvents.h"
+#include "WindowEvents.h"
 
 
 namespace Trickster {
@@ -16,26 +19,10 @@ namespace Trickster {
 		 */
 		void Initialize();
 
-		
-		Event<> OnRender;
-		Event<> OnRenderTransparent;
-		Event<float> OnUpdate;
-		Event<> OnStart;
-		Event<> OnWindowClose;
-		Event<int, int> OnWindowResize;
-		Event<bool> OnWindowMinimize;
-		Event<bool> OnWindowMaximize;
-		Event<int> OnKeyPressed;
-		Event<int> OnKeyReleased;
-		Event<int, int> OnKeyRepeat;
-		Event<int> OnMouseButtonPressed;
-		Event<int> OnMouseButtonReleased;
-		Event<float, float> OnMouseButtonScrolled;
-		Event<float, float> OnMouseMoved;
-		Event<> Tick;
-		Event<> TickOnce;
-		Event<> PreTick;
-		Event<> PostTick;
+		GameLoopEvents GameLoopEvents;
+		JobEvents JobEvents;
+		InputEvents InputEvents;
+		WindowEvents WindowEvents;
 	private:
 		static EventManager* instance;
 		EventManager();

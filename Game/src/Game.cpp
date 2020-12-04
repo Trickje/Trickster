@@ -37,7 +37,7 @@ void Trickster::Game::OnStart()
 	box->SetPosition({ (Application::Get()->GetWindow()->GetWidth() / 2.f) - 100.f, Application::Get()->GetWindow()->GetHeight() / 2.f });
 	box2 = new UIClickable("Resources/image.png", {( Application::Get()->GetWindow()->GetWidth() / 2.f) - 100.f, Application::Get()->GetWindow()->GetHeight() / 2.f  - box->GetHeight()},  100, box->GetHeight());
 	bar = new ProgressBar();
-	EventManager::GetInstance()->OnMouseMoved.AddListener(std::bind(&Camera::MouseMove, m_Camera.get(), std::placeholders::_1,std::placeholders::_2));
+	EventManager::GetInstance()->InputEvents.OnMouseMoved.AddListener(std::bind(&Camera::MouseMove, m_Camera.get(), std::placeholders::_1,std::placeholders::_2));
 	bar->SetPosition({ 50.f, 30.f });
 	bar->SetSize({20.f, 5.f});
 	//bar->SetColorFront({1.f, 0.f, 0.f});

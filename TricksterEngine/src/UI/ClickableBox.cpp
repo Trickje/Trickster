@@ -8,7 +8,7 @@ ClickableBox::ClickableBox(float X, float Y, float a_Width, float a_Height)
 	this->m_Pos = { X,Y };
 	m_Width = a_Width;
 	m_Height = a_Height;
-	Trickster::EventManager::GetInstance()->OnUpdate.AddListener(std::bind(&ClickableBox::OnUpdate, this));
+	Trickster::EventManager::GetInstance()->GameLoopEvents.OnUpdate.AddListener(std::bind(&ClickableBox::OnUpdate, this));
 }
 
 ClickableBox::~ClickableBox()
@@ -25,7 +25,7 @@ void ClickableBox::OnUpdate()
 		{
 			IsAlreadyClicked = true;
 			AwaitingClick = true;
-			Trickster::EventManager::GetInstance()->TickOnce.AddListener(std::bind(&ClickableBox::OnClick, this));
+			Trickster::EventManager::GetInstance()->GameLoopEvents.TickOnce.AddListener(std::bind(&ClickableBox::OnClick, this));
 		}
 		else {
 			OnClick();

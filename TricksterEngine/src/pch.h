@@ -17,7 +17,8 @@
 #include <thread>
 #include <ctime>
 #include <future>
-
+#include <condition_variable>
+#include <atomic>
 //External header files
 // Include GLEW. Always include it before gl.h and glfw3.h, since it's a bit magic.
 #include <GL/glew.h>

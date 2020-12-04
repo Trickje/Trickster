@@ -5,7 +5,7 @@
 using namespace Trickster;
 Trickster::Camera::Camera()
 {
-	Trickster::EventManager::GetInstance()->OnUpdate.AddListener(std::bind(&Camera::RecalculateViewProjection, this));
+	Trickster::EventManager::GetInstance()->GameLoopEvents.OnUpdate.AddListener(std::bind(&Camera::RecalculateViewProjection, this));
 	m_View = glm::mat4(0.f);
 	m_Projection = glm::mat4(0.f);
 	m_ViewProjection = glm::mat4(0.f);

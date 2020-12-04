@@ -14,14 +14,14 @@ WindowsWindow::WindowsWindow(const WindowProps& props)
 {
 	Init(props);
 	glfwSetWindowCloseCallback(m_Window, [](GLFWwindow* a_Window) {
-		EventManager::GetInstance()->OnWindowClose.Execute();
+		EventManager::GetInstance()->WindowEvents.OnWindowClose.Execute();
 		});
 	
 	glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* a_Window, int a_Width, int a_Height) {
 	//	EventManager::GetInstance()->OnWindowResize.Execute(a_Width, a_Height);
 		});
 	glfwSetFramebufferSizeCallback(m_Window, [](GLFWwindow* a_Window, int a_Width, int a_Height) {
-		EventManager::GetInstance()->OnWindowResize.Execute(a_Width, a_Height);
+		EventManager::GetInstance()->WindowEvents.OnWindowResize.Execute(a_Width, a_Height);
 		});
 	glfwSetWindowRefreshCallback(m_Window, [](GLFWwindow* a_Window)
 	{
@@ -34,43 +34,43 @@ WindowsWindow::WindowsWindow(const WindowProps& props)
 		//Access the data via the UserPointer
 		if(a_Action == GLFW_PRESS)
 		{
-			EventManager::GetInstance()->OnKeyPressed.Execute(a_Key);
+			EventManager::GetInstance()->InputEvents.OnKeyPressed.Execute(a_Key);
 
 		}
 		if(a_Action == GLFW_RELEASE)
 		{
-			EventManager::GetInstance()->OnKeyReleased.Execute(a_Key);
+			EventManager::GetInstance()->InputEvents.OnKeyReleased.Execute(a_Key);
 		}
 		if(a_Action == GLFW_REPEAT)
 		{
-			EventManager::GetInstance()->OnKeyRepeat.Execute(a_Key, 1);
+			EventManager::GetInstance()->InputEvents.OnKeyRepeat.Execute(a_Key, 1);
 		}
 		});
 	glfwSetMouseButtonCallback(m_Window, [](GLFWwindow* a_Window, int a_Button, int a_Action, int a_Mods) {
 		if(a_Action == GLFW_PRESS)
 		{
-			EventManager::GetInstance()->OnMouseButtonPressed.Execute(a_Button);
+			EventManager::GetInstance()->InputEvents.OnMouseButtonPressed.Execute(a_Button);
 		}
 		if(a_Action == GLFW_RELEASE)
 		{
-			EventManager::GetInstance()->OnMouseButtonReleased.Execute(a_Button);
+			EventManager::GetInstance()->InputEvents.OnMouseButtonReleased.Execute(a_Button);
 		}
 		});
 	glfwSetScrollCallback(m_Window, [](GLFWwindow* a_Window, double a_XOffset, double a_YOffset) {
 	
-		EventManager::GetInstance()->OnMouseButtonScrolled.Execute(static_cast<float>(a_XOffset), static_cast<float>(a_YOffset));
+		EventManager::GetInstance()->InputEvents.OnMouseButtonScrolled.Execute(static_cast<float>(a_XOffset), static_cast<float>(a_YOffset));
 	});
 	
 	glfwSetCursorPosCallback(m_Window, [](GLFWwindow* a_Window, double a_XOffset, double a_YOffset) {
-		EventManager::GetInstance()->OnMouseMoved.Execute(static_cast<float>(a_XOffset), static_cast<float>(a_YOffset));
+		EventManager::GetInstance()->InputEvents.OnMouseMoved.Execute(static_cast<float>(a_XOffset), static_cast<float>(a_YOffset));
 		});
 
 	glfwSetWindowIconifyCallback(m_Window, [](GLFWwindow* a_Window, int a_Iconified) {
-		EventManager::GetInstance()->OnWindowMinimize.Execute(a_Iconified == GLFW_TRUE);
+		EventManager::GetInstance()->WindowEvents.OnWindowMinimize.Execute(a_Iconified == GLFW_TRUE);
 		});
 	glfwSetWindowMaximizeCallback(m_Window, [](GLFWwindow* a_Window, int a_Maximized) {
 	
-		EventManager::GetInstance()->OnWindowMaximize.Execute(a_Maximized == GLFW_TRUE);
+		EventManager::GetInstance()->WindowEvents.OnWindowMaximize.Execute(a_Maximized == GLFW_TRUE);
 		});
 }
 
@@ -121,11 +121,11 @@ void Trickster::WindowsWindow::Draw()
 
 	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 	//Render Objects
-	EventManager::GetInstance()->OnRender.Execute();
+	EventManager::GetInstance()->GameLoopEvents.OnRender.Execute();
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	EventManager::GetInstance()->OnRenderTransparent.Execute();
+	EventManager::GetInstance()->GameLoopEvents.OnRenderTransparent.Execute();
 	glDisable(GL_BLEND);
 	// Swap buffers
 	glfwSwapBuffers(m_Window);
@@ -394,12 +394,12 @@ void WindowsWindow::Init(const WindowProps& props)
 	//glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	SetVSync(true);
 	//Listener to the windowclose.
-	EventManager::GetInstance()->OnKeyPressed.AddListener(std::bind(&WindowsWindow::SetKeyDown, this, std::placeholders::_1, true));
-	EventManager::GetInstance()->OnKeyReleased.AddListener(std::bind(&WindowsWindow::SetKeyDown, this, std::placeholders::_1, false));
-	EventManager::GetInstance()->OnWindowClose.AddListener(std::bind(&WindowsWindow::Shutdown, this));
-	EventManager::GetInstance()->OnMouseButtonPressed.AddListener(std::bind(&WindowsWindow::SetClick, this, std::placeholders::_1, true));
-	EventManager::GetInstance()->OnMouseButtonReleased.AddListener(std::bind(&WindowsWindow::SetClick, this, std::placeholders::_1, false));
-	EventManager::GetInstance()->OnWindowResize.AddListener(std::bind(&WindowsWindow::Resize, this, std::placeholders::_1, std::placeholders::_2));
+	EventManager::GetInstance()->InputEvents.OnKeyPressed.AddListener(std::bind(&WindowsWindow::SetKeyDown, this, std::placeholders::_1, true));
+	EventManager::GetInstance()->InputEvents.OnKeyReleased.AddListener(std::bind(&WindowsWindow::SetKeyDown, this, std::placeholders::_1, false));
+	EventManager::GetInstance()->WindowEvents.OnWindowClose.AddListener(std::bind(&WindowsWindow::Shutdown, this));
+	EventManager::GetInstance()->InputEvents.OnMouseButtonPressed.AddListener(std::bind(&WindowsWindow::SetClick, this, std::placeholders::_1, true));
+	EventManager::GetInstance()->InputEvents.OnMouseButtonReleased.AddListener(std::bind(&WindowsWindow::SetClick, this, std::placeholders::_1, false));
+	EventManager::GetInstance()->WindowEvents.OnWindowResize.AddListener(std::bind(&WindowsWindow::Resize, this, std::placeholders::_1, std::placeholders::_2));
 }
 
 void WindowsWindow::Shutdown()

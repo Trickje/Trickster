@@ -12,11 +12,11 @@ Application::Application()
 	m_Timer.Start();
 	m_Engine = std::make_shared<Engine>();
 	m_Window = std::unique_ptr<Window>(Window::Create());
-	EventManager::GetInstance()->OnStart.AddListener(std::bind(&Application::OnStart, this));
-	EventManager::GetInstance()->OnRender.AddListener(std::bind(&Application::OnRender, this));
-	EventManager::GetInstance()->OnUpdate.AddListener(std::bind(&Window::OnUpdate, m_Window.get()));
-	EventManager::GetInstance()->OnUpdate.AddListener(std::bind(&Application::OnUpdate, this, std::placeholders::_1));
-	EventManager::GetInstance()->OnStart.AddListener(std::bind(&ShaderManager::Initialize, ShaderManager::GetInstance()));
+	EventManager::GetInstance()->GameLoopEvents.OnStart.AddListener(std::bind(&Application::OnStart, this));
+	EventManager::GetInstance()->GameLoopEvents.OnRender.AddListener(std::bind(&Application::OnRender, this));
+	EventManager::GetInstance()->GameLoopEvents.OnUpdate.AddListener(std::bind(&Window::OnUpdate, m_Window.get()));
+	EventManager::GetInstance()->GameLoopEvents.OnUpdate.AddListener(std::bind(&Application::OnUpdate, this, std::placeholders::_1));
+	EventManager::GetInstance()->GameLoopEvents.OnStart.AddListener(std::bind(&ShaderManager::Initialize, ShaderManager::GetInstance()));
 	m_Application = this;
 }
 
@@ -43,7 +43,7 @@ if (!m_Engine->Initialize())
 	LOG_ERROR("Failed to initialize the engine!");
 }
 std::srand(static_cast<unsigned int>(time(0)));
-EventManager::GetInstance()->OnStart.Execute();
+EventManager::GetInstance()->GameLoopEvents.OnStart.Execute();
 	float time_passed = m_Timer.GetSeconds();
 	if (time_passed < 1.f) {
 		LOG("Initialization complete!\nTook " + std::to_string(time_passed) + " seconds.");
@@ -65,15 +65,15 @@ bool Trickster::Application::Update()
 {
 	float DeltaTime = m_Timer.Reset();
 	//DELTA TIME calculations
-	EventManager::GetInstance()->OnUpdate.Execute(DeltaTime);
+	EventManager::GetInstance()->GameLoopEvents.OnUpdate.Execute(DeltaTime);
 	CurrentTickTime += DeltaTime;
 	while(CurrentTickTime >= TickTime)
 	{
 		CurrentTickTime -= TickTime;
-		EventManager::GetInstance()->PreTick.Execute();
-		EventManager::GetInstance()->Tick.Execute();
-		EventManager::GetInstance()->TickOnce.ExecuteAndClear();
-		EventManager::GetInstance()->PostTick.Execute();
+		EventManager::GetInstance()->GameLoopEvents.PreTick.Execute();
+		EventManager::GetInstance()->GameLoopEvents.Tick.Execute();
+		EventManager::GetInstance()->GameLoopEvents.TickOnce.ExecuteAndClear();
+		EventManager::GetInstance()->GameLoopEvents.PostTick.Execute();
 	}
 	return !m_Window->ShouldClose();
 }
