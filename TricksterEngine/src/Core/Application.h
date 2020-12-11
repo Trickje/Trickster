@@ -27,6 +27,7 @@ namespace Trickster {
 	protected:
 		std::shared_ptr<Window> m_Window;
 		Timer m_Timer;
+		//The multi-threading object ONLY ONE IS ALLOWED
 		std::unique_ptr<Jobsystem> m_Jobsystem;
 		float TickTime = 0.6f;
 		float CurrentTickTime;

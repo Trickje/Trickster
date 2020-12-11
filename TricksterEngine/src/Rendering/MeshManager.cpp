@@ -15,6 +15,7 @@ namespace Trickster {
 
 	MeshManager::MeshManager()
 	{
+		LOG("[MeshManager] Created MeshManager");
 	}
 
 
@@ -22,7 +23,6 @@ namespace Trickster {
 	{
 	}
 	bool MeshManager::Initialize(std::shared_ptr<Camera> a_Camera){
-		LOG("Initializing MeshManager.")
 		m_Camera = a_Camera;
 		return true;
 	}

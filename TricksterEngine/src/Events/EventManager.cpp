@@ -11,7 +11,6 @@ namespace Trickster {
 	}
 	EventManager::EventManager()
 	{
-		this->Initialize();
 	}
 
 
@@ -19,9 +18,4 @@ namespace Trickster {
 	{
 	}
 
-	void EventManager::Initialize()
-	{
-		LOG("Initializing Events.");
-		
-	}
 }

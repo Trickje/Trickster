@@ -9,8 +9,6 @@ int main()
 	
 	Trickster::Application* app = Trickster::CreateApplication();
 	app->Start();
-//	system("PAUSE");
-//	Trickster::LOG_CLEAR();
 	while(app->Update())
 	{
 		app->OnRender();

@@ -42,6 +42,7 @@ namespace Trickster {
 
 	ShaderManager::ShaderManager()
 	{
+		LOG("[ShaderManager] Created ShaderManager");
 	}
 
 

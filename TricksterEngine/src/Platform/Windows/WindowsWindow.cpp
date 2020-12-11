@@ -364,10 +364,10 @@ void WindowsWindow::Init(const WindowProps& props)
 	m_Width = props.width;
 	m_Height = props.height;
 
-	LOG(std::string("Creating window " + props.title + " " + " (" + std::to_string(props.width) + ", " + std::to_string(props.height) + ")."));
+	LOG(std::string("[Window] Creating window " + props.title + " " + " (" + std::to_string(props.width) + ", " + std::to_string(props.height) + ")."));
 	if(!s_GLFWInitialized)
 	{
-		LOG("Initializing GLFW.");
+		LOG("[Window] Initializing GLFW.");
 		int success = glfwInit();
 		ASSERT(success);
 		s_GLFWInitialized = true;
@@ -385,7 +385,7 @@ void WindowsWindow::Init(const WindowProps& props)
 	glfwSetWindowIcon(m_Window, 1, image);
 	glfwGetWindowPos(m_Window, &m_PosX, &m_PosY);
 
-	LOG("Initializing GLEW.");
+	LOG("[Window] Initializing GLEW.");
 	glewExperimental = GL_TRUE;
 	glewInit();
 	glfwSetInputMode(m_Window, GLFW_STICKY_KEYS, GL_TRUE);

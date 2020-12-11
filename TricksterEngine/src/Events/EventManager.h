@@ -17,7 +17,6 @@ namespace Trickster {
 		 *
 		 * 
 		 */
-		void Initialize();
 
 		GameLoopEvents GameLoopEvents;
 		JobEvents JobEvents;

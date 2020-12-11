@@ -8,7 +8,7 @@ using namespace Trickster;
 Application* Application::m_Application = nullptr;
 Application::Application()
 {
-	LOG("Started the timer");
+	LOG("[Application] Starting initialization");
 	m_Timer.Start();
 	m_Engine = std::make_shared<Engine>();
 	m_Window = std::unique_ptr<Window>(Window::Create());
@@ -38,7 +38,6 @@ Application* Application::Get()
 
 void Application::Start()
 {
-	LOG("Initializing program.");
 if (!m_Engine->Initialize())
 {
 	LOG_ERROR("Failed to initialize the engine!");
@@ -47,10 +46,10 @@ std::srand(static_cast<unsigned int>(time(0)));
 EventManager::GetInstance()->GameLoopEvents.OnStart.Execute();
 	float time_passed = m_Timer.GetSeconds();
 	if (time_passed < 1.f) {
-		LOG("Initialization complete!\nTook " + std::to_string(time_passed) + " seconds.");
+		LOG("[Application] Initialization complete!\nTook " + std::to_string(time_passed) + " seconds.");
 	}else
 	{
-		LOG_WARNING("Initialization complete!\nTook " + std::to_string(time_passed) + " seconds.");
+		LOG_WARNING("[Application] Initialization complete!\nTook " + std::to_string(time_passed) + " seconds.");
 	}
 	m_Timer.Reset();
 	CurrentTickTime = 0.f;

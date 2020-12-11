@@ -12,6 +12,7 @@ namespace Trickster {
 #define TRIANGLEBASEDUI
 	Renderer::Renderer()
 	{
+		LOG("[Renderer] Created Renderer");
 	}
 
 	//Renderer::Renderer(GLFWwindow* a_window)
