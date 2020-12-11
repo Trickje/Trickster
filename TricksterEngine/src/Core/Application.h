@@ -1,4 +1,5 @@
 #pragma once
+#include "Jobsystem.h"
 
 
 namespace Trickster {
@@ -26,6 +27,7 @@ namespace Trickster {
 	protected:
 		std::shared_ptr<Window> m_Window;
 		Timer m_Timer;
+		std::unique_ptr<Jobsystem> m_Jobsystem;
 		float TickTime = 0.6f;
 		float CurrentTickTime;
 	};

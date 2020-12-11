@@ -19,6 +19,7 @@ namespace Trickster {
 		void OnStart() override;
 		void OnRender() override;
 		bool IsTickBased() override;
+		void UselessFunction(int iterations);
 	private:
 		IronMan* m_IronMan;
 		std::shared_ptr<Camera> m_Camera;

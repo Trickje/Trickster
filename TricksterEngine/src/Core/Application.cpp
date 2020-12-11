@@ -12,6 +12,7 @@ Application::Application()
 	m_Timer.Start();
 	m_Engine = std::make_shared<Engine>();
 	m_Window = std::unique_ptr<Window>(Window::Create());
+	m_Jobsystem = std::make_unique<Jobsystem>();
 	EventManager::GetInstance()->GameLoopEvents.OnStart.AddListener(std::bind(&Application::OnStart, this));
 	EventManager::GetInstance()->GameLoopEvents.OnRender.AddListener(std::bind(&Application::OnRender, this));
 	EventManager::GetInstance()->GameLoopEvents.OnUpdate.AddListener(std::bind(&Window::OnUpdate, m_Window.get()));

@@ -1,81 +1,89 @@
 #pragma once
+#include <queue>
 
-//TODO(Rick) Categorization of this, separate Render jobs and so on.
+//*********************.*********************//
+//********************/ \********************//
+//*******************/   \*******************//
+//***Intellectual property of Rick Pijpers***//
+//*******************\   /*******************//
+//********************\ /********************//
+//*********************`*********************//
+//          Created December 5 2020          //
 
-// Fixed size very simple thread safe ring buffer
-template <typename T, size_t capacity>
-class ThreadSafeRingBuffer
-{
-public:
-    // Push an item to the end if there is free space
-    //  Returns true if successful
-    //  Returns false if there is not enough space
-    inline bool push_back(const T& item)
-    {
-        bool result = false;
-        lock.lock();
-        size_t next = (head + 1) % capacity;
-        if (next != tail)
-        {
-            data[head] = item;
-            head = next;
-            result = true;
-        }
-        lock.unlock();
-        return result;
-    }
+// https://en.cppreference.com/w/cpp/thread/condition_variable
+// https://en.cppreference.com/w/cpp/thread/condition_variable/notify_one
 
-    // Get an item if there are any
-    //  Returns true if successful
-    //  Returns false if there are no items
-    inline bool pop_front(T& item)
-    {
-        bool result = false;
-        lock.lock();
-        if (tail != head)
-        {
-            item = data[tail];
-            tail = (tail + 1) % capacity;
-            result = true;
-        }
-        lock.unlock();
-        return result;
-    }
 
-private:
-    T data[capacity];
-    size_t head = 0;
-    size_t tail = 0;
-    std::mutex lock; // this just works better than a spinlock here (on windows)
-};
-// A Dispatched job will receive this as function argument:
-struct JobDispatchArgs
-{
-    uint32_t jobIndex;
-    uint32_t groupIndex;
-};
-class Jobsystem
-{
-public:
-	// Create the internal resources such as worker threads, etc. Call it once when initializing the application.
-    void Initialize();
 
-    // Add a job to execute asynchronously. Any idle thread will execute this job.
-    void Execute(const std::function<void()>& job);
 
-    // Divide a job onto multiple jobs and execute in parallel.
-    //  jobCount    : how many jobs to generate for this task.
-    //  groupSize   : how many jobs to execute per thread. Jobs inside a group execute serially. It might be worth to increase for small jobs
-    //  func        : receives a JobDispatchArgs as parameter
-    void Dispatch(uint32_t jobCount, uint32_t groupSize, const std::function<void(JobDispatchArgs)>& job);
 
-    // Check if any threads are working currently or not
-    bool IsBusy();
+//TODO Categorization of this, separate Render jobs and so on.
+namespace Trickster {
+	//Class for Multithreading
+	class Jobsystem
+	{
+	public:
+		void Initialize();
+		void OnUpdate(float a_DeltaTime);
+		template<class F, class... Args>
+		auto Enqueue(F&& function, Args&&... args) -> std::future<typename std::result_of<F(Args...)>::type>;
+		Jobsystem();
+		~Jobsystem();
+		private:
 
-    // Wait until all threads become idle
-    void Wait();
 
-private:
 
-};
 
+
+		//Joinable threads
+		std::vector<std::thread> m_Threads;
+		std::queue<std::function<void()>> m_Tasks;
+		//Synchronization
+		std::mutex queue_mutex;
+		std::condition_variable condition;
+		bool stop;
+		size_t max_threads;
+	};
+
+
+	// https://github.com/progschj/ThreadPool/blob/master/ThreadPool.h 
+	// add new work item to the pool
+	template<class F, class... Args>
+	auto Jobsystem::Enqueue(F&& function, Args&&... args)
+		-> std::future<typename std::result_of<F(Args...)>::type>
+	{
+		using return_type = typename std::result_of<F(Args...)>::type;
+
+		auto task = std::make_shared< std::packaged_task<return_type()> >(
+			std::bind(std::forward<F>(function), std::forward<Args>(args)...)
+			);
+
+		std::future<return_type> res = task->get_future();
+		{
+			std::unique_lock<std::mutex> lock(queue_mutex);
+
+			// don't allow enqueueing after stopping the pool
+			if (stop)
+				throw std::runtime_error("enqueue on stopped ThreadPool");
+
+			m_Tasks.emplace([task]() { (*task)(); });
+		}
+		condition.notify_one();
+		return res;
+	}
+	inline Jobsystem::Jobsystem()
+	{
+		this->Initialize();
+	}
+	// the destructor joins all threads
+	inline Jobsystem::~Jobsystem()
+	{
+		{
+			std::unique_lock<std::mutex> lock(queue_mutex);
+			stop = true;
+		}
+		condition.notify_all();
+		for (std::thread& t : m_Threads)
+			t.join();
+	}
+}

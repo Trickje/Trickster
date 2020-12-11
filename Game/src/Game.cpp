@@ -27,6 +27,15 @@ Trickster::Game::~Game()
 
 void Trickster::Game::OnStart()
 {
+	Profiler p("OnStart");
+	{
+		//Profiler profiler("UselessFunction");
+		for (int i = 0; i < 50; i++)
+		{
+		m_Jobsystem->Enqueue(&Game::UselessFunction,this,  1000000);
+		//UselessFunction(1000000);
+		}
+	}
 	m_IronMan = new IronMan("planet_Terrestrial1.obj");
 	m_Camera = std::make_shared<Camera>();
 	MeshManager::GetInstance()->Initialize(m_Camera);
@@ -91,4 +100,15 @@ void Game::OnRender()
 bool Game::IsTickBased()
 {
 	return m_TickBased;
+}
+
+void Game::UselessFunction(int iterations)
+{
+	for(int i = 0; i < iterations; i++)
+	{
+		if(i > 0)
+		{
+			std::pow(iterations, 2);
+		}
+	}
 }

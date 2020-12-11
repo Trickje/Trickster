@@ -225,6 +225,7 @@
     <ClCompile Include="src\UI\UIClickable.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Core\RingBuffer.h" />
     <ClInclude Include="src\Core\Jobsystem.h" />
     <ClInclude Include="src\Core\Profiler.h" />
     <ClInclude Include="src\Core\Input.h" />
