@@ -6,7 +6,7 @@ void Trickster::Jobsystem::Initialize()
 {
     stop = false;
     max_threads = std::thread::hardware_concurrency();
-    LOG("Available threads: " + std::to_string(max_threads));
+    LOG("[Multi-Threading] Available threads: " + std::to_string(max_threads));
     if (max_threads == 0)
     {
         m_Threads.push_back(std::thread());
@@ -14,11 +14,13 @@ void Trickster::Jobsystem::Initialize()
     else 
     {
         //Found this code on  https://github.com/progschj/ThreadPool/blob/master/ThreadPool.h
-        for (size_t i = 0; i < max_threads; ++i)
+        for (size_t i = 0; i < max_threads; i++) {
+            m_Working.emplace_back(false);
             m_Threads.emplace_back(
-                [this]
+                [this, i]
                 {
-                    while(!stop)
+            		
+                    for (;;)
                     {
                         std::function<void()> task;
 
@@ -29,14 +31,15 @@ void Trickster::Jobsystem::Initialize()
                             if (this->stop && this->m_Tasks.empty())
                                 return;
                             task = std::move(this->m_Tasks.front());
+                            m_Working[i] = true;
                             this->m_Tasks.pop();
-                            lock.unlock();
                         }
-
                         task();
+                        m_Working[i] = false;
                     }
                 }
                 );
+        }
     }
 	EventManager::GetInstance()->GameLoopEvents.OnUpdate.AddListener(std::bind(&Jobsystem::OnUpdate,this, std::placeholders::_1));
 }
@@ -45,4 +48,20 @@ void Trickster::Jobsystem::Initialize()
 void Trickster::Jobsystem::OnUpdate(float a_DeltaTime)
 {
 
+}
+
+void Jobsystem::AwaitAll()
+{
+    bool Working = true;
+	while(Working)
+	{
+        Working = false;
+		for(auto b: m_Working)
+		{
+			if(b)
+			{
+                Working = true;
+			}
+		}
+	}
 }

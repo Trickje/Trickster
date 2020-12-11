@@ -1,5 +1,4 @@
 #pragma once
-#include <queue>
 
 //*********************.*********************//
 //********************/ \********************//
@@ -9,6 +8,9 @@
 //********************\ /********************//
 //*********************`*********************//
 //          Created December 5 2020          //
+
+//To clarify: I did not make all of this code myself, but parts of it are mine.
+
 
 // https://en.cppreference.com/w/cpp/thread/condition_variable
 // https://en.cppreference.com/w/cpp/thread/condition_variable/notify_one
@@ -25,10 +27,14 @@ namespace Trickster {
 	public:
 		void Initialize();
 		void OnUpdate(float a_DeltaTime);
+		//This function will add a task (a function pointer or lambda) to the task queue for worker threads.
+		//ONLY USE THIS IF YOU KNOW THAT YOUR FUNCTION IS THREAD-SAFE
 		template<class F, class... Args>
 		auto Enqueue(F&& function, Args&&... args) -> std::future<typename std::result_of<F(Args...)>::type>;
 		Jobsystem();
 		~Jobsystem();
+		//This function will pause the main thread until all worker threads are idle
+		void AwaitAll();
 		private:
 
 
@@ -37,6 +43,7 @@ namespace Trickster {
 
 		//Joinable threads
 		std::vector<std::thread> m_Threads;
+		std::vector<bool> m_Working;
 		std::queue<std::function<void()>> m_Tasks;
 		//Synchronization
 		std::mutex queue_mutex;

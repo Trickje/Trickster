@@ -27,14 +27,14 @@ Trickster::Game::~Game()
 
 void Trickster::Game::OnStart()
 {
-	Profiler p("OnStart");
 	{
-		//Profiler profiler("UselessFunction");
+		Profiler profiler("UselessFunction");
 		for (int i = 0; i < 50; i++)
 		{
 		m_Jobsystem->Enqueue(&Game::UselessFunction,this,  1000000);
 		//UselessFunction(1000000);
 		}
+		m_Jobsystem->AwaitAll();
 	}
 	m_IronMan = new IronMan("planet_Terrestrial1.obj");
 	m_Camera = std::make_shared<Camera>();

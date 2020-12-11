@@ -16,6 +16,7 @@
 #include <shared_mutex>
 #include <list>
 #include <thread>
+#include <queue>
 #include <ctime>
 #include <future>
 #include <condition_variable>
