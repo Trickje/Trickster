@@ -15,9 +15,7 @@ using namespace Trickster;
 Trickster::Game::Game()
 {
 	m_IronMan = nullptr;
-	box = nullptr;
 	bar = nullptr;
-	box2 = nullptr;
 }
 
 Trickster::Game::~Game()
@@ -27,16 +25,14 @@ Trickster::Game::~Game()
 
 void Trickster::Game::OnStart()
 {
-	
 	m_IronMan = new IronMan("planet_Terrestrial1.obj");
+	m_PauseMenu = new UIClickable("Resources/PauseMenu.png", {0.f,0.f}, m_Window->GetWidth(), m_Window->GetHeight());
+	m_PauseMenu->SetVisible(false);
 	m_Camera = std::make_shared<Camera>();
 	MeshManager::GetInstance()->Initialize(m_Camera);
 	m_Camera->SetPosition({ 0.f, 0.f, 10.f });
 	m_Camera->LookAt(m_IronMan->GetPosition());
 	m_IronMan->Rotate(0.f, 20.f, 0.f);
-	box = new UIClickable("Resources/image.png", { 0.f ,0.f }, 600.f, 100.f);
-	box->SetPosition({ (Application::Get()->GetWindow()->GetWidth() / 2.f) - 100.f, Application::Get()->GetWindow()->GetHeight() / 2.f });
-	box2 = new UIClickable("Resources/image.png", {( Application::Get()->GetWindow()->GetWidth() / 2.f) - 100.f, Application::Get()->GetWindow()->GetHeight() / 2.f  - box->GetHeight()},  100, box->GetHeight());
 	bar = new ProgressBar();
 	EventManager::GetInstance()->InputEvents.OnMouseMoved.AddListener(std::bind(&Camera::MouseMove, m_Camera.get(), std::placeholders::_1,std::placeholders::_2));
 	bar->SetPosition({ 50.f, 30.f });
@@ -49,11 +45,7 @@ void Trickster::Game::OnStart()
 
 void Trickster::Game::OnUpdate(float a_DeltaTime)
 {
-	bar->SetPosition({ bar->GetPosition().x, bar->GetPosition().y + 5.f * a_DeltaTime});
-	if(box->isClicked())
-	{
-		bar->SetPercentage(bar->GetPercentage() -0.2f);
-	}
+	
 	float speed = 10.f;
 	if(Input::GetKeyDown(Keys::W))
 	{
@@ -80,6 +72,8 @@ void Trickster::Game::OnUpdate(float a_DeltaTime)
 		m_Camera->Move(glm::vec3(0.f, 1.f, 0.f) * speed * a_DeltaTime);
 	}
 	
+	
+	
 	m_IronMan->Rotate(45.f * a_DeltaTime);
 }
 
@@ -87,6 +81,11 @@ void Trickster::Game::OnUpdate(float a_DeltaTime)
 void Game::OnRender()
 {
 	//this should be empty
+}
+
+void Trickster::Game::OnPause(bool isPaused)
+{
+	m_PauseMenu->SetVisible(isPaused);
 }
 
 bool Game::IsTickBased()

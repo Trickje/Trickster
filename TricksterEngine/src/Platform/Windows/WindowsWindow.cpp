@@ -18,14 +18,22 @@ WindowsWindow::WindowsWindow(const WindowProps& props)
 		});
 	
 	glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* a_Window, int a_Width, int a_Height) {
-	//	EventManager::GetInstance()->OnWindowResize.Execute(a_Width, a_Height);
+		EventManager::GetInstance()->WindowEvents.OnWindowResize.Execute(a_Width, a_Height);
+		WindowsWindow& data = *(WindowsWindow*)glfwGetWindowUserPointer(a_Window);
+		Application::Get()->Update();
+		data.Draw();
 		});
 	glfwSetFramebufferSizeCallback(m_Window, [](GLFWwindow* a_Window, int a_Width, int a_Height) {
 		EventManager::GetInstance()->WindowEvents.OnWindowResize.Execute(a_Width, a_Height);
+		WindowsWindow& data = *(WindowsWindow*)glfwGetWindowUserPointer(a_Window);
+		Application::Get()->Update();
+		data.Draw();
 		});
 	glfwSetWindowRefreshCallback(m_Window, [](GLFWwindow* a_Window)
 	{
+			
 			WindowsWindow& data = *(WindowsWindow*)glfwGetWindowUserPointer(a_Window);
+			Application::Get()->Update();
 			data.Draw();
 	});
 	glfwSetKeyCallback(m_Window, [](GLFWwindow* a_Window, int a_Key, int a_Keycode, int a_Action, int a_Modifier) {
@@ -67,10 +75,44 @@ WindowsWindow::WindowsWindow(const WindowProps& props)
 
 	glfwSetWindowIconifyCallback(m_Window, [](GLFWwindow* a_Window, int a_Iconified) {
 		EventManager::GetInstance()->WindowEvents.OnWindowMinimize.Execute(a_Iconified == GLFW_TRUE);
+		WindowsWindow& data = *(WindowsWindow*)glfwGetWindowUserPointer(a_Window);
+		Application::Get()->Update();
+		data.Draw();
 		});
 	glfwSetWindowMaximizeCallback(m_Window, [](GLFWwindow* a_Window, int a_Maximized) {
 	
 		EventManager::GetInstance()->WindowEvents.OnWindowMaximize.Execute(a_Maximized == GLFW_TRUE);
+		WindowsWindow& data = *(WindowsWindow*)glfwGetWindowUserPointer(a_Window);
+		Application::Get()->Update();
+		data.Draw();
+		});
+	glfwSetWindowPosCallback(m_Window, [](GLFWwindow* a_Window, int xpos, int ypos)
+		{
+			WindowsWindow& data = *(WindowsWindow*)glfwGetWindowUserPointer(a_Window);
+			Application::Get()->Update();
+			data.Draw();
+		});
+	glfwSetWindowFocusCallback(m_Window, [](GLFWwindow* a_Window, int focused)
+		{
+			WindowsWindow& data = *(WindowsWindow*)glfwGetWindowUserPointer(a_Window);
+			Application::Get()->Update();
+			data.Draw();
+		});
+	glfwSetWindowContentScaleCallback(m_Window, [](GLFWwindow* a_Window, float xscale, float yscale)
+		{
+			WindowsWindow& data = *(WindowsWindow*)glfwGetWindowUserPointer(a_Window);
+			Application::Get()->Update();
+			data.Draw();
+		});
+	glfwSetCursorEnterCallback(m_Window, [](GLFWwindow* a_Window, int entered)
+		{
+			if(entered)
+			{
+				Input::SetCursorInWindow(true);
+			}else
+			{
+				Input::SetCursorInWindow(false); 
+			}
 		});
 }
 
@@ -357,6 +399,17 @@ void Trickster::WindowsWindow::Resize(int a_Width, int a_Height)
 void* Trickster::WindowsWindow::GetRaw()
 {
 	return m_Window;
+}
+void Trickster::WindowsWindow::CaptureMouse(bool yoinkMouse)
+{
+	if (yoinkMouse) {
+		glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	}
+	else
+	{
+		glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+		glfwSetCursorPos(m_Window, static_cast<double>(m_Width) / 2.0, static_cast<double>(m_Height) / 2.0);
+	}
 }
 void WindowsWindow::Init(const WindowProps& props)
 {

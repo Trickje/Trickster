@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "Application.h"
 
+
+#include "Input.h"
 #include "Window.h"
 #include "ShaderManager.h"
 using namespace Trickster;
@@ -12,19 +14,23 @@ Application::Application()
 	m_Timer.Start();
 	m_Engine = std::make_shared<Engine>();
 	m_Window = std::unique_ptr<Window>(Window::Create());
-	m_Jobsystem = std::make_unique<Jobsystem>();
+	m_JobSystem = std::make_shared<JobSystem>();
 	EventManager::GetInstance()->GameLoopEvents.OnStart.AddListener(std::bind(&Application::OnStart, this));
 	EventManager::GetInstance()->GameLoopEvents.OnRender.AddListener(std::bind(&Application::OnRender, this));
 	EventManager::GetInstance()->GameLoopEvents.OnUpdate.AddListener(std::bind(&Window::OnUpdate, m_Window.get()));
 	EventManager::GetInstance()->GameLoopEvents.OnUpdate.AddListener(std::bind(&Application::OnUpdate, this, std::placeholders::_1));
 	EventManager::GetInstance()->GameLoopEvents.OnStart.AddListener(std::bind(&ShaderManager::Initialize, ShaderManager::GetInstance()));
 	m_Application = this;
+	m_Paused = false;
+	m_Window->CaptureMouse(true);
 }
 
 
 Application::~Application()
 {
 //m_Engine implicitly deleted
+//	delete m_JobSystem.get();
+//	m_JobSystem.reset();
 }
 
 Application* Application::Get()
@@ -53,7 +59,7 @@ EventManager::GetInstance()->GameLoopEvents.OnStart.Execute();
 	}
 	m_Timer.Reset();
 	CurrentTickTime = 0.f;
-	
+
 }
 
 void Application::Draw()
@@ -63,18 +69,41 @@ void Application::Draw()
 
 bool Trickster::Application::Update()
 {
-	float DeltaTime = m_Timer.Reset();
-	//DELTA TIME calculations
-	EventManager::GetInstance()->GameLoopEvents.OnUpdate.Execute(DeltaTime);
-	CurrentTickTime += DeltaTime;
-	while(CurrentTickTime >= TickTime)
+	if(m_Paused)
 	{
-		CurrentTickTime -= TickTime;
-		EventManager::GetInstance()->GameLoopEvents.PreTick.Execute();
-		EventManager::GetInstance()->GameLoopEvents.Tick.Execute();
-		EventManager::GetInstance()->GameLoopEvents.TickOnce.ExecuteAndClear();
-		EventManager::GetInstance()->GameLoopEvents.PostTick.Execute();
+		m_Timer.Pause();
+		if (Input::GetClick(Mouse::Left))
+		{
+			//UNPAUSE
+			m_Paused = false;
+			m_Window->CaptureMouse(true);
+			OnPause(false);
+		}
+	}else
+	{
+		if (Input::GetKeyDown(Keys::ESC))
+		{
+			//PAUSE
+			m_Paused = true;
+			m_Window->CaptureMouse(false);
+			OnPause(true);
+			
+		}
+		m_Timer.Pause(false);
+		float DeltaTime = m_Timer.Reset();
+		//DELTA TIME calculations
+		EventManager::GetInstance()->GameLoopEvents.OnUpdate.Execute(DeltaTime);
+		CurrentTickTime += DeltaTime;
+		while (CurrentTickTime >= TickTime)
+		{
+			CurrentTickTime -= TickTime;
+			EventManager::GetInstance()->GameLoopEvents.PreTick.Execute();
+			EventManager::GetInstance()->GameLoopEvents.Tick.Execute();
+			EventManager::GetInstance()->GameLoopEvents.TickOnce.ExecuteAndClear();
+			EventManager::GetInstance()->GameLoopEvents.PostTick.Execute();
+		}
 	}
+	
 	return !m_Window->ShouldClose();
 }
 
@@ -86,6 +115,16 @@ std::shared_ptr<Engine> Application::GetEngine() const
 std::shared_ptr<Window> Application::GetWindow() const
 {
 	return m_Window;
+}
+
+std::shared_ptr<JobSystem> Trickster::Application::GetJobSystem() const
+{
+	return m_JobSystem;
+}
+
+bool Trickster::Application::Paused() const
+{
+	return m_Paused;
 }
 
 

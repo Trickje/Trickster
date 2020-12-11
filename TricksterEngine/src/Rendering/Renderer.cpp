@@ -51,6 +51,7 @@ namespace Trickster {
 
 	void Renderer::DrawTransparent()
 	{
+		/*
 		auto drawables = SpriteManager::GetInstance()->m_Drawable2Ds;
 		for(auto& drawable : drawables)
 		{
@@ -58,14 +59,14 @@ namespace Trickster {
 			{
 				drawable->Draw();
 			}
-		}
+		}*/
 	}
 
 
 #ifdef TRIANGLEBASEDUI
 	void Renderer::DrawUI()
 	{
-
+		if (Application::Get()->Paused()) return;
 		if (SpriteManager::GetInstance()->m_Drawable2Ds.empty())
 		{
 			//LOG_WARNING("Empty UI list");

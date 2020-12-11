@@ -30,7 +30,6 @@ void UIClickable::OnUpdate()
 void UIClickable::OnClick()
 {
 	ClickableBox::OnClick();
-	LOG("Click");
 }
 
 bool Trickster::UIClickable::isClicked()
@@ -42,4 +41,9 @@ void UIClickable::SetPosition(const glm::vec2& a_Position)
 {
 	ClickableBox::SetPosition(a_Position);
 	m_Drawable->SetPosition(a_Position.x, a_Position.y);
+}
+
+void Trickster::UIClickable::SetVisible(bool isVisible)
+{
+	m_Drawable->SetVisible(isVisible);
 }

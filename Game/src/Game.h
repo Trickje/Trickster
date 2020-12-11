@@ -18,14 +18,14 @@ namespace Trickster {
 		void OnUpdate(float a_DeltaTime) override;
 		void OnStart() override;
 		void OnRender() override;
+		void OnPause(bool isPaused) override;
 		bool IsTickBased() override;
 	private:
 		IronMan* m_IronMan;
 		std::shared_ptr<Camera> m_Camera;
-		UIClickable* box;
-		UIClickable* box2;
 		bool m_TickBased = true;
 		ProgressBar* bar;
+		UIClickable* m_PauseMenu;
 	};
 
 	//This Creates the application in the entry point

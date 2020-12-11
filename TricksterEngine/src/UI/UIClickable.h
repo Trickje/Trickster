@@ -14,6 +14,7 @@ namespace Trickster {
 		virtual void OnClick();
 		bool isClicked();
 		virtual void SetPosition(const glm::vec2& a_Position);
+		void SetVisible(bool isVisible);
 	private:
 		std::unique_ptr<Trickster::Drawable2D> m_Drawable;
 	};

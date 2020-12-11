@@ -74,7 +74,8 @@ Scale	|   x    |   y   |       z        |  1.f  |
 		glm::mat4 m_TranslationMatrix;
 		std::shared_ptr<DrawData> m_DrawData;
 		std::vector<Vertex> m_Vertices;	//Mesh
-		
+		bool m_IsLoaded;
+		bool HasBuffers = false;
 		
 	};
 

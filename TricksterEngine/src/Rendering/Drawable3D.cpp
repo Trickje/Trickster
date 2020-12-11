@@ -17,12 +17,14 @@ namespace Trickster {
 	{
 		m_DrawData = std::make_shared<DrawData>();
 		m_ShaderPath = "";
+		m_IsLoaded = false;
 	}
 	
 	Drawable3D::Drawable3D(const std::string& a_ModelFileName, const glm::vec3& a_Position, const glm::vec3& a_Scale,
 		const std::string& a_ShaderFileName)
 		: m_ModelMatrix(glm::mat4(1.0)), m_RotationMatrix(glm::mat4(1.0f)), m_TranslationMatrix(glm::mat4(1.0f))
 	{
+		m_IsLoaded = false;
 		Initialize(a_ModelFileName, a_Position, a_Scale, a_ShaderFileName);
 		
 	}
@@ -47,7 +49,8 @@ namespace Trickster {
 		MeshManager::GetInstance()->m_Drawable3Ds.push_back(std::shared_ptr<Drawable3D>(this));
 		//Fills in data
 		m_TextureBase = "Models/";
-		LoadMesh(a_ModelFileName);
+		//Make this multithreaded
+		Application::Get()->GetJobSystem()->Enqueue(&Drawable3D::LoadMesh, this, a_ModelFileName);
 		SetPosition(a_Position);
 		SetShaderPath(a_ShaderFileName);
 		SetScale(a_Scale);
@@ -62,22 +65,28 @@ namespace Trickster {
 	//This is handled by the engine. Don't manually draw it
 	void Drawable3D::Draw(std::shared_ptr<Camera> a_Camera)
 	{
-		CalculateRotationMatrix();
-		m_ModelMatrix = m_RotationMatrix * m_TranslationMatrix;
-		ShaderManager::GetShader(m_ShaderPath)->Bind();
-		const auto UniformLoc = glGetUniformLocation(ShaderManager::GetShader(m_ShaderPath)->Get(), "MVP");
-		glm::mat4 MVP = a_Camera->GetProjection() * a_Camera->GetView() * m_ModelMatrix;
-		glUniformMatrix4fv(UniformLoc, 1, GL_FALSE, &MVP[0][0]);
+		if(!HasBuffers)
+		{
+			MakeBuffers();
+			HasBuffers = true;
+		}
+		if (m_IsLoaded) {
+			CalculateRotationMatrix();
+			m_ModelMatrix = m_RotationMatrix * m_TranslationMatrix;
+			ShaderManager::GetShader(m_ShaderPath)->Bind();
+			const auto UniformLoc = glGetUniformLocation(ShaderManager::GetShader(m_ShaderPath)->Get(), "MVP");
+			glm::mat4 MVP = a_Camera->GetProjection() * a_Camera->GetView() * m_ModelMatrix;
+			glUniformMatrix4fv(UniformLoc, 1, GL_FALSE, &MVP[0][0]);
 
-		TextureManager::GetTexture(std::string(m_TextureBase + m_TextureFile))->Bind();
-		m_DrawData->vb->Bind();
-		m_DrawData->va->Bind();
-		GLCall(glDrawArrays(GL_TRIANGLES, 0, (GLsizei)m_Vertices.size()));
+			TextureManager::GetTexture(std::string(m_TextureBase + m_TextureFile))->Bind();
+			m_DrawData->vb->Bind();
+			m_DrawData->va->Bind();
+			GLCall(glDrawArrays(GL_TRIANGLES, 0, (GLsizei)m_Vertices.size()));
+		}
 	}
 
 	void Drawable3D::LoadMesh(const std::string& a_FileName)
 	{
-
 		tinyobj::attrib_t attrib;
 		std::vector<tinyobj::shape_t> shapes;
 		std::vector<tinyobj::material_t> materials;
@@ -100,6 +109,7 @@ namespace Trickster {
 		}
 
 		if (!ret) {
+			LOG_ERROR("SOMETHING BAD");
 		//	exit(1);
 		}
 #pragma warning(push)
@@ -158,13 +168,11 @@ namespace Trickster {
 			}
 		}
 #pragma warning(pop)
-		MakeBuffers();
 		for(int i = 0; i < materials.size(); i++)
 		{
 			m_TextureFile = materials[i].diffuse_texname;
-			TextureManager::GetTexture(m_TextureBase + m_TextureFile);
 		}
-
+		m_IsLoaded = true;
 	}
 
 	void Drawable3D::SetPosition(const glm::vec3& a_Position)

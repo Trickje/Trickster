@@ -1,8 +1,8 @@
 #include "pch.h"
-#include "Jobsystem.h"
+#include "JobSystem.h"
 using namespace Trickster;
 
-void Trickster::Jobsystem::Initialize()
+void Trickster::JobSystem::Initialize()
 {
     stop = false;
     max_threads = std::thread::hardware_concurrency();
@@ -41,16 +41,16 @@ void Trickster::Jobsystem::Initialize()
                 );
         }
     }
-	EventManager::GetInstance()->GameLoopEvents.OnUpdate.AddListener(std::bind(&Jobsystem::OnUpdate,this, std::placeholders::_1));
+	EventManager::GetInstance()->GameLoopEvents.OnUpdate.AddListener(std::bind(&JobSystem::OnUpdate,this, std::placeholders::_1));
 }
 
 
-void Trickster::Jobsystem::OnUpdate(float a_DeltaTime)
+void Trickster::JobSystem::OnUpdate(float a_DeltaTime)
 {
 
 }
 
-void Jobsystem::AwaitAll()
+void JobSystem::AwaitAll()
 {
     bool Working = true;
 	while(Working)

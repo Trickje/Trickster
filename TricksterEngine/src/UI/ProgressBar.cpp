@@ -48,6 +48,7 @@ float Trickster::ProgressBar::GetPercentage()
 
 void ProgressBar::Draw()
 {
+	if (Application::Get()->Paused()) return;
 	ShaderManager::GetShader("basicColor")->Bind();
 	const glm::vec2 ScreenPos = ToScreenPos();
 	glUniform2f(m_UniformLoc, ScreenPos.x, ScreenPos.y);

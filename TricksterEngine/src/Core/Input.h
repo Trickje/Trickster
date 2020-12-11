@@ -17,6 +17,7 @@ namespace Trickster {
 		static bool GetClick(int MouseKey);
 		static void SetClick(int MouseKey, bool a_bool);
 		static glm::vec2 GetMousePos();
+		static void SetCursorInWindow(bool isInWindow);
 	private:
 		bool GetKeyDownImpl(int Key);
 		void SetKeyDownImpl(int Key, bool a_bool);
@@ -27,6 +28,7 @@ namespace Trickster {
 		static Input* instance;
 		bool Keys[54];
 		bool MouseKeys[8];
+		bool CursorInWindow;
 	};
 
 }

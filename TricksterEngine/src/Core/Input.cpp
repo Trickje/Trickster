@@ -44,6 +44,7 @@ void Trickster::Input::SetClickImpl(int MouseKey, bool a_bool)
 
 Input::Input() : Keys(), MouseKeys()
 {
+	CursorInWindow = true;
 }
 
 Trickster::Input::~Input()
@@ -60,15 +61,30 @@ void Trickster::Input::SetKeyDown(int Key, bool a_bool)
 }
 bool Trickster::Input::GetClick(int MouseKey)
 {
-	return instance->GetClickImpl(MouseKey);
+	if (instance->CursorInWindow) {
+		return instance->GetClickImpl(MouseKey);
+	}else
+	{
+		return false;
+	}
 }
 void Trickster::Input::SetClick(int MouseKey, bool a_bool)
 {
-	instance->SetClickImpl(MouseKey, a_bool);
+	if (instance->CursorInWindow) {
+		instance->SetClickImpl(MouseKey, a_bool);
+	}else
+	{
+		return;
+	}
 }
 glm::vec2 Trickster::Input::GetMousePos()
 {
 	double x, y;
 	glfwGetCursorPos(static_cast<GLFWwindow*>(Application::Get()->GetWindow()->GetRaw()), &x, &y);
 	return { x,y };
+}
+
+void Trickster::Input::SetCursorInWindow(bool isInWindow)
+{
+	instance->CursorInWindow = isInWindow;
 }

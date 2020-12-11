@@ -13,9 +13,11 @@ namespace Trickster {
 		void Start();
 		//Returns time in Seconds and resets the timer to 0
 		float Reset();
+		void Pause(bool a_Pause = true);
 	private:
 		float m_Time;
 		float m_StartTime;
+		bool m_Paused;
 	};
 
 }

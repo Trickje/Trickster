@@ -22,7 +22,7 @@
 //TODO Categorization of this, separate Render jobs and so on.
 namespace Trickster {
 	//Class for Multithreading
-	class Jobsystem
+	class JobSystem
 	{
 	public:
 		void Initialize();
@@ -31,8 +31,8 @@ namespace Trickster {
 		//ONLY USE THIS IF YOU KNOW THAT YOUR FUNCTION IS THREAD-SAFE
 		template<class F, class... Args>
 		auto Enqueue(F&& function, Args&&... args) -> std::future<typename std::result_of<F(Args...)>::type>;
-		Jobsystem();
-		~Jobsystem();
+		JobSystem();
+		~JobSystem();
 		//This function will pause the main thread until all worker threads are idle
 		void AwaitAll();
 		private:
@@ -56,7 +56,7 @@ namespace Trickster {
 	// https://github.com/progschj/ThreadPool/blob/master/ThreadPool.h 
 	// add new work item to the pool
 	template<class F, class... Args>
-	auto Jobsystem::Enqueue(F&& function, Args&&... args)
+	auto JobSystem::Enqueue(F&& function, Args&&... args)
 		-> std::future<typename std::result_of<F(Args...)>::type>
 	{
 		using return_type = typename std::result_of<F(Args...)>::type;
@@ -78,12 +78,12 @@ namespace Trickster {
 		condition.notify_one();
 		return res;
 	}
-	inline Jobsystem::Jobsystem()
+	inline JobSystem::JobSystem()
 	{
 		this->Initialize();
 	}
 	// the destructor joins all threads
-	inline Jobsystem::~Jobsystem()
+	inline JobSystem::~JobSystem()
 	{
 		{
 			std::unique_lock<std::mutex> lock(queue_mutex);

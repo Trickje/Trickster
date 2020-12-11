@@ -28,6 +28,7 @@ namespace Trickster {
 		void SetClick(int MouseKey, bool value) override;
 		void Resize(int a_Width, int a_Height) override;
 		void* GetRaw() override;
+		void CaptureMouse(bool yoinkMouse) override;
 	private:
 		virtual void Init(const WindowProps& props);
 		virtual void Shutdown();

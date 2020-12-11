@@ -187,17 +187,24 @@ glm::mat4 Trickster::Camera::GetProjection()const
 
 void Trickster::Camera::MouseMove(float a_X, float a_Y)
 {
-	if (firstMouse)
+	if(Application::Get()->Paused())
 	{
 		m_LastMousePos.x = a_X;
 		m_LastMousePos.y = a_Y;
-		firstMouse = false;
 	}
-	float x = a_X - m_LastMousePos.x;
-	float y = m_LastMousePos.y - a_Y;
-	m_LastMousePos.x = a_X;
-	m_LastMousePos.y = a_Y;
-	Rotate(x * m_SensitivityX * 0.1f, y * m_SensitivityY * 0.1f);
+	else {
+		if (firstMouse)
+		{
+			m_LastMousePos.x = a_X;
+			m_LastMousePos.y = a_Y;
+			firstMouse = false;
+		}
+		float x = a_X - m_LastMousePos.x;
+		float y = m_LastMousePos.y - a_Y;
+		m_LastMousePos.x = a_X;
+		m_LastMousePos.y = a_Y;
+		Rotate(x * m_SensitivityX * 0.1f, y * m_SensitivityY * 0.1f);
+	}
 }
 glm::mat4  Trickster::Camera::CalculateProjection()
 {

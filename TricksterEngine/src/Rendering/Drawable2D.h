@@ -25,7 +25,8 @@ namespace Trickster {
 		void SetPosition(const float a_X, const float a_Y);
 		glm::vec2 GetPosition() const;
 		glm::vec2 ToScreenPos();
-
+		void SetVisible(bool isVisible = true);
+		bool IsVisible();
 		glm::vec2 m_Position;
 		glm::vec2 m_Size;
 		//Texture file path
@@ -49,7 +50,7 @@ namespace Trickster {
 			1.f, 0.f,	//Bottom right
 			0.f, 0.f	//Bottom left
 		};
-
+		bool m_Visible;
 	};
 
 

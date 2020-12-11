@@ -35,6 +35,7 @@ namespace Trickster {
 		virtual void SetClick(int MouseKey, bool value) = 0;
 		virtual void Resize(int a_Width, int a_Height) = 0;
 		virtual void* GetRaw() = 0;
+		virtual void CaptureMouse(bool yoinkMouse) = 0;
 		static Window* Create(const WindowProps& props = WindowProps());
 		
 	};

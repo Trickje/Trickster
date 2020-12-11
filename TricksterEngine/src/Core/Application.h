@@ -1,5 +1,5 @@
 #pragma once
-#include "Jobsystem.h"
+#include "JobSystem.h"
 
 
 namespace Trickster {
@@ -15,12 +15,15 @@ namespace Trickster {
 		virtual void OnUpdate(float a_DeltaTime) = 0;
 		virtual void OnStart() = 0;
 		virtual void OnRender() = 0;
+		virtual void OnPause(bool isPaused) = 0;
 		
 		void Draw();
 		bool Update();
 		std::shared_ptr<Engine> GetEngine() const;
 		std::shared_ptr<Window> GetWindow() const;
+		std::shared_ptr<JobSystem> GetJobSystem() const;
 		virtual bool IsTickBased() = 0;
+		bool Paused() const;
 	private:
 		static Application* m_Application;
 		std::shared_ptr<Engine> m_Engine;
@@ -28,9 +31,10 @@ namespace Trickster {
 		std::shared_ptr<Window> m_Window;
 		Timer m_Timer;
 		//The multi-threading object ONLY ONE IS ALLOWED
-		std::unique_ptr<Jobsystem> m_Jobsystem;
+		std::shared_ptr<JobSystem> m_JobSystem;
 		float TickTime = 0.6f;
 		float CurrentTickTime;
+		bool m_Paused;
 	};
 	//To be defined in CLIENT
 	Application* CreateApplication();
