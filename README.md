@@ -23,6 +23,8 @@ This engine is made ONLY for myself. __DO NOT USE THIS SOFTWARE IN *ANY* WAY SHA
 - 3D models
 - Input polling
 - Camera
+- Multithreading
+- Pause option
 
 
 #### To be added:
