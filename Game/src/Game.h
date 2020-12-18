@@ -26,6 +26,7 @@ namespace Trickster {
 		bool m_TickBased = true;
 		ProgressBar* bar;
 		UIClickable* m_PauseMenu;
+		std::vector<IronMan*> m_Planets;
 	};
 
 	//This Creates the application in the entry point

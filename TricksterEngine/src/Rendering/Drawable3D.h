@@ -50,6 +50,7 @@ namespace Trickster {
 
 	private:
 		void CalculateRotationMatrix();
+		void CalculateTranslationMatrix();
 		std::string m_TextureBase;
 		std::string m_TextureFile;
 		std::string m_ShaderPath;
@@ -71,6 +72,7 @@ Scale	|   x    |   y   |       z        |  1.f  |
 		glm::mat4 m_ModelMatrix;
 		glm::mat4 m_RotationMatrix;
 		float m_Yaw, m_Pitch, m_Roll;
+		glm::vec3 m_Position;
 		glm::mat4 m_TranslationMatrix;
 		std::shared_ptr<DrawData> m_DrawData;
 		std::vector<Vertex> m_Vertices;	//Mesh

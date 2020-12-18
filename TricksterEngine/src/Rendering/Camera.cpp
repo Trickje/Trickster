@@ -2,6 +2,20 @@
 #include "Camera.h"
 #include "Window.h"
 
+
+
+
+
+
+
+
+
+//TODO THE CAMERA ROTATES INSTEAD OF THE OBJECTS... WTF??
+//TODO or maybee they are rotating around the center y axis.....
+//so rotate before applying position
+
+
+
 using namespace Trickster;
 Trickster::Camera::Camera()
 {

@@ -72,7 +72,8 @@ namespace Trickster {
 		}
 		if (m_IsLoaded) {
 			CalculateRotationMatrix();
-			m_ModelMatrix = m_RotationMatrix * m_TranslationMatrix;
+			CalculateTranslationMatrix();
+			m_ModelMatrix = m_TranslationMatrix * m_RotationMatrix;// * scalematrix;
 			ShaderManager::GetShader(m_ShaderPath)->Bind();
 			const auto UniformLoc = glGetUniformLocation(ShaderManager::GetShader(m_ShaderPath)->Get(), "MVP");
 			glm::mat4 MVP = a_Camera->GetProjection() * a_Camera->GetView() * m_ModelMatrix;
@@ -177,21 +178,17 @@ namespace Trickster {
 
 	void Drawable3D::SetPosition(const glm::vec3& a_Position)
 	{
-		m_TranslationMatrix[3][0] = a_Position.x;
-		m_TranslationMatrix[3][1] = a_Position.y;
-		m_TranslationMatrix[3][2] = a_Position.z;
+		m_Position = a_Position;
 	}
 
 	glm::vec3 Drawable3D::GetPosition() const
 	{
-		return glm::vec3(m_TranslationMatrix[3][0], m_TranslationMatrix[3][1], m_TranslationMatrix[3][2]);
+		return m_Position;
 	}
 
 	void Drawable3D::Move(const glm::vec3& a_Offset)
 	{
-		m_TranslationMatrix[3][0] += a_Offset.x;
-		m_TranslationMatrix[3][1] += a_Offset.y;
-		m_TranslationMatrix[3][2] += a_Offset.z;
+		m_Position += a_Offset;
 	}
 
 	glm::vec3 Drawable3D::GetForward() const
@@ -256,6 +253,13 @@ namespace Trickster {
 		m_RotationMatrix = glm::rotate(m_RotationMatrix, glm::radians(m_Yaw), glm::vec3(0.f,1.f,0.f));
 		m_RotationMatrix = glm::rotate(m_RotationMatrix, glm::radians(m_Pitch), glm::vec3(1.f, 0.f, 0.f));
 		m_RotationMatrix = glm::rotate(m_RotationMatrix, glm::radians(m_Roll), glm::vec3(0.f, 0.f, 1.f));
+	}
+
+	void Drawable3D::CalculateTranslationMatrix()
+	{
+		m_TranslationMatrix[3][0] = m_Position.x;
+		m_TranslationMatrix[3][1] = m_Position.y;
+		m_TranslationMatrix[3][2] = m_Position.z;
 	}
 
 	void Drawable3D::MakeBuffers()
