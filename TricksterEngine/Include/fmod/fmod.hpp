@@ -13,7 +13,8 @@
 
 #include "fmod_common.h"
 #include "fmod.h"
-
+#pragma warning (push)
+#pragma warning(disable: 26812)
 /*
     FMOD Namespace
 */
@@ -603,5 +604,5 @@ namespace FMOD
         FMOD_RESULT F_API getUserData            (void **userdata);
     };
 }
-
+#pragma warning (pop)
 #endif
