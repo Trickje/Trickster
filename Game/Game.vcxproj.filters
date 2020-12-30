@@ -54,8 +54,15 @@
     <Image Include="Models\Terrestrial1.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="Resources\Icon\icon.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <None Include="Models\planet_Terrestrial1.mtl" />
+    <None Include="Resources\Sounds\Music\MainMenu\FortunateSon.fsb" />
+  </ItemGroup>
+  <ItemGroup>
+    <Object Include="Models\planet_Terrestrial1.obj" />
   </ItemGroup>
 </Project>

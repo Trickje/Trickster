@@ -15,6 +15,7 @@ Application::Application()
 	m_Engine = std::make_shared<Engine>();
 	m_Window = std::unique_ptr<Window>(Window::Create());
 	m_JobSystem = std::make_shared<JobSystem>();
+	m_AudioPlayer = std::make_shared<AudioPlayer>();
 	EventManager::GetInstance()->GameLoopEvents.OnStart.AddListener(std::bind(&Application::OnStart, this));
 	EventManager::GetInstance()->GameLoopEvents.OnRender.AddListener(std::bind(&Application::OnRender, this));
 	EventManager::GetInstance()->GameLoopEvents.OnUpdate.AddListener(std::bind(&Window::OnUpdate, m_Window.get()));
@@ -29,8 +30,7 @@ Application::Application()
 Application::~Application()
 {
 //m_Engine implicitly deleted
-//	delete m_JobSystem.get();
-//	m_JobSystem.reset();
+
 }
 
 Application* Application::Get()
@@ -44,12 +44,17 @@ Application* Application::Get()
 
 void Application::Start()
 {
-if (!m_Engine->Initialize())
-{
-	LOG_ERROR("Failed to initialize the engine!");
-}
-std::srand(static_cast<unsigned int>(time(0)));
-EventManager::GetInstance()->GameLoopEvents.OnStart.Execute();
+	if (!m_Engine->Initialize())
+	{
+		LOG_ERROR("Failed to initialize the engine!");
+	}
+	if(!m_AudioPlayer->Initialize())
+	{
+		LOG_ERROR("Failed to initialize the Audio Player!");
+	}
+	
+	std::srand(static_cast<unsigned int>(time(0)));
+	EventManager::GetInstance()->GameLoopEvents.OnStart.Execute();
 	float time_passed = m_Timer.GetSeconds();
 	if (time_passed < 1.f) {
 		LOG("[Application] Initialization complete!\nTook " + std::to_string(time_passed) + " seconds.");

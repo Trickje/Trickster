@@ -18,30 +18,8 @@ namespace Trickster {
 		va = new VertexArray();
 		layout = new VertexBufferLayout();
 	};
-	Drawable2D::Drawable2D()
-	{
-		m_DrawData = new DrawData2D(
-			&m_Vertices[0], sizeof(m_Vertices));
-		GLCall(m_UniformLoc = glGetUniformLocation(ShaderManager::GetShader("basic")->Get(), "ScreenPos"));
-		m_FilePath = "Resources/image.png";
-		m_DrawData->layout->Push<float>(2);
-		m_DrawData->va->AddBuffer(*m_DrawData->vb, *m_DrawData->layout);
-		m_Size = { TextureManager::GetTexture(m_FilePath)->GetWidth(),  TextureManager::GetTexture(m_FilePath)->GetHeight() };
-		m_Position = { 0.f, 0.f };
-		m_Visible = true;
-		if (TextureManager::GetTexture(m_FilePath)->GetBPP() == 4)
-		{
-			m_Transparent = true;
-			EventManager::GetInstance()->GameLoopEvents.OnRenderTransparent.AddListener(std::bind(&Drawable2D::Draw, this));
-		}
-		else
-		{
-			m_Transparent = false;
-			SpriteManager::GetInstance()->m_Drawable2Ds.push_back(this);
-		}
-	}
-
-	Drawable2D::Drawable2D(const glm::vec2 a_Position, const glm::vec2 a_Scale, const std::string& a_FilePath)
+	
+	Drawable2D::Drawable2D(const std::string& a_FilePath, const glm::vec2 a_Position, const glm::vec2 a_Scale)
 		: m_Position(a_Position), m_Scale(a_Scale), m_FilePath(a_FilePath)
 	{
 		m_DrawData = new DrawData2D(

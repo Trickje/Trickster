@@ -125,13 +125,14 @@
       <AdditionalLibraryDirectories>$(SolutionDir)/TricksterEngine/Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <Lib>
-      <AdditionalDependencies>glew32.lib</AdditionalDependencies>
+      <AdditionalDependencies>glew32.lib;fmodstudio_vc.lib;fmod_vc.lib;</AdditionalDependencies>
     </Lib>
     <Lib>
       <AdditionalLibraryDirectories>C:\Users\rick\source\repos\TricksterEngine\TricksterEngine\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
     <PostBuildEvent>
-      <Command>Xcopy /E /I /Y "$(ProjectDir)Resources" "$(OutDir)Resources"</Command>
+      <Command>Xcopy /E /I /Y "$(ProjectDir)Resources" "$(OutDir)Resources"
+Xcopy /E /I /Y "$(ProjectDir)Lib/DLL" "$(OutDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -185,16 +186,18 @@
       <AdditionalDependencies>opengl32.lib;glew32s.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Lib>
-      <AdditionalDependencies>glew32.lib</AdditionalDependencies>
+      <AdditionalDependencies>glew32.lib;fmodstudio_vc.lib;fmod_vc.lib;</AdditionalDependencies>
     </Lib>
     <Lib>
       <AdditionalLibraryDirectories>C:\Users\rick\source\repos\TricksterEngine\TricksterEngine\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
     <PostBuildEvent>
-      <Command>Xcopy /E /I /Y "$(ProjectDir)Resources" "$(OutDir)Resources"</Command>
+      <Command>Xcopy /E /I /Y "$(ProjectDir)Resources" "$(OutDir)Resources"
+Xcopy /E /I /Y "$(ProjectDir)Lib/DLL" "$(OutDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Core\AudioPlayer.cpp" />
     <ClCompile Include="src\Core\Jobsystem.cpp" />
     <ClCompile Include="src\Core\Profiler.cpp" />
     <ClCompile Include="src\Core\Input.cpp" />
@@ -225,6 +228,7 @@
     <ClCompile Include="src\UI\UIClickable.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Core\AudioPlayer.h" />
     <ClInclude Include="src\Core\RingBuffer.h" />
     <ClInclude Include="src\Core\Jobsystem.h" />
     <ClInclude Include="src\Core\Profiler.h" />
@@ -270,9 +274,19 @@
     </None>
     <None Include="Resources\basic.fragmentshader" />
     <None Include="Resources\basic.vertexshader" />
+    <None Include="Resources\basicColor.fragmentshader" />
+    <None Include="Resources\basicColor.vertexshader" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Resources\image.png">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </Image>
+    <Image Include="Resources\image3.png">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </Image>
+    <Image Include="Resources\PauseMenu.png">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </Image>

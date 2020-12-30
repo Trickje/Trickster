@@ -99,6 +99,9 @@
     <ClCompile Include="src\Core\Jobsystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Core\AudioPlayer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Rendering\Drawable2D.h">
@@ -212,6 +215,9 @@
     <ClInclude Include="src\Core\RingBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Core\AudioPlayer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\basic.vertexshader">
@@ -222,9 +228,17 @@
     </None>
     <None Include="Resources\3D.vertexshader" />
     <None Include="Resources\3D.fragmentshader" />
+    <None Include="Resources\basicColor.fragmentshader" />
+    <None Include="Resources\basicColor.vertexshader" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Resources\image.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\image3.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\PauseMenu.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

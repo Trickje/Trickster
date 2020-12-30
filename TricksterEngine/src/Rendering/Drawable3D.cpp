@@ -48,7 +48,7 @@ namespace Trickster {
 		//Subscribes to be managed by the MeshManager
 		MeshManager::GetInstance()->m_Drawable3Ds.push_back(std::shared_ptr<Drawable3D>(this));
 		//Fills in data
-		m_TextureBase = "Models/";
+		m_TextureBase = Application::Get()->ModelPath;
 		//Make this multithreaded
 		Application::Get()->GetJobSystem()->Enqueue(&Drawable3D::LoadMesh, this, a_ModelFileName);
 		SetPosition(a_Position);
@@ -79,7 +79,7 @@ namespace Trickster {
 			glm::mat4 MVP = a_Camera->GetProjection() * a_Camera->GetView() * m_ModelMatrix;
 			glUniformMatrix4fv(UniformLoc, 1, GL_FALSE, &MVP[0][0]);
 
-			TextureManager::GetTexture(std::string(m_TextureBase + m_TextureFile))->Bind();
+			TextureManager::GetTexture(std::string("../Models/" + m_TextureFile))->Bind();
 			m_DrawData->vb->Bind();
 			m_DrawData->va->Bind();
 			GLCall(glDrawArrays(GL_TRIANGLES, 0, (GLsizei)m_Vertices.size()));
@@ -92,7 +92,7 @@ namespace Trickster {
 		std::vector<tinyobj::shape_t> shapes;
 		std::vector<tinyobj::material_t> materials;
 
-		std::string basedir = "Models/";
+		std::string basedir = Application::Get()->ModelPath;
 		std::string FilePath = basedir + a_FileName;
 
 		

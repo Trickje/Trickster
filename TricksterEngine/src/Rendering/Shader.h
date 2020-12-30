@@ -9,7 +9,7 @@ namespace Trickster {
 	class Shader
 	{
 	public:
-		Shader(const std::string& filePath);
+		Shader(const std::string& a_ShaderName);
 		~Shader();
 		void Bind() const;
 		void Unbind() const;

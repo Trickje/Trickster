@@ -15,8 +15,7 @@ namespace Trickster {
 	class Drawable2D 
 	{
 	public:
-		Drawable2D();
-		Drawable2D(const glm::vec2 a_Position, const glm::vec2 a_Scale, const std::string& a_FilePath);
+		Drawable2D(const std::string& a_FilePath, const glm::vec2 a_Position = { 0.f,0.f }, const glm::vec2 a_Scale = { 1.f, 1.f });
 		virtual ~Drawable2D();
 		virtual void Draw();
 		void SetScale(const float a_Width, const float a_Height);

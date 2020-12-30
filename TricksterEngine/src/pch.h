@@ -37,6 +37,17 @@
 
 #include <stb_image.h>
 #include <TinyObjLoader.h>
+//FMOD includes
+#include <fmod/fmod_studio.h>
+#include <fmod/fmod_studio.hpp>
+#include <fmod/fmod_studio_common.h>
+#include <fmod/fmod.h>
+#include <fmod/fmod_errors.h>
+#include <fmod/fmod_codec.h>
+#include <fmod/fmod_common.h>
+#include <fmod/fmod_dsp.h>
+#include <fmod/fmod_dsp_effects.h>
+#include <fmod/fmod_output.h>
 
 
 //My header files
@@ -47,4 +58,5 @@
 #include <Events/Event.h>
 #include <Core/Engine.h>
 #include <Renderer.h>
+#include <Core/AudioPlayer.h>
 #include <Core/Application.h>

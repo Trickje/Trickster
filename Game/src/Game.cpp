@@ -26,7 +26,7 @@ Trickster::Game::~Game()
 void Trickster::Game::OnStart()
 {
 	m_IronMan = new IronMan("planet_Terrestrial1.obj");
-	m_PauseMenu = new UIClickable("Resources/PauseMenu.png", {0.f,0.f}, m_Window->GetWidth(), m_Window->GetHeight());
+	m_PauseMenu = new UIClickable("PauseMenu.png", {0.f,0.f}, m_Window->GetWidth(), m_Window->GetHeight());
 	m_PauseMenu->SetVisible(false);
 	m_Camera = std::make_shared<Camera>();
 	MeshManager::GetInstance()->Initialize(m_Camera);

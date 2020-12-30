@@ -2,13 +2,16 @@
 #include "Texture.h"
 #include "Window.h"
 namespace Trickster {
-	Texture::Texture(const std::string& path)
-		: m_FilePath(path), m_LocalBuffer(nullptr),
+	Texture::Texture(const std::string& a_FileName)
+		: m_FileName(a_FileName), m_LocalBuffer(nullptr),
 		m_Width(0), m_Height(0), m_BPP(0)
 	{
 		stbi_set_flip_vertically_on_load(1);
-		m_LocalBuffer = stbi_load(path.c_str(), &m_Width, &m_Height, &m_BPP, 0);
-
+		m_LocalBuffer = stbi_load( (Application::Get()->TexturePath + m_FileName).c_str(), &m_Width, &m_Height, &m_BPP, 0);
+		if(m_Width == 0)
+		{
+			LOG_ERROR("[Texture] Failed to load " + m_FileName + "!");
+		}
 		//Generating texture holder
 		GLCall(glGenTextures(1, &m_RendererID));
 		GLCall(glBindTexture(GL_TEXTURE_2D, m_RendererID));

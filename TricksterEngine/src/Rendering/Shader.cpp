@@ -3,13 +3,12 @@
 
 namespace Trickster {
 
-	Shader::Shader(const std::string& filePath)
-		: m_FilePath(filePath), m_RendererID(0)
+	Shader::Shader(const std::string& a_ShaderName)
+		: m_FilePath(a_ShaderName), m_RendererID(0)
 	{
 		//	ShaderProgramSource source = ParseShader(filePath);
 		//	m_RendererID = CreateShader(source.VertexSource, source.FragmentSource);
-		std::string str =  "Resources/";
-		m_RendererID = LoadShaders( std::string(str + filePath + ".vertexshader").c_str(), std::string(str + filePath + ".fragmentshader").c_str());
+		m_RendererID = LoadShaders( std::string(Application::Get()->ShaderPath + a_ShaderName + ".vertexshader").c_str(), std::string(Application::Get()->ShaderPath + a_ShaderName + ".fragmentshader").c_str());
 	}
 
 

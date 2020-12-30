@@ -6,17 +6,17 @@ namespace Trickster {
 
 
 
-	Texture * TextureManager::GetTexture(const std::string texturePath)
+	Texture * TextureManager::GetTexture(const std::string a_TextureName)
 	{
-		auto it = TextureManager::GetInstance()->map.find(texturePath);
+		auto it = TextureManager::GetInstance()->map.find(a_TextureName);
 		if (it != TextureManager::GetInstance()->map.end())
 		{
 			//found
 			return it->second;
 		}
-		TextureManager::GetInstance()->map.insert(std::pair<std::string, Trickster::Texture*>(texturePath, new Texture(texturePath)));
+		TextureManager::GetInstance()->map.insert(std::pair<std::string, Trickster::Texture*>(a_TextureName, new Texture(a_TextureName)));
 
-		return TextureManager::GetInstance()->map[texturePath];
+		return TextureManager::GetInstance()->map[a_TextureName];
 	}
 
 
