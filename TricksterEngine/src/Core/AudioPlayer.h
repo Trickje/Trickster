@@ -5,23 +5,25 @@
 
 
 
-//Hello World
 namespace Trickster {
+	//Audio handling class
+	//Should only be accessed through the Application class!
 	class AudioPlayer
 	{
 	public:
 		AudioPlayer();
 		~AudioPlayer();
 		void Play(std::string a_FileName);
-		bool LoadSound(std::string a_FileName);
-		bool LoadSoundAsync(std::string a_FileName);
+		bool LoadSound(std::string a_FileName, bool a_3D = false, bool a_Looping = false, bool a_Stream = false);
+		bool LoadSoundAsync(std::string a_FileName, bool a_3D = false, bool a_Looping = false, bool a_Stream = false);
 		bool Initialize();
-		bool Destroy();
 		void Update(float a_DeltaTime);
 
 	private:
-		FMOD::Studio::System* m_System;
-		std::map<std::string, FMOD::Studio::Bank*> m_LoadedSounds;
+		FMOD::System* m_System;
+		//String: Sound Name
+		//FMOD::Sound*: Sound handle
+		std::map<std::string, FMOD::Sound*> m_LoadedSounds;
 		//String: Name
 		//Int: ID
 		std::vector<std::pair<std::string, int>> m_SoundsPlaying;

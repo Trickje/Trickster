@@ -29,6 +29,8 @@ void Trickster::Game::OnStart()
 	m_PauseMenu = new UIClickable("PauseMenu.png", {0.f,0.f}, m_Window->GetWidth(), m_Window->GetHeight());
 	m_PauseMenu->SetVisible(false);
 	m_Camera = std::make_shared<Camera>();
+	m_AudioPlayer->LoadSound("Music/MainMenu/FortunateSon.mp3");
+	m_AudioPlayer->Play("Music/MainMenu/FortunateSon.mp3");
 	MeshManager::GetInstance()->Initialize(m_Camera);
 	m_Camera->SetPosition({ 0.f, 0.f, 10.f });
 	m_Camera->LookAt(m_IronMan->GetPosition());

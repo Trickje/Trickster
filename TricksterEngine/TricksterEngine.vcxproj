@@ -125,7 +125,7 @@
       <AdditionalLibraryDirectories>$(SolutionDir)/TricksterEngine/Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <Lib>
-      <AdditionalDependencies>glew32.lib;fmodstudio_vc.lib;fmod_vc.lib;</AdditionalDependencies>
+      <AdditionalDependencies>glew32.lib;fmod_vc.lib;</AdditionalDependencies>
     </Lib>
     <Lib>
       <AdditionalLibraryDirectories>C:\Users\rick\source\repos\TricksterEngine\TricksterEngine\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -186,7 +186,7 @@ Xcopy /E /I /Y "$(ProjectDir)Lib/DLL" "$(OutDir)"</Command>
       <AdditionalDependencies>opengl32.lib;glew32s.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Lib>
-      <AdditionalDependencies>glew32.lib;fmodstudio_vc.lib;fmod_vc.lib;</AdditionalDependencies>
+      <AdditionalDependencies>glew32.lib;fmod_vc.lib;</AdditionalDependencies>
     </Lib>
     <Lib>
       <AdditionalLibraryDirectories>C:\Users\rick\source\repos\TricksterEngine\TricksterEngine\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
