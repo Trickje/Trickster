@@ -27,6 +27,8 @@ namespace Trickster {
 		ProgressBar* bar;
 		UIClickable* m_PauseMenu;
 		std::vector<IronMan*> m_Planets;
+		int m_MainMusic;
+		float volumex = -1.f;
 	};
 
 	//This Creates the application in the entry point

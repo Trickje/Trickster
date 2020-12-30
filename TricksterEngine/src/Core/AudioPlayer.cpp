@@ -4,6 +4,7 @@ using namespace Trickster;
 AudioPlayer::AudioPlayer()
 {
 	SoundDir = "Resources/Sounds/";
+	NextID = 0;
 }
 
 AudioPlayer::~AudioPlayer()
@@ -19,13 +20,13 @@ AudioPlayer::~AudioPlayer()
 	}
 }
 
-void AudioPlayer::Play(std::string a_FileName)
+int AudioPlayer::Play(std::string a_FileName, FMOD::ChannelGroup* a_Group)
 {
 	auto it = m_LoadedSounds.find(a_FileName);
 	if(it != m_LoadedSounds.end())
 	{
 		FMOD::Channel* rawChannelPointer;
-		FMOD_RESULT result = m_System->playSound(it->second, nullptr, false, &rawChannelPointer);
+		FMOD_RESULT result = m_System->playSound(it->second, a_Group, false, &rawChannelPointer);
 		if(result != FMOD_OK)
 		{
 			LOG_ERROR("[Audio Player] Failed to play sound " + a_FileName + "!");
@@ -41,9 +42,47 @@ void AudioPlayer::Play(std::string a_FileName)
 				std::string str = a_FileName.substr(sub + 1);
 				LOG_USELESS("[Audio Player] Playing sound " + str);
 			}
+			
+			m_SoundsPlaying.insert(std::pair<int, SoundInfo*>(NextID, new SoundInfo{ it->second, rawChannelPointer, a_Group }));
+			NextID++;
+			return NextID - 1;
 		}
 	}
+	return -1;
 }
+bool Trickster::AudioPlayer::ChangeVolume(int a_ID, float a_DeltaVolume)
+{
+	auto it = m_SoundsPlaying.find(a_ID);
+	if(it != m_SoundsPlaying.end())
+	{
+		float vol = 0;
+		it->second->Channel->getVolume(&vol);
+		it->second->Channel->setVolume(vol + a_DeltaVolume);
+
+		return true;
+	}
+	return false;
+}
+
+void AudioPlayer::SetVolume(int a_ID, float a_Volume)
+{
+	auto it = m_SoundsPlaying.find(a_ID);
+	if (it != m_SoundsPlaying.end())
+	{
+		it->second->Channel->setVolume(a_Volume);
+	}
+}
+
+void AudioPlayer::GetVolume(int a_ID, float* a_Volume)
+{
+	auto it = m_SoundsPlaying.find(a_ID);
+	if (it != m_SoundsPlaying.end())
+	{
+
+		it->second->Channel->getVolume(a_Volume);
+	}
+}
+
 bool Trickster::AudioPlayer::LoadSound(std::string a_FileName, bool a_3D, bool a_Looping, bool a_Stream)
 {
 	if (m_LoadedSounds.find(a_FileName) == m_LoadedSounds.end())
@@ -119,5 +158,5 @@ bool AudioPlayer::Initialize()
 
 void AudioPlayer::Update(float a_DeltaTime)
 {
-	
+	m_System->update();
 }

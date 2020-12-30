@@ -30,7 +30,8 @@ void Trickster::Game::OnStart()
 	m_PauseMenu->SetVisible(false);
 	m_Camera = std::make_shared<Camera>();
 	m_AudioPlayer->LoadSound("Music/MainMenu/FortunateSon.mp3");
-	m_AudioPlayer->Play("Music/MainMenu/FortunateSon.mp3");
+	m_MainMusic = m_AudioPlayer->Play("Music/MainMenu/FortunateSon.mp3");
+	m_AudioPlayer->SetVolume(m_MainMusic, 0.f);
 	MeshManager::GetInstance()->Initialize(m_Camera);
 	m_Camera->SetPosition({ 0.f, 0.f, 10.f });
 	m_Camera->LookAt(m_IronMan->GetPosition());
@@ -54,8 +55,12 @@ void Trickster::Game::OnStart()
 
 void Trickster::Game::OnUpdate(float a_DeltaTime)
 {
-	
-	float speed = 10.f;
+	float volume = -1.f;
+	m_AudioPlayer->GetVolume(m_MainMusic, &volume);
+	if (volume < 0.5f) {
+		m_AudioPlayer->ChangeVolume(m_MainMusic, 0.01f * a_DeltaTime);
+		LOG_USELESS(volume);
+	}float speed = 10.f;
 	if(Input::GetKeyDown(Keys::W))
 	{
 		m_Camera->Move(1.f * m_Camera->GetForward() * speed * a_DeltaTime);

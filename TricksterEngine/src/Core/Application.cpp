@@ -96,6 +96,7 @@ bool Trickster::Application::Update()
 		}
 		m_Timer.Pause(false);
 		float DeltaTime = m_Timer.Reset();
+		m_AudioPlayer->Update(DeltaTime);
 		//DELTA TIME calculations
 		EventManager::GetInstance()->GameLoopEvents.OnUpdate.Execute(DeltaTime);
 		CurrentTickTime += DeltaTime;
