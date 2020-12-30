@@ -267,30 +267,6 @@ Xcopy /E /I /Y "$(ProjectDir)Lib/DLL" "$(OutDir)"</Command>
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h" />
     <ClInclude Include="src\UI\UIClickable.h" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\3D.fragmentshader" />
-    <None Include="Resources\3D.vertexshader">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
-    </None>
-    <None Include="Resources\basic.fragmentshader" />
-    <None Include="Resources\basic.vertexshader" />
-    <None Include="Resources\basicColor.fragmentshader" />
-    <None Include="Resources\basicColor.vertexshader" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="Resources\image.png">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </Image>
-    <Image Include="Resources\image3.png">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </Image>
-    <Image Include="Resources\PauseMenu.png">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </Image>
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

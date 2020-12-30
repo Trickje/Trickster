@@ -219,27 +219,4 @@
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\basic.vertexshader">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="Resources\basic.fragmentshader">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="Resources\3D.vertexshader" />
-    <None Include="Resources\3D.fragmentshader" />
-    <None Include="Resources\basicColor.fragmentshader" />
-    <None Include="Resources\basicColor.vertexshader" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="Resources\image.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="Resources\image3.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="Resources\PauseMenu.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-  </ItemGroup>
 </Project>
