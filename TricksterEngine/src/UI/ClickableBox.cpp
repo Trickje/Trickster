@@ -1,7 +1,10 @@
 #include "pch.h"
-#include "ClickableBox.h"
+#include "UI/ClickableBox.h"
+
+#include "Core/Application.h"
 #include "Core/Input.h"
-#include "Window.h"
+#include "Events/EventManager.h"
+#include "Rendering/Window.h"
 
 ClickableBox::ClickableBox(float X, float Y, float a_Width, float a_Height)
 {

@@ -1,12 +1,15 @@
 #include "pch.h"
-#include "ProgressBar.h"
-#include "ShaderManager.h"
-#include "Shader.h"
+#include "UI/ProgressBar.h"
+#include "Rendering/ShaderManager.h"
+#include "Rendering/Shader.h"
 
 #include <Rendering/VertexBuffer.h>
+
+#include "Core/Application.h"
+#include "Events/EventManager.h"
 #include "Rendering/VertexArray.h"
 #include "Rendering/VertexBufferLayout.h"
-#include "Window.h"
+#include "Rendering/Window.h"
 
 using namespace Trickster;
 

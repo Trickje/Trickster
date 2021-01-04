@@ -69,27 +69,32 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)/TricksterEngine/Include;$(SolutionDir)/TricksterEngine/src/Rendering;$(SolutionDir)/TricksterEngine/src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)TricksterEngine\Include;$(SolutionDir)TricksterEngine\Headers</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>$(SolutionDir)/TricksterEngine/Lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opengl32.lib;glew32s.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <IgnoreSpecificDefaultLibraries>MSVCRT;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <AdditionalLibraryDirectories>$(OutDir);$(SolutionDir)Lib;$(SolutionDir)TricksterEngine;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>TricksterEngine.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <IgnoreSpecificDefaultLibraries>
+      </IgnoreSpecificDefaultLibraries>
+      <SubSystem>
+      </SubSystem>
     </Link>
     <PostBuildEvent>
-      <Command>Xcopy /E /I /Y "$(ProjectDir)Models" "$(OutDir)Resources/Models"
-Xcopy /E /I /Y "$(ProjectDir)Resources" "$(OutDir)Resources"
-Xcopy /E /I /Y "$(ProjectDir)Lib\DLL" "$(OutDir)"</Command>
+      <Command>
+Xcopy /E /I /Y "$(SolutionDir)Lib\DLL" "$(OutDir)"
+Xcopy /E /I /Y "$(SolutionDir)Resources" "$(OutDir)Resources"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -132,21 +137,31 @@ Xcopy /E /I /Y "$(ProjectDir)Lib\DLL" "$(OutDir)"</Command>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)/TricksterEngine/Include;$(SolutionDir)/TricksterEngine/src/Rendering;$(SolutionDir)/TricksterEngine/src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)TricksterEngine\Include;$(SolutionDir)TricksterEngine\Headers</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(SolutionDir)/TricksterEngine/Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opengl32.lib;glew32s.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <IgnoreSpecificDefaultLibraries>MSVCRT;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <AdditionalLibraryDirectories>$(OutDir);$(SolutionDir)Lib;$(SolutionDir)TricksterEngine;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>TricksterEngine.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <IgnoreSpecificDefaultLibraries>
+      </IgnoreSpecificDefaultLibraries>
+      <SubSystem>NotSet</SubSystem>
     </Link>
     <PostBuildEvent>
-      <Command>Xcopy /E /I /Y "$(ProjectDir)Models" "$(OutDir)Resources/Models"
-Xcopy /E /I /Y "$(ProjectDir)Resources" "$(OutDir)Resources"
-Xcopy /E /I /Y "$(ProjectDir)Lib\DLL" "$(OutDir)"</Command>
+      <Command>
+Xcopy /E /I /Y "$(SolutionDir)Lib\DLL" "$(OutDir)"
+Xcopy /E /I /Y "$(SolutionDir)Resources" "$(OutDir)Resources"
+
+Xcopy /E /I /Y "$(SolutionDir)Lib\DLL" "$(SolutionDir)LatestVersion\Game"
+
+Xcopy /I /Y "$(SolutionDir)LatestVersion\Engine\TricksterEngine.dll" "$(SolutionDir)LatestVersion\Game"
+
+Xcopy /E /I /Y "$(OutDir)$(TargetFileName)" "$(SolutionDir)LatestVersion\Game"
+Xcopy /E /I /Y "$(SolutionDir)Resources" "$(SolutionDir)LatestVersion\Game\Resources"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

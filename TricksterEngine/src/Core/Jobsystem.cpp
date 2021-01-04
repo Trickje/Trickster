@@ -1,7 +1,24 @@
 #include "pch.h"
-#include "JobSystem.h"
+
+#include "Events/EventManager.h"
+#include "Core/JobSystem.h"
 using namespace Trickster;
 
+JobSystem::JobSystem()
+{
+    this->Initialize();
+}
+// the destructor joins all threads
+JobSystem::~JobSystem()
+{
+    {
+        std::unique_lock<std::mutex> lock(queue_mutex);
+        stop = true;
+    }
+    condition.notify_all();
+    for (std::thread& t : m_Threads)
+        t.join();
+}
 void Trickster::JobSystem::Initialize()
 {
     stop = false;

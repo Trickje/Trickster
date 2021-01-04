@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "VertexBuffer.h"
+#include "Rendering/VertexBuffer.h"
 
 namespace Trickster {
 	VertexBuffer::VertexBuffer(const void* data, unsigned int size)

@@ -1,2 +1,2 @@
 #pragma once
-#include <../../TricksterEngine/src/pch.h>
+#include <pch.h>

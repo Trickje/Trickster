@@ -1,19 +1,9 @@
 #include "pch.h"
-#include "Camera.h"
-#include "Window.h"
+#include "Rendering/Camera.h"
+#include "Rendering/Window.h"
 
-
-
-
-
-
-
-
-
-//TODO THE CAMERA ROTATES INSTEAD OF THE OBJECTS... WTF??
-//TODO or maybee they are rotating around the center y axis.....
-//so rotate before applying position
-
+#include "Core/Application.h"
+#include "Events/EventManager.h"
 
 
 using namespace Trickster;

@@ -1,9 +1,8 @@
 #include "pch.h"
 #include "Game.h"
-#include <Core/EntryPoint.h>
 
 
-
+#include "Rendering/Window.h"
 #include "UI/ClickableBox.h"
 #include "Events/EventManager.h"
 #include "Core/Input.h"
@@ -11,6 +10,7 @@
 #include "Rendering/MeshManager.h"
 #include "UI/UIClickable.h"
 #include "UI/ProgressBar.h"
+#include "Core/EntryPoint.h"
 using namespace Trickster;
 Trickster::Game::Game()
 {
@@ -26,7 +26,7 @@ Trickster::Game::~Game()
 void Trickster::Game::OnStart()
 {
 	m_IronMan = new IronMan("planet_Terrestrial1.obj");
-	m_PauseMenu = new UIClickable("PauseMenu.png", {0.f,0.f}, m_Window->GetWidth(), m_Window->GetHeight());
+	m_PauseMenu = new UIClickable("PauseMenu.png", {0.f,0.f}, static_cast<float>(m_Window->GetWidth()), static_cast<float>(m_Window->GetHeight()));
 	m_PauseMenu->SetVisible(false);
 	m_Camera = std::make_shared<Camera>();
 	m_AudioPlayer->LoadSound("Music/MainMenu/FortunateSon.mp3");

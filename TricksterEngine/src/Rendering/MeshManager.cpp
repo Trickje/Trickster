@@ -1,6 +1,6 @@
 #include "pch.h"
-#include "MeshManager.h"
-#include "Drawable3D.h"
+#include "Rendering/MeshManager.h"
+#include "Rendering/Drawable3D.h"
 #include "Rendering/Camera.h"
 namespace Trickster {
 	MeshManager* MeshManager::instance = nullptr;

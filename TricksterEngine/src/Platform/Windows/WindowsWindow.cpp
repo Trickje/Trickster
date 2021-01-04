@@ -1,7 +1,10 @@
 #include "pch.h"
-#include "WindowsWindow.h"
-#include "Core/Input.h"
+#include "Platform/Windows/WindowsWindow.h"
 
+#include "Core/Application.h"
+#include "Core/Input.h"
+#include "Events/EventManager.h"
+#include "stb_image.h"
 
 using namespace Trickster;
 static bool s_GLFWInitialized = false;

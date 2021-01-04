@@ -1,6 +1,7 @@
 #include "pch.h"
-#include "Input.h"
-#include "Window.h"
+#include "Core/Input.h"
+#include "Rendering/Window.h"
+#include "Core/Application.h"
 
 using namespace Trickster;
 Input* Input::instance = new Input();

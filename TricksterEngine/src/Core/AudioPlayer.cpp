@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "AudioPlayer.h"
+#include "Core/AudioPlayer.h"
 using namespace Trickster;
 AudioPlayer::AudioPlayer()
 {

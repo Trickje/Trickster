@@ -50,7 +50,7 @@ END
 // ICON
 //
 
-MYICON1                ICON                     "Resources\\Icon\\icon.ico"
+MYICON1                ICON                     "..\\Resources\\Icon\\icon.ico"
 
 #endif    // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////

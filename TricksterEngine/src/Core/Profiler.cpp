@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "Profiler.h"
+#include "Core/Profiler.h"
 using namespace Trickster;
 
 Profiler::Profiler(std::string a_Name) : m_Timer(), m_Name(a_Name)

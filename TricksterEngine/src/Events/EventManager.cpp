@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "Events/EventManager.h"
 namespace Trickster {
 	EventManager* EventManager::instance = nullptr;
 	EventManager * EventManager::GetInstance()

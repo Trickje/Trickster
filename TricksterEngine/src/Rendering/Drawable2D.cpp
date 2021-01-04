@@ -1,15 +1,18 @@
 #include "pch.h"
 
-#include "Drawable2D.h"
-#include "Shader.h"
-#include "ShaderManager.h"
-#include "TextureManager.h"
-#include "SpriteManager.h"
-#include "Texture.h"
-#include "Window.h"
-#include "VertexBuffer.h"
-#include "VertexBufferLayout.h"
-#include "VertexArray.h"
+#include "Rendering/Drawable2D.h"
+
+#include "Core/Application.h"
+#include "Events/EventManager.h"
+#include "Rendering/Shader.h"
+#include "Rendering/ShaderManager.h"
+#include "Rendering/TextureManager.h"
+#include "Rendering/SpriteManager.h"
+#include "Rendering/Texture.h"
+#include "Rendering/Window.h"
+#include "Rendering/VertexBuffer.h"
+#include "Rendering/VertexBufferLayout.h"
+#include "Rendering/VertexArray.h"
 
 namespace Trickster {
 	DrawData2D::DrawData2D(void* data, int size)

@@ -1,15 +1,17 @@
 #include "pch.h"
-#include "Drawable3D.h"
-#include "Camera.h"
-#include "MeshManager.h"
-#include "ShaderManager.h"
-#include "Shader.h"
-#include "Texture.h"
-#include "TextureManager.h"
-#include "VertexArray.h"
-#include "VertexBuffer.h"
-#include "VertexBufferLayout.h"
-
+#define TINYOBJLOADER_IMPLEMENTATION
+#include "Rendering/Drawable3D.h"
+#include "Rendering/Camera.h"
+#include "Core/Application.h"
+#include "Rendering/MeshManager.h"
+#include "Rendering/ShaderManager.h"
+#include "Rendering/Shader.h"
+#include "Rendering/Texture.h"
+#include "Rendering/TextureManager.h"
+#include "Rendering/VertexArray.h"
+#include "Rendering/VertexBuffer.h"
+#include "Rendering/VertexBufferLayout.h"
+#include "TinyObjLoader.h"
 namespace Trickster {
 	//Don't use this constructor!!
 	Drawable3D::Drawable3D()

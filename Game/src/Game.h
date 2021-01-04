@@ -1,6 +1,5 @@
 #pragma once
 
-//#include "EntryPoint.h"
 #include "Core/Logger.h"
 #include "Core/Application.h"
 #include "UI/ClickableBox.h"
@@ -8,7 +7,7 @@
 #include "IronMan.h"
 #include "Rendering/Camera.h"
 #include "UI/UIClickable.h"
-
+#include "Core/AudioPlayer.h"
 namespace Trickster {
 	class Game : public Trickster::Application {
 	public:

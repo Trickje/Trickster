@@ -1,6 +1,9 @@
 #include "pch.h"
-#include "Texture.h"
-#include "Window.h"
+#define STB_IMAGE_IMPLEMENTATION
+#include "Rendering/Texture.h"
+#include "Core/Application.h"
+#include "Rendering/Window.h"
+#include "stb_image.h"
 namespace Trickster {
 	Texture::Texture(const std::string& a_FileName)
 		: m_FileName(a_FileName), m_LocalBuffer(nullptr),

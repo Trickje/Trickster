@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "IndexBuffer.h"
+#include "Rendering/IndexBuffer.h"
 
 
 namespace Trickster {

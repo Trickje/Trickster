@@ -1,7 +1,7 @@
 #include "pch.h"
-#include "VertexArray.h"
-#include "VertexBuffer.h"
-#include "VertexBufferLayout.h"
+#include "Rendering/VertexArray.h"
+#include "Rendering/VertexBuffer.h"
+#include "Rendering/VertexBufferLayout.h"
 
 namespace Trickster {
 	VertexArray::VertexArray()

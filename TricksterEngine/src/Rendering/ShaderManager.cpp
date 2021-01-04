@@ -1,6 +1,6 @@
 #include "pch.h"
-#include "ShaderManager.h"
-#include "Shader.h"
+#include "Rendering/ShaderManager.h"
+#include "Rendering/Shader.h"
 
 
 namespace Trickster {

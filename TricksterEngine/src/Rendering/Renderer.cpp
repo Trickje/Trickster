@@ -1,12 +1,17 @@
 #include "pch.h"
-#include "Renderer.h"
+#include "Rendering/Renderer.h"
 
-#include "Texture.h"
-#include "TextureManager.h"
-#include "Drawable2D.h"
-#include "MeshManager.h"
-#include "SpriteManager.h"
-#include "Window.h"
+
+#include "Core/Application.h"
+#include "Rendering/Texture.h"
+#include "Rendering/TextureManager.h"
+#include "Rendering/Drawable2D.h"
+#include "Rendering/MeshManager.h"
+#include "Rendering/SpriteManager.h"
+#include "Rendering/Window.h"
+#include "Rendering/Drawable3D.h"
+#include "Events/EventManager.h"
+
 namespace Trickster {
 	//#define QUADBASEDUI
 #define TRIANGLEBASEDUI

@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "VertexBufferLayout.h"
+#include "Rendering/VertexBufferLayout.h"
 namespace Trickster {
 
 

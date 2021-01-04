@@ -1,10 +1,16 @@
 #include "pch.h"
-#include "Application.h"
+#include "Core/Application.h"
 
 
-#include "Input.h"
-#include "Window.h"
-#include "ShaderManager.h"
+
+#include "Core/AudioPlayer.h"
+#include "Core/Engine.h"
+#include "Events/EventManager.h"
+#include "Core/Input.h"
+#include "Rendering/Window.h"
+#include "Rendering/ShaderManager.h"
+
+
 using namespace Trickster;
 
 Application* Application::m_Application = nullptr;

@@ -40,13 +40,13 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -112,27 +112,33 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;ASIO_NO_WIN32_LEAN_AND_MEAN;_CONSOLE;TRICKSTER_EXPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)/TricksterEngine/Include;$(SolutionDir)/TricksterEngine/src/Rendering;$(SolutionDir)/TricksterEngine/src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)/TricksterEngine/Include;$(ProjectDir)Headers</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>opengl32.lib;glew32s.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)/TricksterEngine/Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glew32.lib;glfw3.lib;fmod_vc.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <IgnoreSpecificDefaultLibraries>
+      </IgnoreSpecificDefaultLibraries>
+      <EntryPointSymbol>
+      </EntryPointSymbol>
     </Link>
     <Lib>
-      <AdditionalDependencies>glew32.lib;fmod_vc.lib;</AdditionalDependencies>
+      <AdditionalDependencies>
+      </AdditionalDependencies>
     </Lib>
     <Lib>
       <AdditionalLibraryDirectories>C:\Users\rick\source\repos\TricksterEngine\TricksterEngine\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
     <PostBuildEvent>
-      <Command>Xcopy /E /I /Y "$(ProjectDir)Resources" "$(OutDir)Resources"
-Xcopy /E /I /Y "$(ProjectDir)Lib/DLL" "$(OutDir)"</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -165,25 +171,29 @@ Xcopy /E /I /Y "$(ProjectDir)Lib/DLL" "$(OutDir)"</Command>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>TRICKSTER_EXPORT;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)/TricksterEngine/Include;$(SolutionDir)/TricksterEngine/src/Rendering;$(SolutionDir)/TricksterEngine/src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)/TricksterEngine/Include;$(ProjectDir)Headers</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4244</DisableSpecificWarnings>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>NotSet</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)/TricksterEngine/Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opengl32.lib;glew32s.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)Lib;$(ProjectDir)Headers;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glew32.lib;glfw3.lib;fmod_vc.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <EntryPointSymbol>
+      </EntryPointSymbol>
+      <IgnoreSpecificDefaultLibraries>
+      </IgnoreSpecificDefaultLibraries>
     </Link>
     <Lib>
       <AdditionalDependencies>glew32.lib;fmod_vc.lib;</AdditionalDependencies>
@@ -192,11 +202,13 @@ Xcopy /E /I /Y "$(ProjectDir)Lib/DLL" "$(OutDir)"</Command>
       <AdditionalLibraryDirectories>C:\Users\rick\source\repos\TricksterEngine\TricksterEngine\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
     <PostBuildEvent>
-      <Command>Xcopy /E /I /Y "$(ProjectDir)Resources" "$(OutDir)Resources"
-Xcopy /E /I /Y "$(ProjectDir)Lib/DLL" "$(OutDir)"</Command>
+      <Command>Xcopy /I /Y "$(OutDir)TricksterEngine.dll" "$(SolutionDir)LatestVersion\Engine"
+Xcopy /I /Y "$(OutDir)TricksterEngine.lib" "$(SolutionDir)LatestVersion\Engine"
+Xcopy /E /I /Y "$(ProjectDir)Headers" "$(SolutionDir)LatestVersion\Engine\Headers"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Core\Network.cpp" />
     <ClCompile Include="src\Core\AudioPlayer.cpp" />
     <ClCompile Include="src\Core\Jobsystem.cpp" />
     <ClCompile Include="src\Core\Profiler.cpp" />
@@ -210,6 +222,7 @@ Xcopy /E /I /Y "$(ProjectDir)Lib/DLL" "$(OutDir)"</Command>
     <ClCompile Include="src\Core\Application.cpp" />
     <ClCompile Include="src\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\Rendering\Drawable2D.cpp" />
     <ClCompile Include="src\Core\Engine.cpp" />
@@ -228,6 +241,44 @@ Xcopy /E /I /Y "$(ProjectDir)Lib/DLL" "$(OutDir)"</Command>
     <ClCompile Include="src\UI\UIClickable.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Headers\Core\Application.h" />
+    <ClInclude Include="Headers\Core\AudioPlayer.h" />
+    <ClInclude Include="Headers\Core\Engine.h" />
+    <ClInclude Include="Headers\Core\EntryPoint.h" />
+    <ClInclude Include="Headers\Core\Input.h" />
+    <ClInclude Include="Headers\Core\Jobsystem.h" />
+    <ClInclude Include="Headers\Core\Logger.h" />
+    <ClInclude Include="Headers\Core\Network.h" />
+    <ClInclude Include="Headers\Core\Profiler.h" />
+    <ClInclude Include="Headers\Core\RingBuffer.h" />
+    <ClInclude Include="Headers\Core\Timer.h" />
+    <ClInclude Include="Headers\Events\Event.h" />
+    <ClInclude Include="Headers\Events\EventManager.h" />
+    <ClInclude Include="Headers\Events\GameLoopEvents.h" />
+    <ClInclude Include="Headers\Events\InputEvents.h" />
+    <ClInclude Include="Headers\Events\JobEvents.h" />
+    <ClInclude Include="Headers\Events\WindowEvents.h" />
+    <ClInclude Include="Headers\pch.h" />
+    <ClInclude Include="Headers\Platform\Windows\WindowsWindow.h" />
+    <ClInclude Include="Headers\Rendering\Camera.h" />
+    <ClInclude Include="Headers\Rendering\Drawable2D.h" />
+    <ClInclude Include="Headers\Rendering\Drawable3D.h" />
+    <ClInclude Include="Headers\Rendering\IndexBuffer.h" />
+    <ClInclude Include="Headers\Rendering\MeshManager.h" />
+    <ClInclude Include="Headers\Rendering\Renderer.h" />
+    <ClInclude Include="Headers\Rendering\Shader.h" />
+    <ClInclude Include="Headers\Rendering\ShaderManager.h" />
+    <ClInclude Include="Headers\Rendering\SpriteManager.h" />
+    <ClInclude Include="Headers\Rendering\Texture.h" />
+    <ClInclude Include="Headers\Rendering\TextureManager.h" />
+    <ClInclude Include="Headers\Rendering\VertexArray.h" />
+    <ClInclude Include="Headers\Rendering\VertexBuffer.h" />
+    <ClInclude Include="Headers\Rendering\VertexBufferLayout.h" />
+    <ClInclude Include="Headers\Rendering\Window.h" />
+    <ClInclude Include="Headers\UI\ClickableBox.h" />
+    <ClInclude Include="Headers\UI\ProgressBar.h" />
+    <ClInclude Include="Headers\UI\UIClickable.h" />
+    <ClInclude Include="src\Core\Network.h" />
     <ClInclude Include="src\Core\AudioPlayer.h" />
     <ClInclude Include="src\Core\RingBuffer.h" />
     <ClInclude Include="src\Core\Jobsystem.h" />
@@ -255,10 +306,10 @@ Xcopy /E /I /Y "$(ProjectDir)Lib/DLL" "$(OutDir)"</Command>
     <ClInclude Include="src\Rendering\Shader.h" />
     <ClInclude Include="src\Rendering\ShaderManager.h" />
     <ClInclude Include="src\Rendering\SpriteManager.h" />
-    <ClInclude Include="src\Rendering\stb_image.h" />
+    <ClInclude Include="Include\stb_image.h" />
     <ClInclude Include="src\Rendering\Texture.h" />
     <ClInclude Include="src\Rendering\TextureManager.h" />
-    <ClInclude Include="src\Rendering\TinyObjLoader.h" />
+    <ClInclude Include="Include\TinyObjLoader.h" />
     <ClInclude Include="src\Rendering\VertexArray.h" />
     <ClInclude Include="src\Rendering\VertexBuffer.h" />
     <ClInclude Include="src\Rendering\VertexBufferLayout.h" />
