@@ -202,9 +202,9 @@
       <AdditionalLibraryDirectories>C:\Users\rick\source\repos\TricksterEngine\TricksterEngine\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
     <PostBuildEvent>
-      <Command>Xcopy /I /Y "$(OutDir)TricksterEngine.dll" "$(SolutionDir)LatestVersion\Engine"
-Xcopy /I /Y "$(OutDir)TricksterEngine.lib" "$(SolutionDir)LatestVersion\Engine"
-Xcopy /E /I /Y "$(ProjectDir)Headers" "$(SolutionDir)LatestVersion\Engine\Headers"</Command>
+      <Command>Xcopy /I /Y "$(OutDir)TricksterEngine.dll" "$(SolutionDir)LatestVersion\TricksterEngine"
+Xcopy /I /Y "$(OutDir)TricksterEngine.lib" "$(SolutionDir)LatestVersion\TricksterEngine"
+Xcopy /E /I /Y "$(ProjectDir)Headers" "$(SolutionDir)LatestVersion\TricksterEngine\include"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
