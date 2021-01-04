@@ -9,29 +9,29 @@ namespace Trickster {
 		public Window
 	{
 	public:
-		WindowsWindow(const WindowProps& props);
-		virtual ~WindowsWindow();
+		TRICKSTER_API WindowsWindow(const WindowProps& props);
+		TRICKSTER_API virtual ~WindowsWindow();
 
-		void OnUpdate() override;
+		TRICKSTER_API void OnUpdate() override;
 
-		inline unsigned int GetWidth() const override { return m_Width; }
-		inline unsigned int GetHeight() const override { return m_Height; }
-
+		TRICKSTER_API inline unsigned int GetWidth() const override { return m_Width; }
+		TRICKSTER_API inline unsigned int GetHeight() const override { return m_Height; }
+		
 		//Window attributes
-		void EventHandle() override;
-		void SetVSync(bool enabled) override;
-		bool IsVSync() const override;
-		void Draw() override;
-		bool ShouldClose() const override;
-		void SetKeyDown(int Key, bool a_bool);
-		void SetFullscreen(bool a_Fullscreen) override;
-		void SetClick(int MouseKey, bool value) override;
-		void Resize(int a_Width, int a_Height) override;
-		void* GetRaw() override;
-		void CaptureMouse(bool yoinkMouse) override;
+		TRICKSTER_API void EventHandle() override;
+		TRICKSTER_API void SetVSync(bool enabled) override;
+		TRICKSTER_API bool IsVSync() const override;
+		TRICKSTER_API void Draw() override;
+		TRICKSTER_API bool ShouldClose() const override;
+		TRICKSTER_API void SetKeyDown(int Key, bool a_bool);
+		TRICKSTER_API void SetFullscreen(bool a_Fullscreen) override;
+		TRICKSTER_API void SetClick(int MouseKey, bool value) override;
+		TRICKSTER_API void Resize(int a_Width, int a_Height) override;
+		TRICKSTER_API void* GetRaw() override;
+		TRICKSTER_API void CaptureMouse(bool yoinkMouse) override;
 	private:
-		virtual void Init(const WindowProps& props);
-		virtual void Shutdown();
+		TRICKSTER_API virtual void Init(const WindowProps& props);
+		TRICKSTER_API virtual void Shutdown();
 		
 		GLFWwindow* m_Window;
 		

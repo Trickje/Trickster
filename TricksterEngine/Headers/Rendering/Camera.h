@@ -63,8 +63,8 @@ namespace Trickster {
 	private:
 		//Only accessed within this class!
 		//Sets the view
-		void SetView(const glm::mat4& a_View);
-		glm::mat4 CalculateProjection();
+		TRICKSTER_API void SetView(const glm::mat4& a_View);
+		TRICKSTER_API glm::mat4 CalculateProjection();
 
 		glm::mat4 m_View{};
 		glm::mat4 m_Projection{};
@@ -90,7 +90,7 @@ namespace Trickster {
 
 	};
 
-	inline void Camera::SetView(const glm::mat4& a_View)
+	TRICKSTER_API inline void Camera::SetView(const glm::mat4& a_View)
 	{
 		m_View = a_View;
 	}

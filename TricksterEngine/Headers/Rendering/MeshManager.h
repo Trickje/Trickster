@@ -15,7 +15,7 @@ namespace Trickster {
 	private:
 		static MeshManager* instance;
 		std::shared_ptr<Camera> m_Camera;
-		MeshManager();
-		~MeshManager();
+		TRICKSTER_API MeshManager();
+		TRICKSTER_API ~MeshManager();
 	};
 }

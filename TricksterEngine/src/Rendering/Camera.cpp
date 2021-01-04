@@ -4,6 +4,7 @@
 
 #include "Core/Application.h"
 #include "Events/EventManager.h"
+#include "glm/gtc/matrix_transform.hpp"
 
 
 using namespace Trickster;
