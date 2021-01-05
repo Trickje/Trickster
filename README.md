@@ -9,23 +9,19 @@ Which I can decide at any point.
 
 
 #### Feature list:
-- Entry point
+- Entry point handled by engine
 - Window
-- 2D texture handling
+- 2D textures
 - Delta Time
 - Logging system
 - OpenGL wrapper, sort of
-- Managers for stuff
-- Error and warning free
 - Event system
-- Event handling system
 - Model loading
 - 3D models
-- Input polling
+- Input
 - Camera
 - Multithreading
 - Pause option
-- Window Features
 
 
 #### To be added:
