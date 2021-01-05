@@ -15,7 +15,9 @@ namespace Trickster {
 
 	MeshManager::MeshManager()
 	{
+#ifdef DETAILED_CONSOLE
 		LOG("[MeshManager] Created MeshManager");
+#endif
 	}
 
 

@@ -33,6 +33,7 @@ namespace Trickster {
 		virtual bool IsVSync() const = 0;
 		virtual void SetFullscreen(bool a_Fullscreen) = 0;
 		virtual void SetClick(int MouseKey, bool value) = 0;
+		virtual void SetTitle(std::string a_Title) = 0;
 		virtual void Resize(int a_Width, int a_Height) = 0;
 		virtual void* GetRaw() = 0;
 		virtual void CaptureMouse(bool yoinkMouse) = 0;

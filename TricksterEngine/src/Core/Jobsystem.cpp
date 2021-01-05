@@ -23,7 +23,11 @@ void Trickster::JobSystem::Initialize()
 {
     stop = false;
     max_threads = std::thread::hardware_concurrency();
+#ifdef DETAILED_CONSOLE
     LOG("[Multi-Threading] Available threads: " + std::to_string(max_threads));
+#else
+    LOG("Available threads: " + std::to_string(max_threads));
+#endif
     if (max_threads == 0)
     {
         m_Threads.push_back(std::thread());

@@ -142,6 +142,9 @@
 Xcopy /I /Y "$(OutDir)$(TargetName).lib" "$(SolutionDir)LatestVersion\TricksterEngine"
 Xcopy /E /I /Y "$(ProjectDir)Headers" "$(SolutionDir)LatestVersion\TricksterEngine\include"</Command>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>powershell.exe -ExecutionPolicy Bypass -NoProfile -NonInteractive -File update_version.ps1 "./Headers/Core/Version.h"</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -208,6 +211,9 @@ Xcopy /E /I /Y "$(ProjectDir)Headers" "$(SolutionDir)LatestVersion\TricksterEngi
 Xcopy /I /Y "$(OutDir)$(TargetName).lib" "$(SolutionDir)LatestVersion\TricksterEngine"
 Xcopy /E /I /Y "$(ProjectDir)Headers" "$(SolutionDir)LatestVersion\TricksterEngine\include"</Command>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>powershell.exe -ExecutionPolicy Bypass -NoProfile -NonInteractive -File update_version.ps1 "./Headers/Core/Version.h"</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\Network.cpp" />
@@ -254,6 +260,7 @@ Xcopy /E /I /Y "$(ProjectDir)Headers" "$(SolutionDir)LatestVersion\TricksterEngi
     <ClInclude Include="Headers\Core\Profiler.h" />
     <ClInclude Include="Headers\Core\RingBuffer.h" />
     <ClInclude Include="Headers\Core\Timer.h" />
+    <ClInclude Include="Headers\Core\Version.h" />
     <ClInclude Include="Headers\Events\Event.h" />
     <ClInclude Include="Headers\Events\EventManager.h" />
     <ClInclude Include="Headers\Events\GameLoopEvents.h" />
@@ -280,6 +287,7 @@ Xcopy /E /I /Y "$(ProjectDir)Headers" "$(SolutionDir)LatestVersion\TricksterEngi
     <ClInclude Include="Headers\UI\ClickableBox.h" />
     <ClInclude Include="Headers\UI\ProgressBar.h" />
     <ClInclude Include="Headers\UI\UIClickable.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="src\Core\Network.h" />
     <ClInclude Include="src\Core\AudioPlayer.h" />
     <ClInclude Include="src\Core\RingBuffer.h" />
@@ -319,6 +327,12 @@ Xcopy /E /I /Y "$(ProjectDir)Headers" "$(SolutionDir)LatestVersion\TricksterEngi
     <ClInclude Include="src\Rendering\Window.h" />
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h" />
     <ClInclude Include="src\UI\UIClickable.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="TricksterEngine.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="icon1.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

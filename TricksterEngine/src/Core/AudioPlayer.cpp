@@ -39,11 +39,15 @@ int AudioPlayer::PlayInGroup(std::string a_FileName, FMOD::ChannelGroup* a_Group
 			if(sub >= sizeof(a_FileName) - 1)
 			{
 
+#ifdef DETAILED_CONSOLE
 				LOG_USELESS("[Audio Player] Playing sound " + a_FileName);
+#endif
 			}
 			else {
 				std::string str = a_FileName.substr(sub + 1);
+#ifdef DETAILED_CONSOLE
 				LOG_USELESS("[Audio Player] Playing sound " + str);
+#endif
 			}
 			
 			m_SoundsPlaying.insert(std::pair<int, SoundInfo*>(NextID, new SoundInfo{ it->second, rawChannelPointer, a_Group }));
@@ -129,11 +133,15 @@ int AudioPlayer::Play(std::string a_FileName, bool a_3D, bool a_Looping, bool a_
 			if (sub >= sizeof(a_FileName) - 1)
 			{
 
+#ifdef DETAILED_CONSOLE
 				LOG_USELESS("[Audio Player] Playing sound " + a_FileName);
+#endif
 			}
 			else {
 				std::string str = a_FileName.substr(sub + 1);
+#ifdef DETAILED_CONSOLE
 				LOG_USELESS("[Audio Player] Playing sound " + str);
+#endif
 			}
 
 			m_SoundsPlaying.insert(std::pair<int, SoundInfo*>(NextID, new SoundInfo{ it->second, rawChannelPointer, nullptr }));
@@ -169,7 +177,9 @@ bool Trickster::AudioPlayer::LoadSound(std::string a_FileName, bool a_3D, bool a
 		FMOD_RESULT result = m_System->createSound((SoundDir + a_FileName).c_str(), mode, nullptr, &rawSoundPointer);
 		if (result == FMOD_OK) {
 			m_LoadedSounds.insert(std::pair<std::string, FMOD::Sound*>(a_FileName, rawSoundPointer));
+#ifdef DETAILED_CONSOLE
 			LOG_USELESS("[Audio Player] Loaded sound " + a_FileName);
+#endif
 		}else
 		{
 			LOG_ERROR("[Audio Player] Failed to load sound " + SoundDir + a_FileName +"!");
@@ -177,7 +187,9 @@ bool Trickster::AudioPlayer::LoadSound(std::string a_FileName, bool a_3D, bool a
 		}
 	}else
 	{
+#ifdef DETAILED_CONSOLE
 		LOG_USELESS("[Audio Player] Already loaded sound " + a_FileName + "!");
+#endif
 		return false;
 	}
 	return true;
@@ -194,7 +206,9 @@ bool Trickster::AudioPlayer::LoadSoundAsync(std::string a_FileName, bool a_3D, b
 		FMOD_RESULT result = m_System->createSound((SoundDir + a_FileName).c_str(), mode, nullptr, &rawSoundPointer);
 		if (result == FMOD_OK) {
 			m_LoadedSounds.insert(std::pair<std::string, FMOD::Sound*>(a_FileName, rawSoundPointer));
+#ifdef DETAILED_CONSOLE
 			LOG_USELESS("[Audio Player] Loaded sound " + a_FileName);
+#endif
 		}
 		else
 		{
@@ -204,7 +218,9 @@ bool Trickster::AudioPlayer::LoadSoundAsync(std::string a_FileName, bool a_3D, b
 	}
 	else
 	{
+#ifdef DETAILED_CONSOLE
 		LOG_USELESS("[Audio Player] Already loaded sound " + a_FileName + "!");
+#endif
 		return false;
 	}
 	return true;
@@ -225,7 +241,9 @@ bool AudioPlayer::Initialize()
 		printf("FMOD error! (%d) %s\n", result, FMOD_ErrorString(result));
 		return false;
 	}
+#ifdef DETAILED_CONSOLE
 	LOG("[Audio Player] Initialized.");
+#endif
 	return true;
 }
 

@@ -156,12 +156,13 @@ Xcopy /E /I /Y "$(SolutionDir)Resources" "$(OutDir)Resources"</Command>
 Xcopy /E /I /Y "$(SolutionDir)Lib\DLL\$(Configuration)" "$(OutDir)"
 Xcopy /E /I /Y "$(SolutionDir)Resources" "$(OutDir)Resources"
 
-Xcopy /E /I /Y "$(SolutionDir)Lib\DLL\$(Configuration)" "$(SolutionDir)LatestVersion\Game"
+Xcopy /E /I /Y "$(SolutionDir)Lib\DLL\$(Configuration)" "$(SolutionDir)LatestVersion\$(ProjectName)"
 
-Xcopy /I /Y "$(SolutionDir)LatestVersion\TricksterEngine\TricksterEngine.dll" "$(SolutionDir)LatestVersion\Game"
+Xcopy /I /Y "$(SolutionDir)LatestVersion\TricksterEngine\TricksterEngine.dll" "$(SolutionDir)LatestVersion\$(ProjectName)"
 
-Xcopy /E /I /Y "$(OutDir)$(TargetFileName)" "$(SolutionDir)LatestVersion\Game"
-Xcopy /E /I /Y "$(SolutionDir)Resources" "$(SolutionDir)LatestVersion\Game\Resources"</Command>
+Xcopy /E /I /Y "$(OutDir)$(TargetFileName)" "$(SolutionDir)LatestVersion\$(ProjectName)"
+Xcopy /E /I /Y "$(SolutionDir)Resources" "$(SolutionDir)LatestVersion\$(ProjectName)\Resources"
+Xcopy /E /I /Y "$(SolutionDir)Mods" "$(SolutionDir)LatestVersion\$(ProjectName)\Mods"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -187,6 +188,7 @@ Xcopy /E /I /Y "$(SolutionDir)Resources" "$(SolutionDir)LatestVersion\Game\Resou
     <ResourceCompile Include="Game.rc" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="..\Resources\Icon\icon.ico" />
     <Image Include="Models\Terrestrial1.jpg">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </Image>

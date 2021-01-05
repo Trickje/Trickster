@@ -42,7 +42,9 @@ namespace Trickster {
 
 	ShaderManager::ShaderManager()
 	{
+#ifdef DETAILED_CONSOLE
 		LOG("[ShaderManager] Created ShaderManager");
+#endif
 	}
 
 

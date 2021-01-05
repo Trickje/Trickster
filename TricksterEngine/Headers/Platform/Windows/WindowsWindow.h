@@ -26,6 +26,7 @@ namespace Trickster {
 		TRICKSTER_API void SetKeyDown(int Key, bool a_bool);
 		TRICKSTER_API void SetFullscreen(bool a_Fullscreen) override;
 		TRICKSTER_API void SetClick(int MouseKey, bool value) override;
+		TRICKSTER_API void SetTitle(std::string a_Title) override;
 		TRICKSTER_API void Resize(int a_Width, int a_Height) override;
 		TRICKSTER_API void* GetRaw() override;
 		TRICKSTER_API void CaptureMouse(bool yoinkMouse) override;

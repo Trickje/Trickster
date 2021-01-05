@@ -171,7 +171,9 @@ namespace Trickster {
 		int InfoLogLength;
 
 		// Compile Vertex Shader
+#ifdef DETAILED_CONSOLE
 		LOG_USELESS("[Vertex Shader] Compiling shader : " + std::string(vertex_file_path));
+#endif
 		char const* VertexSourcePointer = VertexShaderCode.c_str();
 		glShaderSource(VertexShaderID, 1, &VertexSourcePointer, nullptr);
 		glCompileShader(VertexShaderID);
@@ -187,7 +189,9 @@ namespace Trickster {
 		}
 
 		// Compile Fragment Shader
+#ifdef DETAILED_CONSOLE
 		LOG_USELESS("[Fragment Shader] Compiling shader : " + std::string(fragment_file_path));
+#endif
 		char const* FragmentSourcePointer = FragmentShaderCode.c_str();
 		glShaderSource(FragmentShaderID, 1, &FragmentSourcePointer, nullptr);
 		glCompileShader(FragmentShaderID);

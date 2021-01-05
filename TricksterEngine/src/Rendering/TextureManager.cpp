@@ -34,7 +34,9 @@ namespace Trickster {
 
 	TextureManager::TextureManager()
 	{
+#ifdef DETAILED_CONSOLE
 		LOG("[TextureManager] Created TextureManager");
+#endif
 	}
 
 

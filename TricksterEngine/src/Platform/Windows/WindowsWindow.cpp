@@ -405,11 +405,17 @@ void WindowsWindow::Init(const WindowProps& props)
 	m_Title = props.title;
 	m_Width = props.width;
 	m_Height = props.height;
-
-	LOG(std::string("[Window] Creating window " + props.title + " " + " (" + std::to_string(props.width) + ", " + std::to_string(props.height) + ")."));
+	std::string output;
+#ifdef DETAILED_CONSOLE
+	output += "[Window] ";
+#endif
+	output += "Creating window " + props.title + ": " + std::to_string(props.width) + ", " + std::to_string(props.height) + ".";
+	LOG(output);
 	if(!s_GLFWInitialized)
 	{
+#ifdef DETAILED_CONSOLE
 		LOG("[Window] Initializing GLFW.");
+#endif
 		int success = glfwInit();
 		ASSERT(success);
 		s_GLFWInitialized = true;
@@ -424,10 +430,15 @@ void WindowsWindow::Init(const WindowProps& props)
 	image[0].height = i_Height;
 	image[0].width = i_Width;
 	image[0].pixels = i_LocalBuffer;
+	int xpos, ypos, width, height;
+	glfwGetMonitorWorkarea(glfwGetPrimaryMonitor(), &xpos, &ypos, &width, &height);
+	glfwSetWindowPos(m_Window, width - m_Width, (height / 2 - (m_Height / 2)));
 	glfwSetWindowIcon(m_Window, 1, image);
 	glfwGetWindowPos(m_Window, &m_PosX, &m_PosY);
 
+#ifdef DETAILED_CONSOLE
 	LOG("[Window] Initializing GLEW.");
+#endif
 	glewExperimental = GL_TRUE;
 	glewInit();
 	glfwSetInputMode(m_Window, GLFW_STICKY_KEYS, GL_TRUE);
@@ -448,4 +459,9 @@ void WindowsWindow::Shutdown()
 {
 	LOG("Shutting down.");
 	glfwSetWindowShouldClose(m_Window, GLFW_TRUE);
+}
+
+void WindowsWindow::SetTitle(std::string a_Title)
+{
+	glfwSetWindowTitle(m_Window, a_Title.c_str());
 }

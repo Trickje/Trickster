@@ -11,6 +11,7 @@
 #include "UI/UIClickable.h"
 #include "UI/ProgressBar.h"
 #include "Core/EntryPoint.h"
+#include "Core/Version.h"
 using namespace Trickster;
 Trickster::Game::Game()
 {
@@ -25,6 +26,7 @@ Trickster::Game::~Game()
 
 void Trickster::Game::OnStart()
 {
+	m_Window->SetTitle({ "Trickster Engine v" + TRICKSTER_VERSION_STRING });
 	m_IronMan = new IronMan("planet_Terrestrial1.obj");
 	m_PauseMenu = new UIClickable("PauseMenu.png", {0.f,0.f}, static_cast<float>(m_Window->GetWidth()), static_cast<float>(m_Window->GetHeight()));
 	m_PauseMenu->SetVisible(false);
@@ -55,7 +57,7 @@ void Trickster::Game::OnUpdate(float a_DeltaTime)
 	}else
 	{
 		m_AudioPlayer->Pause(m_MainMusic);
-		LOG("Music paused");
+		//LOG("Music paused");
 	}
 	float speed = 10.f;
 	if(Input::GetKeyDown(Keys::W))

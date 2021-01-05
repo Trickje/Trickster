@@ -11,12 +11,14 @@
 
 #include <curl/curl.h>
 #include <curl/mprintf.h>
+
+#include "Core/Version.h"
 using namespace Trickster;
 
 Application* Application::m_Application = nullptr;
 Application::Application()
 {
-	LOG("[Application] Starting initialization");
+	LOG("Trickster Engine is running on version " + std::to_string(TRICKSTER_VERSION_MAJOR) + "." + std::to_string(TRICKSTER_VERSION_MINOR) + "." + std::to_string(TRICKSTER_VERSION_PATCH) + "." + std::to_string(TRICKSTER_VERSION_BUILD));
 	m_Timer.Start();
 	m_Engine = std::make_shared<Engine>();
 	m_Window = std::unique_ptr<Window>(Window::Create());
@@ -65,10 +67,14 @@ void Application::Start()
 	EventManager::GetInstance()->GameLoopEvents.OnStart.Execute();
 	float time_passed = m_Timer.GetSeconds();
 	if (time_passed < 1.f) {
+#ifdef DETAILED_CONSOLE
 		LOG("[Application] Initialization complete!\nTook " + std::to_string(time_passed) + " seconds.");
+#endif
 	}else
 	{
+#ifdef DETAILED_CONSOLE
 		LOG_WARNING("[Application] Initialization complete!\nTook " + std::to_string(time_passed) + " seconds.");
+#endif
 	}
 	m_Timer.Reset();
 	CurrentTickTime = 0.f;

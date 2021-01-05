@@ -13,7 +13,9 @@ namespace Trickster {
 
 	SpriteManager::SpriteManager()
 	{
+#ifdef DETAILED_CONSOLE
 		LOG("[SpriteManager] Created SpriteManager");
+#endif
 	}
 
 
