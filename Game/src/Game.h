@@ -27,7 +27,8 @@ namespace Trickster {
 		UIClickable* m_PauseMenu;
 		std::vector<IronMan*> m_Planets;
 		int m_MainMusic;
-		float volumex = -1.f;
+		float volumex = 0.f;
+		FMOD::ChannelGroup* m_MainGroup;
 	};
 
 	//This Creates the application in the entry point

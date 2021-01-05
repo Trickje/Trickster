@@ -1,6 +1,6 @@
 #pragma once
 //#include <SDKDDKVer.h>
-
+//https://curl.se/windows/
 //STL
 	#include <iostream>
 	#include <memory>

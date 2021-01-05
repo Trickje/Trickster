@@ -2,7 +2,6 @@
 #include "Core/Application.h"
 
 
-
 #include "Core/AudioPlayer.h"
 #include "Core/Engine.h"
 #include "Events/EventManager.h"
@@ -10,7 +9,8 @@
 #include "Rendering/Window.h"
 #include "Rendering/ShaderManager.h"
 
-
+#include <curl/curl.h>
+#include <curl/mprintf.h>
 using namespace Trickster;
 
 Application* Application::m_Application = nullptr;
@@ -58,7 +58,9 @@ void Application::Start()
 	{
 		LOG_ERROR("Failed to initialize the Audio Player!");
 	}
-	
+	CURL* hnd = curl_easy_init();
+	delete hnd;
+	hnd = NULL;
 	std::srand(static_cast<unsigned int>(time(0)));
 	EventManager::GetInstance()->GameLoopEvents.OnStart.Execute();
 	float time_passed = m_Timer.GetSeconds();

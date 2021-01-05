@@ -85,7 +85,7 @@
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(OutDir);$(SolutionDir)Lib;$(SolutionDir)TricksterEngine;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>TricksterEngine.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>TricksterEngine-d.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
       <SubSystem>
@@ -93,7 +93,7 @@
     </Link>
     <PostBuildEvent>
       <Command>
-Xcopy /E /I /Y "$(SolutionDir)Lib\DLL" "$(OutDir)"
+Xcopy /E /I /Y "$(SolutionDir)Lib\DLL\$(Configuration)" "$(OutDir)"
 Xcopy /E /I /Y "$(SolutionDir)Resources" "$(OutDir)Resources"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -153,10 +153,10 @@ Xcopy /E /I /Y "$(SolutionDir)Resources" "$(OutDir)Resources"</Command>
     </Link>
     <PostBuildEvent>
       <Command>
-Xcopy /E /I /Y "$(SolutionDir)Lib\DLL" "$(OutDir)"
+Xcopy /E /I /Y "$(SolutionDir)Lib\DLL\$(Configuration)" "$(OutDir)"
 Xcopy /E /I /Y "$(SolutionDir)Resources" "$(OutDir)Resources"
 
-Xcopy /E /I /Y "$(SolutionDir)Lib\DLL" "$(SolutionDir)LatestVersion\Game"
+Xcopy /E /I /Y "$(SolutionDir)Lib\DLL\$(Configuration)" "$(SolutionDir)LatestVersion\Game"
 
 Xcopy /I /Y "$(SolutionDir)LatestVersion\Engine\TricksterEngine.dll" "$(SolutionDir)LatestVersion\Game"
 
