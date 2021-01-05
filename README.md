@@ -38,6 +38,7 @@ Single-Header Files
 1. Timer, like SFML
 1. File logger (to debug code with)
 1. Improve profiler to profile function calls and data usage, and seperate it in a single-header
+1. Random name generator
 
 
 
