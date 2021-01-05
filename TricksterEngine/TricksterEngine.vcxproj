@@ -204,8 +204,8 @@ Xcopy /E /I /Y "$(ProjectDir)Headers" "$(SolutionDir)LatestVersion\TricksterEngi
       <AdditionalLibraryDirectories>C:\Users\rick\source\repos\TricksterEngine\TricksterEngine\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
     <PostBuildEvent>
-      <Command>Xcopy /I /Y "$(OutDir)TricksterEngine.dll" "$(SolutionDir)LatestVersion\TricksterEngine"
-Xcopy /I /Y "$(OutDir)TricksterEngine.lib" "$(SolutionDir)LatestVersion\TricksterEngine"
+      <Command>Xcopy /I /Y "$(OutDir)$(TargetName)$(TargetExt)" "$(SolutionDir)LatestVersion\TricksterEngine"
+Xcopy /I /Y "$(OutDir)$(TargetName).lib" "$(SolutionDir)LatestVersion\TricksterEngine"
 Xcopy /E /I /Y "$(ProjectDir)Headers" "$(SolutionDir)LatestVersion\TricksterEngine\include"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>

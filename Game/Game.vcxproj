@@ -158,7 +158,7 @@ Xcopy /E /I /Y "$(SolutionDir)Resources" "$(OutDir)Resources"
 
 Xcopy /E /I /Y "$(SolutionDir)Lib\DLL\$(Configuration)" "$(SolutionDir)LatestVersion\Game"
 
-Xcopy /I /Y "$(SolutionDir)LatestVersion\Engine\TricksterEngine.dll" "$(SolutionDir)LatestVersion\Game"
+Xcopy /I /Y "$(SolutionDir)LatestVersion\TricksterEngine\TricksterEngine.dll" "$(SolutionDir)LatestVersion\Game"
 
 Xcopy /E /I /Y "$(OutDir)$(TargetFileName)" "$(SolutionDir)LatestVersion\Game"
 Xcopy /E /I /Y "$(SolutionDir)Resources" "$(SolutionDir)LatestVersion\Game\Resources"</Command>
