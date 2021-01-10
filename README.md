@@ -39,7 +39,8 @@ Which I can decide at any point.
 
 
 
-### Networking Update               (Version 0.1.0)
+### Networking Update
+#### Version 0.1.0
 1. ~~Sound~~
 1. Packet listening / sending
 1. Database requesting and handling
@@ -48,13 +49,15 @@ Which I can decide at any point.
 1. Create a server project
 1. Logging in / account system per game. But don't make it mandatory, use a way of choosing to enable it
 
-### UI Update                       (Version 0.1.1)
+### UI Update                       
+#### Version 0.1.1
 1. Text rendering (OpenGL)
 1. ImGUI OR my own GUI classes :))
 1. GUI docking
 1. Chat
 
-### Dynamic linking Update          (Version 0.1.2)
+### Dynamic linking Update
+#### Version 0.1.2
 1. Modding support
 1. Scripting support
 1. File saving
@@ -64,7 +67,8 @@ Which I can decide at any point.
 1. Having a header file per category that you can include, like glm does
 1. ~~Have easy switching between building the dll and a static library~~
 
-### Graphical front-end Update      (Version 0.1.3)
+### Graphical front-end Update
+#### Version 0.1.3
 1. Ray maths
 1. Lights
 1. Shaders and having a system to choose the shader based on variables, no burden with the game programmer
@@ -73,7 +77,8 @@ Which I can decide at any point.
 1. Render queue
 1. Different camera's active at the same time (minimap)
 
-### Graphical back-end Update       (Version 0.2.0)
+### Graphical back-end Update
+#### Version 0.2.0
 1. Abstracting the graphics away from platform specific, this will change the layout of  the project quite a bit
 1. Having the update functionality run asynchronous from the graphic funcitonality, (graphic would be the main thread)
 1. Vulkan (maybe)
@@ -82,13 +87,15 @@ Which I can decide at any point.
 1. Model animations
 1. Sprite animations
 
-### Editor Update                   (Version 0.2.1)
+### Editor Update
+#### Version 0.2.1
 1. Scene viewer
 1. Mouse picking
 1. Entity hierarchy (without ECS)
 1. Saving and loading levels
 
-### System back-end Update          (Version 0.2.2)
+### System back-end Update
+#### Version 0.2.2
 1. Seperating the worker pool so that some tasks are only acessible to certain workers but those workers can also access the main pool
 1. Loading screen
 1. Support backwards compatibility, people can join servers if they have a version of the game that is within the same subversion, but not a graphical update
