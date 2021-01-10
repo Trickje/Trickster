@@ -458,6 +458,7 @@ Xcopy /E /I /Y "$(ProjectDir)Headers" "$(SolutionDir)LatestVersion\TricksterEngi
   <ItemGroup>
     <ClInclude Include="Headers\Build\WarningsDisable.h" />
     <ClInclude Include="Headers\Build\WarningsEnable.h" />
+    <ClInclude Include="Headers\Core.h" />
     <ClInclude Include="Headers\Core\Application.h" />
     <ClInclude Include="Headers\Core\AudioPlayer.h" />
     <ClInclude Include="Headers\Core\Engine.h" />
@@ -466,6 +467,8 @@ Xcopy /E /I /Y "$(ProjectDir)Headers" "$(SolutionDir)LatestVersion\TricksterEngi
     <ClInclude Include="Headers\Core\Jobsystem.h" />
     <ClInclude Include="Headers\Core\Logger.h" />
     <ClInclude Include="Headers\Core\Macros.h" />
+    <ClInclude Include="Headers\Events.h" />
+    <ClInclude Include="Headers\Network.h" />
     <ClInclude Include="Headers\Network\Listener.h" />
     <ClInclude Include="Headers\Network\Network.h" />
     <ClInclude Include="Headers\Core\Profiler.h" />
@@ -482,6 +485,7 @@ Xcopy /E /I /Y "$(ProjectDir)Headers" "$(SolutionDir)LatestVersion\TricksterEngi
     <ClInclude Include="Headers\Network\Sender.h" />
     <ClInclude Include="Headers\pch.h" />
     <ClInclude Include="Headers\Platform\Windows\WindowsWindow.h" />
+    <ClInclude Include="Headers\Rendering.h" />
     <ClInclude Include="Headers\Rendering\Camera.h" />
     <ClInclude Include="Headers\Rendering\Drawable2D.h" />
     <ClInclude Include="Headers\Rendering\Drawable3D.h" />
@@ -497,6 +501,8 @@ Xcopy /E /I /Y "$(ProjectDir)Headers" "$(SolutionDir)LatestVersion\TricksterEngi
     <ClInclude Include="Headers\Rendering\VertexBuffer.h" />
     <ClInclude Include="Headers\Rendering\VertexBufferLayout.h" />
     <ClInclude Include="Headers\Rendering\Window.h" />
+    <ClInclude Include="Headers\TricksterEngine.h" />
+    <ClInclude Include="Headers\UI.h" />
     <ClInclude Include="Headers\UI\ClickableBox.h" />
     <ClInclude Include="Headers\UI\ProgressBar.h" />
     <ClInclude Include="Headers\UI\UIClickable.h" />
