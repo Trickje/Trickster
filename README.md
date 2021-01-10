@@ -8,21 +8,21 @@ But I will publish the header files and binaries until I want it only for myself
 Which I can decide at any point.
 
 
-#### Feature list:
-- Entry point handled by engine
-- Window
-- 2D textures
-- Delta Time
-- Logging system
-- OpenGL wrapper, sort of
-- Event system
-- Model loading
-- 3D models
-- Input
-- Camera
-- Multithreading
-- Pause option
-
+##Current Version
+####Version (0.0.0)
+1. Entry point handled by engine
+1. Window
+1. 2D textures
+1. Delta Time
+1. Logging system
+1. OpenGL wrapper, sort of
+1. Event system
+1. Model loading
+1. 3D models
+1. Input
+1. Camera
+1. Multithreading
+1. Pause option
 
 #### To be added:
 Single-Header Files
