@@ -2,7 +2,7 @@
 #define TRICKSTER_VERSION_MAJOR 0
 #define TRICKSTER_VERSION_MINOR 1
 #define TRICKSTER_VERSION_PATCH 0
-#define TRICKSTER_VERSION_BUILD 79
+#define TRICKSTER_VERSION_BUILD 90
 
 #define stringify(a) stringify_(a)
 #define stringify_(a) #a

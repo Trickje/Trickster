@@ -1,4 +1,6 @@
 #pragma once
+#ifndef TRICKSTER_STATIC
+//DLL
 //EXPORTING
 #ifdef TRICKSTER_EXPORT
 	#if defined(TRICKSTER_C)
@@ -17,6 +19,11 @@
 		#define TRICKSTER_API __declspec(dllimport)
 		#define TRICKSTER_FUNCTION(returnType) __declspec(dllimport) returnType __cdecl
 	#endif
+#endif
+#else
+//Static library
+#define TRICKSTER_API
+#define TRICKSTER_FUNCTION(returnType) returnType __cdecl
 #endif
 
 #ifdef TRICKSTER_WINDOWS
