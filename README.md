@@ -40,10 +40,10 @@ Single-Header Files
 
 
 Networking Update               (Version 0.1.0)
-1. Sound
+1. ~~Sound~~
 1. Packet listening / sending
 1. Database requesting and handling
-1. Versioning
+1. ~~Versioning~~
 1. Automatic updating (launcher?)
 1. Create a server project
 1. Logging in / account system per game. But don't make it mandatory, use a way of choosing to enable it
@@ -62,7 +62,7 @@ Dynamic linking Update          (Version 0.1.2)
 1. Encrypting those files
 1. Configuration of settings
 1. Having a header file per category that you can include, like glm does
-1. Have easy switching between building the dll and a static library
+1. ~~Have easy switching between building the dll and a static library~~
 
 Graphical front-end Update      (Version 0.1.3)
 1. Ray maths
