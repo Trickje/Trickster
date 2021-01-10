@@ -15,6 +15,8 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
+#pragma warning (push)
+#pragma warning (disable: 26812)
 #include "asio/detail/config.hpp"
 
 #if defined(ASIO_HAS_IOCP)
@@ -793,7 +795,7 @@ void* win_iocp_socket_service_base::interlocked_exchange_pointer(
 
 } // namespace detail
 } // namespace asio
-
+#pragma warning(pop)
 #include "asio/detail/pop_options.hpp"
 
 #endif // defined(ASIO_HAS_IOCP)

@@ -102,6 +102,9 @@ namespace detail { class service_registry; }
  * causing all @c shared_ptr references to all connection objects to be
  * destroyed.
  */
+
+#pragma warning (push)
+#pragma warning (disable: 26812)
 class execution_context
   : private noncopyable
 {
@@ -401,7 +404,7 @@ service_id<Type> execution_context_service_base<Type>::id;
 
 } // namespace detail
 } // namespace asio
-
+#pragma warning(pop)
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/impl/execution_context.hpp"

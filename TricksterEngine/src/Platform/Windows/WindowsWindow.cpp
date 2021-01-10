@@ -8,11 +8,12 @@
 
 using namespace Trickster;
 static bool s_GLFWInitialized = false;
-
+#ifdef TRICKSTER_OPENGL
 Window* Window::Create(const WindowProps& props)
 {
 	return new WindowsWindow(props);
 }
+#endif
 WindowsWindow::WindowsWindow(const WindowProps& props)
 {
 	Init(props);

@@ -24,6 +24,8 @@
 
 #include "asio/detail/push_options.hpp"
 
+#pragma warning (push)
+#pragma warning (disable: 26812)
 namespace asio {
 namespace detail {
 
@@ -54,7 +56,7 @@ public:
 
 } // namespace detail
 } // namespace asio
-
+#pragma warning(pop)
 #include "asio/detail/pop_options.hpp"
 
 #endif // defined(ASIO_HAS_STD_ATOMIC)

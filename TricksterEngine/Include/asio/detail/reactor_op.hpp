@@ -15,6 +15,8 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
+#pragma warning (push)
+#pragma warning (disable: 26812)
 #include "asio/detail/config.hpp"
 #include "asio/detail/operation.hpp"
 
@@ -61,7 +63,7 @@ private:
 
 } // namespace detail
 } // namespace asio
-
+#pragma warning(pop)
 #include "asio/detail/pop_options.hpp"
 
 #endif // ASIO_DETAIL_REACTOR_OP_HPP

@@ -28,7 +28,8 @@
 #include "asio/execution_context.hpp"
 
 #include "asio/detail/push_options.hpp"
-
+#pragma warning(push)
+#pragma warning (disable: 26495)
 namespace asio {
 namespace detail {
 
@@ -156,6 +157,7 @@ private:
 } // namespace detail
 } // namespace asio
 
+#pragma warning(pop)
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/detail/impl/strand_executor_service.hpp"

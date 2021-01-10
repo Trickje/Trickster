@@ -22,6 +22,8 @@
 
 #include "asio/detail/push_options.hpp"
 
+#pragma warning (push)
+#pragma warning (disable: 26812)
 namespace asio {
 
 /// The socket_base class is used as a base for the basic_stream_socket and
@@ -553,7 +555,7 @@ protected:
 };
 
 } // namespace asio
-
+#pragma warning(pop)
 #include "asio/detail/pop_options.hpp"
 
 #endif // ASIO_SOCKET_BASE_HPP

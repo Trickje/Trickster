@@ -22,6 +22,8 @@
 
 #include "asio/detail/push_options.hpp"
 
+#pragma warning (push)
+#pragma warning (disable: 26812)
 namespace asio {
 namespace detail {
 
@@ -55,6 +57,8 @@ void service_registry::destroy_services()
   }
 }
 
+#pragma warning (push)
+#pragma warning (disable: 26812)
 void service_registry::notify_fork(execution_context::fork_event fork_ev)
 {
   // Make a copy of all of the services while holding the lock. We don't want
@@ -83,7 +87,7 @@ void service_registry::notify_fork(execution_context::fork_event fork_ev)
     for (std::size_t i = num_services; i > 0; --i)
       services[i - 1]->notify_fork(fork_ev);
 }
-
+#pragma warning(pop)
 void service_registry::init_key_from_id(execution_context::service::key& key,
     const execution_context::id& id)
 {
@@ -191,7 +195,7 @@ bool service_registry::do_has_service(
 
 } // namespace detail
 } // namespace asio
-
+#pragma warning(pop)
 #include "asio/detail/pop_options.hpp"
 
 #endif // ASIO_DETAIL_IMPL_SERVICE_REGISTRY_IPP

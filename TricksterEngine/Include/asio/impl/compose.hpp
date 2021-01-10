@@ -30,6 +30,8 @@
 
 #include "asio/detail/push_options.hpp"
 
+#pragma warning (push)
+#pragma warning (disable:0070)
 namespace asio {
 
 namespace detail
@@ -348,7 +350,7 @@ namespace detail
     void complete(Args... args)
     {
       this->work_.reset();
-      this->handler_(ASIO_MOVE_CAST(Args)(args)...);
+      this->handler_(args...);
     }
 
 #else // defined(ASIO_HAS_VARIADIC_TEMPLATES)
@@ -525,13 +527,13 @@ template <typename CompletionToken, typename Signature,
 ASIO_INITFN_AUTO_RESULT_TYPE(CompletionToken, Signature)
 async_compose(ASIO_MOVE_ARG(Implementation) implementation,
     ASIO_NONDEDUCED_MOVE_ARG(CompletionToken) token,
-    ASIO_MOVE_ARG(IoObjectsOrExecutors)... io_objects_or_executors)
+    IoObjectsOrExecutors... io_objects_or_executors)
 {
   return async_initiate<CompletionToken, Signature>(
       detail::make_initiate_composed_op<Signature>(
         detail::make_composed_io_executors(
           detail::get_composed_io_executor(
-            ASIO_MOVE_CAST(IoObjectsOrExecutors)(
+            IoObjectsOrExecutors(
               io_objects_or_executors))...)),
       token, ASIO_MOVE_CAST(Implementation)(implementation));
 }
@@ -629,7 +631,7 @@ async_compose(ASIO_MOVE_ARG(Implementation) implementation,
 #endif // !defined(GENERATING_DOCUMENTATION)
 
 } // namespace asio
-
+#pragma warning(pop)
 #include "asio/detail/pop_options.hpp"
 
 #endif // ASIO_IMPL_COMPOSE_HPP

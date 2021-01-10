@@ -17,6 +17,8 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/push_options.hpp"
+#pragma warning(push)
+#pragma warning (disable: 26812)
 
 namespace asio {
 
@@ -53,7 +55,7 @@ inline unsigned int serial_port_base::character_size::value() const
 }
 
 } // namespace asio
-
+#pragma warning(pop)
 #include "asio/detail/pop_options.hpp"
 
 #endif // ASIO_IMPL_SERIAL_PORT_BASE_HPP

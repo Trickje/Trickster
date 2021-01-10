@@ -20,6 +20,9 @@
 
 #include "asio/detail/push_options.hpp"
 
+#pragma warning (push)
+#pragma warning (disable: 26812)
+#pragma warning (disable: 26495)
 namespace asio {
 namespace detail {
 
@@ -34,7 +37,7 @@ struct scheduler_thread_info : public thread_info_base
 
 } // namespace detail
 } // namespace asio
-
+#pragma warning(pop)
 #include "asio/detail/pop_options.hpp"
 
 #endif // ASIO_DETAIL_SCHEDULER_THREAD_INFO_HPP

@@ -113,7 +113,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;TRICKSTER_EXPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;TRICKSTER_EXPORT;TRICKSTER_WINDOWS;TRICKSTER_OPENGL;TRICKSTER_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(SolutionDir)/TricksterEngine/Include;$(ProjectDir)Headers</AdditionalIncludeDirectories>
@@ -182,7 +182,7 @@ Xcopy /E /I /Y "$(ProjectDir)Headers" "$(SolutionDir)LatestVersion\TricksterEngi
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>TRICKSTER_EXPORT;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>TRICKSTER_EXPORT;_WINDOWS;TRICKSTER_WINDOWS;TRICKSTER_OPENGL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(SolutionDir)/TricksterEngine/Include;$(ProjectDir)Headers</AdditionalIncludeDirectories>
@@ -216,11 +216,13 @@ Xcopy /E /I /Y "$(ProjectDir)Headers" "$(SolutionDir)LatestVersion\TricksterEngi
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\Core\Network.cpp" />
+    <ClCompile Include="src\Network\Listener.cpp" />
+    <ClCompile Include="src\Network\Network.cpp" />
     <ClCompile Include="src\Core\AudioPlayer.cpp" />
     <ClCompile Include="src\Core\Jobsystem.cpp" />
     <ClCompile Include="src\Core\Profiler.cpp" />
     <ClCompile Include="src\Core\Input.cpp" />
+    <ClCompile Include="src\Network\Sender.cpp" />
     <ClCompile Include="src\UI\ProgressBar.cpp" />
     <ClCompile Include="src\UI\ClickableBox.cpp" />
     <ClCompile Include="src\Rendering\MeshManager.cpp" />
@@ -249,6 +251,8 @@ Xcopy /E /I /Y "$(ProjectDir)Headers" "$(SolutionDir)LatestVersion\TricksterEngi
     <ClCompile Include="src\UI\UIClickable.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Headers\Build\WarningsDisable.h" />
+    <ClInclude Include="Headers\Build\WarningsEnable.h" />
     <ClInclude Include="Headers\Core\Application.h" />
     <ClInclude Include="Headers\Core\AudioPlayer.h" />
     <ClInclude Include="Headers\Core\Engine.h" />
@@ -256,7 +260,9 @@ Xcopy /E /I /Y "$(ProjectDir)Headers" "$(SolutionDir)LatestVersion\TricksterEngi
     <ClInclude Include="Headers\Core\Input.h" />
     <ClInclude Include="Headers\Core\Jobsystem.h" />
     <ClInclude Include="Headers\Core\Logger.h" />
-    <ClInclude Include="Headers\Core\Network.h" />
+    <ClInclude Include="Headers\Core\Macros.h" />
+    <ClInclude Include="Headers\Network\Listener.h" />
+    <ClInclude Include="Headers\Network\Network.h" />
     <ClInclude Include="Headers\Core\Profiler.h" />
     <ClInclude Include="Headers\Core\RingBuffer.h" />
     <ClInclude Include="Headers\Core\Timer.h" />
@@ -267,6 +273,8 @@ Xcopy /E /I /Y "$(ProjectDir)Headers" "$(SolutionDir)LatestVersion\TricksterEngi
     <ClInclude Include="Headers\Events\InputEvents.h" />
     <ClInclude Include="Headers\Events\JobEvents.h" />
     <ClInclude Include="Headers\Events\WindowEvents.h" />
+    <ClInclude Include="Headers\Network\Package.h" />
+    <ClInclude Include="Headers\Network\Sender.h" />
     <ClInclude Include="Headers\pch.h" />
     <ClInclude Include="Headers\Platform\Windows\WindowsWindow.h" />
     <ClInclude Include="Headers\Rendering\Camera.h" />

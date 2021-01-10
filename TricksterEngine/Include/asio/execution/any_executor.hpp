@@ -36,6 +36,8 @@
 #include "asio/require.hpp"
 
 #include "asio/detail/push_options.hpp"
+#pragma warning(push)
+#pragma warning (disable: 26495)
 
 namespace asio {
 
@@ -2340,7 +2342,7 @@ struct prefer_member<
 #endif // defined(GENERATING_DOCUMENTATION)
 
 } // namespace asio
-
+#pragma warning(pop)
 #include "asio/detail/pop_options.hpp"
 
 #endif // ASIO_EXECUTION_ANY_EXECUTOR_HPP

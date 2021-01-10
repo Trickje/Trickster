@@ -15,6 +15,9 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
+#pragma warning (push)
+#pragma warning (disable: 6258)
+#pragma warning (disable: 6001)
 #include "asio/detail/config.hpp"
 
 #if defined(ASIO_WINDOWS) \
@@ -141,6 +144,7 @@ void __stdcall apc_function(ULONG_PTR) {}
 } // namespace detail
 } // namespace asio
 
+#pragma warning(pop)
 #include "asio/detail/pop_options.hpp"
 
 #endif // defined(ASIO_WINDOWS)

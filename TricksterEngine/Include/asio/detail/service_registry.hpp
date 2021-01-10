@@ -24,6 +24,8 @@
 
 #include "asio/detail/push_options.hpp"
 
+#pragma warning(push)
+#pragma warning (disable: 26812)
 namespace asio {
 
 class io_context;
@@ -162,3 +164,4 @@ private:
 #endif // defined(ASIO_HEADER_ONLY)
 
 #endif // ASIO_DETAIL_SERVICE_REGISTRY_HPP
+#pragma warning(pop)

@@ -12,6 +12,7 @@
 #include "UI/ProgressBar.h"
 #include "Core/EntryPoint.h"
 #include "Core/Version.h"
+#include <Network/Package.h>
 using namespace Trickster;
 Trickster::Game::Game()
 {
@@ -36,7 +37,11 @@ void Trickster::Game::OnStart()
 	MeshManager::GetInstance()->Initialize(m_Camera);
 	m_Camera->SetPosition({ 0.f, 0.f, 10.f });
 	m_Camera->LookAt(m_IronMan->GetPosition());
-
+	Message msg;
+	msg += std::string("Hello ");
+	msg += "world";
+	msg += '!';
+	LOG(msg.to_string());
 	for(int i = 0; i < 10; i++)
 	{
 		m_Planets.push_back(new IronMan("planet_Terrestrial1.obj"));

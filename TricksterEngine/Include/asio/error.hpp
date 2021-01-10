@@ -60,6 +60,8 @@
 
 #include "asio/detail/push_options.hpp"
 
+#pragma warning(push)
+#pragma warning (disable: 26812)
 namespace asio {
 namespace error {
 
@@ -340,7 +342,7 @@ namespace resolver_errc {
   using error::service_not_found;
 } // namespace resolver_errc
 } // namespace asio
-
+#pragma warning(pop)
 #include "asio/detail/pop_options.hpp"
 
 #undef ASIO_NATIVE_ERROR

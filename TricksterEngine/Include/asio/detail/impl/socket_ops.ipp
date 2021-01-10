@@ -15,6 +15,9 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
+#pragma warning (push)
+#pragma warning (disable: 6319)
+#pragma warning (disable:6255)
 #include "asio/detail/config.hpp"
 
 #include <cctype>
@@ -3956,7 +3959,7 @@ u_short_type host_to_network_short(u_short_type value)
 } // namespace socket_ops
 } // namespace detail
 } // namespace asio
-
+#pragma warning(pop)
 #include "asio/detail/pop_options.hpp"
 
 #endif // ASIO_DETAIL_SOCKET_OPS_IPP
