@@ -8,8 +8,8 @@ But I will publish the header files and binaries until I want it only for myself
 Which I can decide at any point.
 
 
-##Current Version
-####Version (0.0.0)
+## Current Version
+#### Version (0.0.0)
 1. Entry point handled by engine
 1. Window
 1. 2D textures
