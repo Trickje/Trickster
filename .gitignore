@@ -9,3 +9,5 @@
 /.vs/TricksterEngine/v16
 /LatestVersion
 !Lib/DLL/*
+*.obj
+!Resources/*
