@@ -3,12 +3,8 @@
 ################################################################################
 
 /.vs/TricksterEngine/v15
-/Release
-/Debug
-/x64
-/TricksterEngine/x64
-/TricksterEngine/Debug
-/Game/x64/Debug
-/Game/x64/Release
+*Release
+*Debug
+*/x64
 /.vs/TricksterEngine/v16
 /LatestVersion
