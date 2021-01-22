@@ -30,6 +30,7 @@
 #include <curl/mprintf.h>
 
 #include "Core/Version.h"
+#include "Rendering/Text/TextRenderer.h"
 using namespace Trickster;
 
 Application* Application::m_Application = nullptr;
@@ -57,7 +58,7 @@ Application::Application()
 Application::~Application()
 {
 //m_Engine implicitly deleted
-
+	delete TextRenderer::Get();
 }
 
 Application* Application::Get()

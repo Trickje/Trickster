@@ -30,10 +30,10 @@ namespace Trickster
 		TRICKSTER_API void RenderString(const std::string& a_String, glm::vec2 a_Position, float a_Scale = 1.f, glm::vec4 a_Color = {1.f,1.f,1.f, 1.f}, const std::string& a_FontName = Get()->DefaultFont);
 
 		TRICKSTER_API void FlushQueue();
+		TRICKSTER_API ~TextRenderer();
 	private:
 		static TextRenderer* m_Instance;
 		TRICKSTER_API TextRenderer();
-		TRICKSTER_API ~TextRenderer();
 		TRICKSTER_API void LoadFont(std::string a_FontName);
 		std::string DefaultFont = "arial";
 		std::map<std::string, std::shared_ptr<Font>> m_Fonts;

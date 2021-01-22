@@ -57,7 +57,8 @@ TextRenderer::TextRenderer()
 
 Trickster::TextRenderer::~TextRenderer()
 {
-    delete m_Instance;
+	m_Fonts.clear();
+	m_RenderQueue.clear();
 }
 
 void Trickster::TextRenderer::LoadFont(std::string a_FontName)
