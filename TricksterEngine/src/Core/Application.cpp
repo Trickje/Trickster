@@ -49,6 +49,8 @@ Application::Application()
 	m_Application = this;
 	m_Paused = false;
 	m_Window->CaptureMouse(true);
+	m_AverageFPS = 0.f;
+	m_TimePassedSinceLastFPSCount = 0.f;
 }
 
 
@@ -138,6 +140,16 @@ bool Trickster::Application::Update()
 			EventManager::GetInstance()->GameLoopEvents.Tick.Execute();
 			EventManager::GetInstance()->GameLoopEvents.TickOnce.ExecuteAndClear();
 			EventManager::GetInstance()->GameLoopEvents.PostTick.Execute();
+		}
+		if(m_TimePassedSinceLastFPSCount >= 1.f)
+		{
+			m_AverageFPS = m_FrameCount / m_TimePassedSinceLastFPSCount;
+			m_TimePassedSinceLastFPSCount = 0.f;
+			m_FrameCount = 0.f;
+		}else
+		{
+			m_FrameCount += 1.f;
+			m_TimePassedSinceLastFPSCount += DeltaTime;
 		}
 	}
 	

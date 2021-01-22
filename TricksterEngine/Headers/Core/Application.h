@@ -48,6 +48,8 @@ namespace Trickster {
 	private:
 		static Application* m_Application;
 		std::shared_ptr<Engine> m_Engine;
+		float m_FrameCount;
+		float m_TimePassedSinceLastFPSCount;
 	protected:
 		std::shared_ptr<Window> m_Window;
 		std::shared_ptr<AudioPlayer> m_AudioPlayer;
@@ -57,6 +59,7 @@ namespace Trickster {
 		float TickTime = 0.6f;
 		float CurrentTickTime;
 		bool m_Paused;
+		float m_AverageFPS;
 		
 	};
 	//To be defined in CLIENT

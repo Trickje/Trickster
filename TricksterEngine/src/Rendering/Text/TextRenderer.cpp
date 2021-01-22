@@ -21,22 +21,33 @@ void TextRenderer::Initialize()
 	EventManager::GetInstance()->GameLoopEvents.OnRenderTransparent.AddListener(std::bind(&Trickster::TextRenderer::FlushQueue, this));
 }
 
-void Trickster::TextRenderer::RenderString(const std::string& a_String, glm::vec2 a_Position, const std::string& a_FontName)
+void Trickster::TextRenderer::RenderString(const std::string& a_String, glm::vec2 a_Position, float a_Scale, glm::vec4 a_Color, const std::string& a_FontName)
 {
 	if(m_Fonts.find(a_FontName) == m_Fonts.end())
 	{
 		LoadFont(a_FontName);
 	}
-	m_RenderQueue.push_back(std::make_shared<TextRenderQueueObject>(a_String, a_Position, m_Fonts.at(a_FontName)));
-//	m_Fonts.at(a_FontName)->Render(a_String, a_Position.x, a_Position.y, 1.f, {1.f,1.f,1.f});
+	std::shared_ptr<Font> font = m_Fonts.at(a_FontName);
+	font->AddVertexData(a_String, a_Position.x, a_Position.y, a_Scale, a_Color);
+	bool isNew = true;
+	for(int i = 0; i < m_RenderQueue.size(); i++)
+	{
+		if (m_RenderQueue[i] == font)
+			isNew = false;
+	}
+	if(isNew)
+	{
+		m_RenderQueue.push_back(font);
+	}
 }
 
 void TextRenderer::FlushQueue()
 {
 	for(auto it : m_RenderQueue)
 	{
-		it->Font->Render(it->String, it->Position.x, it->Position.y,1.f, { 1.f, 1.f, 1.f });
+		it->Render();
 	}
+	
 	m_RenderQueue.clear();
 }
 

@@ -26,12 +26,28 @@ namespace Trickster {
 		Font();
 		~Font();
 		TRICKSTER_API void LoadFromFile(const std::string& a_FileName);
-		TRICKSTER_API void Render(std::string text, float x, float y, float scale, glm::vec3 color);
-
+		TRICKSTER_API void Render();
+		TRICKSTER_API bool operator==(const Font& other);
+		TRICKSTER_API void AddVertexData(std::string text, float x, float y, float scale, glm::vec4 color);
 	private:
 		TRICKSTER_API void Initialize();
 		std::string m_FileName;
 		std::map<char, Character> m_Characters;
 		unsigned int m_VAO, m_VBO;
+		float atlas_width;
+		float atlas_height;
+		GLuint tex;
+		struct point {
+			float x;
+			float y;
+			float z;
+			float tx;
+			float ty;
+			float r;
+			float g;
+			float b;
+			float a;
+		};
+		std::vector<point> coords;
 	};
 }

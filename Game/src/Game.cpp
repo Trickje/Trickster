@@ -120,7 +120,8 @@ void Trickster::Game::OnUpdate(float a_DeltaTime)
 	{
 		p->Rotate(45.f * a_DeltaTime);
 	}
-	TextRenderer::Get()->RenderString("Hello World", { 0.f,0.f });
+	TextRenderer::Get()->RenderString("FPS: " + std::to_string(m_AverageFPS), { 0,GetWindow()->GetHeight() - 48.f },1.f, {0.2f, 0.2f, 0.2f, 0.5f});
+	TextRenderer::Get()->RenderString("1234567890", {100.f, 200.f});
 }
 
 
