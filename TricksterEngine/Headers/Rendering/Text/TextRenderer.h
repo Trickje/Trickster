@@ -1,6 +1,5 @@
 #pragma once
 #include "Internal/Font.h"
-//TODO: color in the vertex buffer and combining the render queue in fonts
 namespace Trickster
 {
 	struct TextRenderQueueObject
