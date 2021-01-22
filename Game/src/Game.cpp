@@ -30,6 +30,8 @@
 #include "Core/EntryPoint.h"
 #include "Core/Version.h"
 #include <Network/Package.h>
+
+#include "Rendering/Text/TextRenderer.h"
 using namespace Trickster;
 Trickster::Game::Game()
 {
@@ -118,6 +120,7 @@ void Trickster::Game::OnUpdate(float a_DeltaTime)
 	{
 		p->Rotate(45.f * a_DeltaTime);
 	}
+	TextRenderer::Get()->RenderString("Hello World", { 0.f,0.f });
 }
 
 

@@ -215,7 +215,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>glew32.lib;glfw3dll.lib;fmod_vc.lib;opengl32.lib;libcurl-d_imp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glew32.lib;glfw3dll.lib;fmod_vc.lib;opengl32.lib;libcurl-d_imp.lib;freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
@@ -355,7 +355,7 @@ Xcopy /E /I /Y "$(ProjectDir)Headers" "$(SolutionDir)LatestVersion\TricksterEngi
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(SolutionDir)Lib;$(ProjectDir)Headers;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glew32.lib;glfw3dll.lib;fmod_vc.lib;opengl32.lib;libcurl_imp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glew32.lib;glfw3dll.lib;fmod_vc.lib;opengl32.lib;libcurl_imp.lib;freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <EntryPointSymbol>
       </EntryPointSymbol>
       <IgnoreSpecificDefaultLibraries>
@@ -426,6 +426,9 @@ Xcopy /E /I /Y "$(ProjectDir)Headers" "$(SolutionDir)LatestVersion\TricksterEngi
     <ClCompile Include="src\Core\Profiler.cpp" />
     <ClCompile Include="src\Core\Input.cpp" />
     <ClCompile Include="src\Network\Sender.cpp" />
+    <ClCompile Include="src\Rendering\Text\Internal\Font.cpp" />
+    <ClCompile Include="src\Rendering\Text\Internal\Label.cpp" />
+    <ClCompile Include="src\Rendering\Text\TextRenderer.cpp" />
     <ClCompile Include="src\UI\ProgressBar.cpp" />
     <ClCompile Include="src\UI\ClickableBox.cpp" />
     <ClCompile Include="src\Rendering\MeshManager.cpp" />
@@ -497,6 +500,10 @@ Xcopy /E /I /Y "$(ProjectDir)Headers" "$(SolutionDir)LatestVersion\TricksterEngi
     <ClInclude Include="Headers\Rendering\SpriteManager.h" />
     <ClInclude Include="Headers\Rendering\Texture.h" />
     <ClInclude Include="Headers\Rendering\TextureManager.h" />
+    <ClInclude Include="Headers\Rendering\Text\Internal\Font.h" />
+    <ClInclude Include="Headers\Rendering\Text\Internal\Label.h" />
+    <ClInclude Include="Headers\Rendering\Text\Internal\Structs.h" />
+    <ClInclude Include="Headers\Rendering\Text\TextRenderer.h" />
     <ClInclude Include="Headers\Rendering\VertexArray.h" />
     <ClInclude Include="Headers\Rendering\VertexBuffer.h" />
     <ClInclude Include="Headers\Rendering\VertexBufferLayout.h" />

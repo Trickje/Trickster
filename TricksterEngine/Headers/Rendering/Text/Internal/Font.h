@@ -1,3 +1,6 @@
+#pragma once
+#include "Structs.h"
+
 /*
 ================================================================================
 		Copyright 2021 Rick Pijpers
@@ -15,3 +18,20 @@
 		limitations under the License.
 =================================================================================
  */
+
+namespace Trickster {
+	class Font
+	{
+	public:
+		Font();
+		~Font();
+		TRICKSTER_API void LoadFromFile(const std::string& a_FileName);
+		TRICKSTER_API void Render(std::string text, float x, float y, float scale, glm::vec3 color);
+
+	private:
+		TRICKSTER_API void Initialize();
+		std::string m_FileName;
+		std::map<char, Character> m_Characters;
+		unsigned int m_VAO, m_VBO;
+	};
+}

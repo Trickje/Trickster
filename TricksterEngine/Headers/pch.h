@@ -98,6 +98,10 @@
 	#include <fmod/fmod_dsp.h>
 	#include <fmod/fmod_dsp_effects.h>
 	#include <fmod/fmod_output.h>
+
+//Freetype includes
+	#include <ft2build.h>
+	#include FT_FREETYPE_H
 //Asio include
 	#include <asio.hpp>
 

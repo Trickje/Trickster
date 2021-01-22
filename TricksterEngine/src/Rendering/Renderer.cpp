@@ -28,6 +28,7 @@
 #include "Rendering/Window.h"
 #include "Rendering/Drawable3D.h"
 #include "Events/EventManager.h"
+#include "Rendering/Text/TextRenderer.h"
 
 namespace Trickster {
 	//#define QUADBASEDUI
