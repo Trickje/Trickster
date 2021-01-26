@@ -17,20 +17,17 @@
 =================================================================================
  */
 namespace Trickster {
-	struct Package
-	{
-
-	};
-	class Listener
-	{
-		
-	};
-	class Sender
-	{
-		
-	};
+	
 	class Network
 	{
+	public:
+		TRICKSTER_API Network();
+		TRICKSTER_API ~Network();
+		TRICKSTER_API const asio::io_context& Get();
+		TRICKSTER_API void ReadAndPrintPage(std::string a_Host, std::string a_Path);
+	private:
+
+		asio::io_context m_Context;
 	};
 
 }

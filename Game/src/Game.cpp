@@ -30,6 +30,7 @@
 #include "Core/EntryPoint.h"
 #include "Core/Version.h"
 #include <Network/Package.h>
+#include <Network/Network.h>
 
 #include "Rendering/Text/TextRenderer.h"
 using namespace Trickster;
@@ -56,11 +57,8 @@ void Trickster::Game::OnStart()
 	MeshManager::GetInstance()->Initialize(m_Camera);
 	m_Camera->SetPosition({ 0.f, 0.f, 10.f });
 	m_Camera->LookAt(m_IronMan->GetPosition());
-	Message msg;
-	msg += std::string("Hello ");
-	msg += "world";
-	msg += '!';
-	LOG(msg.to_string());
+	Network network;
+	network.ReadAndPrintPage("77.168.130.108", "/index.php");
 	for(int i = 0; i < 10; i++)
 	{
 		m_Planets.push_back(new IronMan("planet_Terrestrial1.obj"));

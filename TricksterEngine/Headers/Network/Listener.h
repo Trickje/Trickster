@@ -16,11 +16,15 @@
 		limitations under the License.
 =================================================================================
  */
+
 namespace Trickster {
 
 	class Listener
 	{
+	public:
+	private:
 
+		asio::io_context* io_context;
 	};
 
 
