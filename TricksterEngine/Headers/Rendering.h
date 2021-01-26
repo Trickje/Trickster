@@ -31,3 +31,4 @@
 #include <Rendering/VertexBuffer.h>
 #include <Rendering/VertexBufferLayout.h>
 #include <Rendering/Window.h>
+#include <Rendering/Text/TextRenderer.h>
