@@ -80,6 +80,15 @@
 	#elif defined(TRICKSTER_VULKAN)
 		#if defined(TRICKSTER_DEBUG)
 		//DEBUG
+#define GLFW_INCLUDE_VULKAN
+#include <GLFW/glfw3.h>
+#include <glm/vec3.hpp>
+#include <glm/mat4x4.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/matrix.hpp>
+#include <glm/vec4.hpp>
+#include <glm/vec2.hpp>
+#include <glm/trigonometric.hpp>
 		#else
 		//RELEASE
 		#endif
@@ -103,7 +112,7 @@
 	#include <ft2build.h>
 	#include FT_FREETYPE_H
 //Asio include
-	#include <asio.hpp>
+//	#include <asio.hpp>
 
 #pragma warning(pop)
 //My header libraries

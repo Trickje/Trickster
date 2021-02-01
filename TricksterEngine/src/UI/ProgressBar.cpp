@@ -32,6 +32,7 @@ using namespace Trickster;
 
 ProgressBar::ProgressBar() : m_Position(), m_ColorFront(), m_ColorBack(), m_Size(),  m_Percentage(), m_Scale()
 {
+#ifdef TRICKSTER_OPENGL
 	GLCall(m_UniformLoc = glGetUniformLocation(ShaderManager::GetShader("basicColor")->Get(), "ScreenPos"));
 	GLCall(m_ScaleUniformLoc = glGetUniformLocation(ShaderManager::GetShader("basicColor")->Get(), "Scale"));
 
@@ -41,6 +42,7 @@ ProgressBar::ProgressBar() : m_Position(), m_ColorFront(), m_ColorBack(), m_Size
 	layout->Push<float>(2);
 	layout->Push<float>(3);
 	va->AddBuffer(*vb, *layout);
+#endif
 	m_Scale = { 1.f, 1.f };
 	m_Size = { 90.f, 10.f };
 	m_ColorFront = {0.f, 1.f, 0.f};
@@ -68,9 +70,11 @@ float Trickster::ProgressBar::GetPercentage()
 
 void ProgressBar::Draw()
 {
+#ifdef TRICKSTER_OPENGL
 	if (Application::Get()->Paused()) return;
 	ShaderManager::GetShader("basicColor")->Bind();
 	const glm::vec2 ScreenPos = ToScreenPos();
+
 	glUniform2f(m_UniformLoc, ScreenPos.x, ScreenPos.y);
 
 	//glUniform2f(m_UniformLoc, 0.f, 0.f);
@@ -80,6 +84,7 @@ void ProgressBar::Draw()
 	va->AddBuffer(*vb, *layout);
 	va->Bind();
 	GLCall(glDrawArrays(GL_TRIANGLES, 0, 12));
+#endif
 }
 void Trickster::ProgressBar::SetPosition(const glm::vec2& a_Position)
 {
@@ -196,7 +201,9 @@ void Trickster::ProgressBar::FillVertices()
 	{
 		vertices.push_back(m_Vertices[i]);
 	}
+#ifdef TRICKSTER_OPENGL
 	vb->ChangeData(vertices);
+#endif
 }
 glm::vec2 ProgressBar::ToScreenPos()
 {

@@ -23,6 +23,7 @@ namespace Trickster {
 	class Engine;
 	class Window;
 	class AudioPlayer;
+	class RenderAPI;
 	class Application
 	{
 	public:
@@ -48,6 +49,7 @@ namespace Trickster {
 	private:
 		static Application* m_Application;
 		std::shared_ptr<Engine> m_Engine;
+		std::shared_ptr<RenderAPI> m_RenderAPI;
 		float m_FrameCount;
 		float m_TimePassedSinceLastFPSCount;
 	protected:

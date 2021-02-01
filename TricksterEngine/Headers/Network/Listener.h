@@ -19,12 +19,26 @@
 
 namespace Trickster {
 
+	enum { max_length = 1024 };
 	class Listener
 	{
 	public:
+		Listener(std::string a_Host, std::string a_Path ,  asio::io_context& io_context,
+			asio::ssl::context& context,
+			asio::ip::tcp::resolver::results_type endpoints);
+		TRICKSTER_API void HandleConnect(const asio::error_code& error);
+		TRICKSTER_API void HandleHandshake(const asio::error_code& error);
+		TRICKSTER_API void HandleWrite(const asio::error_code& error, size_t bytes_transferred);
+		TRICKSTER_API void HandleRead(const asio::error_code& error, size_t bytes_transferred);
+		TRICKSTER_API bool VerifyCertificate(bool preverified, asio::ssl::verify_context& ctx);
 	private:
 
-		asio::io_context* io_context;
+		//asio::io_context* io_context;
+
+		asio::ssl::stream<asio::ip::tcp::socket> m_Socket;
+		std::string m_Host;
+		std::string m_Path;
+		std::string m_Buffer;
 	};
 
 

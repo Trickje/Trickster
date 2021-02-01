@@ -36,7 +36,7 @@ namespace Trickster {
 		unsigned int m_VAO, m_VBO;
 		float atlas_width;
 		float atlas_height;
-		GLuint tex;
+		unsigned tex;
 		struct point {
 			float x;
 			float y;

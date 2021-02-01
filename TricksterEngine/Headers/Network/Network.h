@@ -17,7 +17,8 @@
 =================================================================================
  */
 namespace Trickster {
-	
+
+	enum { max_length = 1024 };
 	class Network
 	{
 	public:
@@ -26,8 +27,18 @@ namespace Trickster {
 		TRICKSTER_API const asio::io_context& Get();
 		TRICKSTER_API void ReadAndPrintPage(std::string a_Host, std::string a_Path);
 	private:
+		//Connects current ssl socket to the host
+		//Host example: "77.168.130.108" or "rickpijpers.com"
+		TRICKSTER_API void ConnectSSL(std::string a_Host);
+		//This requires a connection to an SSL host
+		//Path example "index.php" or "TricksterEngine/index.php" or "TricksterEngine/info.txt"
+		TRICKSTER_API void ReadSSLPageToBuffer(std::string a_Path, std::string a_Host);
+
+
+        
 
 		asio::io_context m_Context;
+		std::string m_Buffer;
 	};
 
 }

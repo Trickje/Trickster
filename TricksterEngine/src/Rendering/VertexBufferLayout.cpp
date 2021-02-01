@@ -17,6 +17,7 @@
  */
 #include "pch.h"
 #include "Rendering/VertexBufferLayout.h"
+#ifdef TRICKSTER_OPENGL
 namespace Trickster {
 
 
@@ -29,3 +30,4 @@ namespace Trickster {
 	{
 	}
 }
+#endif

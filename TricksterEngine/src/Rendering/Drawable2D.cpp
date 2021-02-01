@@ -34,9 +34,12 @@
 namespace Trickster {
 	DrawData2D::DrawData2D(void* data, int size)
 	{
+#ifdef TRICKSTER_OPENGL
 		vb = new VertexBuffer(data, size);
 		va = new VertexArray();
 		layout = new VertexBufferLayout();
+#endif
+		
 	};
 	
 	Drawable2D::Drawable2D(const std::string& a_FilePath, const glm::vec2 a_Position, const glm::vec2 a_Scale)
@@ -44,11 +47,13 @@ namespace Trickster {
 	{
 		m_DrawData = new DrawData2D(
 			&m_Vertices[0], sizeof(m_Vertices));
-		GLCall(m_UniformLoc = glGetUniformLocation(ShaderManager::GetShader("basic")->Get(), "ScreenPos"));
-		GLCall(m_ScaleUniformLoc = glGetUniformLocation(ShaderManager::GetShader("basic")->Get(), "Scale"));
+		//GLCall(m_UniformLoc = glGetUniformLocation(ShaderManager::GetShader("basic")->Get(), "ScreenPos"));
+		//GLCall(m_ScaleUniformLoc = glGetUniformLocation(ShaderManager::GetShader("basic")->Get(), "Scale"));
 		m_Size = { TextureManager::GetTexture(m_FilePath)->GetWidth(),  TextureManager::GetTexture(m_FilePath)->GetHeight() };
+#ifdef TRICKSTER_OPENGL
 		m_DrawData->layout->Push<float>(2);
 		m_DrawData->va->AddBuffer(*m_DrawData->vb, *m_DrawData->layout);
+#endif
 		m_Visible = true;
 		if(TextureManager::GetTexture(m_FilePath)->GetBPP() == 4)
 		{
@@ -69,20 +74,23 @@ namespace Trickster {
 
 	void Drawable2D::Draw()
 	{
+#ifdef TRICKSTER_OPENGL
+		
 		if (m_Visible) {
 			ShaderManager::GetShader("basic")->Bind();
 			glm::vec2 ScreenPos = ToScreenPos();
-			glUniform2f(m_UniformLoc, ScreenPos.x, ScreenPos.y);
+			//glUniform2f(m_UniformLoc, ScreenPos.x, ScreenPos.y);
 			const glm::vec2 l_Scale = TextureManager::GetTexture(m_FilePath)->GetScale();
-			glUniform2f(m_ScaleUniformLoc, m_Scale.x * l_Scale.x, m_Scale.y * l_Scale.y);
+			//glUniform2f(m_ScaleUniformLoc, m_Scale.x * l_Scale.x, m_Scale.y * l_Scale.y);
 
 			TextureManager::GetTexture(m_FilePath)->Bind();
 			m_DrawData->vb->Bind();
 			m_DrawData->va->Bind();
 			GLCall(glDrawArrays(GL_TRIANGLES, 0, 6));
 		}
-
+#endif
 	}
+	
 
 	void Drawable2D::SetScale(const float a_Width, const float a_Height)
 	{

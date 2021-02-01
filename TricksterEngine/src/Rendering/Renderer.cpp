@@ -31,7 +31,6 @@
 #include "Rendering/Text/TextRenderer.h"
 
 namespace Trickster {
-	//#define QUADBASEDUI
 #define TRIANGLEBASEDUI
 	Renderer::Renderer()
 	{
@@ -116,42 +115,4 @@ namespace Trickster {
 	}
 #endif
 
-#ifdef QUADBASEDUI
-	void Renderer::DrawUI()
-	{
-		float vertices[] = {
-			-0.5, 0.5, 0.0,
-			0.5, 0.5, 0.0,
-			0.5, -0.5, 0.0,
-			-0.5, -0.5, 0.0
-		};
-
-		GLuint VertexArrayID;
-		glGenVertexArrays(1, &VertexArrayID);
-		glBindVertexArray(VertexArrayID);
-		// This will identify our vertex buffer
-		// Generate 1 buffer, put the resulting identifier in vertexbuffer
-		glGenBuffers(1, &vertexBuffer);
-		// The following commands will talk about our 'vertexbuffer' buffer
-		glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-		// Give our vertices to OpenGL.
-		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-		// 1st attribute buffer : vertices
-		glEnableVertexAttribArray(0);
-		glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-		glVertexAttribPointer(
-			0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
-			3,                  // size
-			GL_FLOAT,           // type
-			GL_FALSE,           // normalized?
-			0,                  // stride
-			(void*)0            // array buffer offset
-		);
-		// Draw the triangle !
-		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, indices);
-		glDrawArrays(GL_QUADS, 0, 4); // Starting from vertex 0; 3 vertices total -> 1 triangle
-		glDisableVertexAttribArray(0);
-	}
-#endif
 }

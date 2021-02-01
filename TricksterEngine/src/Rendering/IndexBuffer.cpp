@@ -18,7 +18,7 @@
 #include "pch.h"
 #include "Rendering/IndexBuffer.h"
 
-
+#ifdef TRICKSTER_OPENGL
 namespace Trickster {
 	IndexBuffer::IndexBuffer(const unsigned int* data, unsigned int count)
 	{
@@ -62,3 +62,4 @@ namespace Trickster {
 		m_Count = static_cast<unsigned int>(a_Data.size()) / 6;
 	}
 }
+#endif

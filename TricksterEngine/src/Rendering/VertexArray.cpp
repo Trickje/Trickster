@@ -19,7 +19,7 @@
 #include "Rendering/VertexArray.h"
 #include "Rendering/VertexBuffer.h"
 #include "Rendering/VertexBufferLayout.h"
-
+#ifdef TRICKSTER_OPENGL
 namespace Trickster {
 	VertexArray::VertexArray()
 	{
@@ -67,3 +67,4 @@ namespace Trickster {
 		GLCall(glBindVertexArray(0));
 	}
 }
+#endif

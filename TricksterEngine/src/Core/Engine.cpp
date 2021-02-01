@@ -41,10 +41,6 @@ namespace Trickster
 		{
 			LOG_ERROR("Failed to initialize the renderer");
 		}
-#ifdef __DEBUG
-		glDebugMessageCallback(DebugMessageCallback, 0);
-#endif
-		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 		return true;
 	}
 

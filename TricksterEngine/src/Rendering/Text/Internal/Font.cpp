@@ -70,7 +70,7 @@ void Trickster::Font::LoadFromFile(const std::string& a_FileName)
         }
 
         w += g->bitmap.width;
-        h = std::max(h, static_cast<int>(g->bitmap.rows));
+        h = max(h, static_cast<int>(g->bitmap.rows));
     }
 
     /* you might as well save this value as it is needed later on */
@@ -179,6 +179,9 @@ void Font::AddVertexData(std::string text, float x, float y, float scale, glm::v
 #ifdef TRICKSTER_VULKAN
 
 
+void Font::AddVertexData(std::string text, float x, float y, float scale, glm::vec4 color)
+{
+}
 
 void Trickster::Font::Initialize()
 {
@@ -188,6 +191,15 @@ void Trickster::Font::Initialize()
 void Trickster::Font::LoadFromFile(const std::string& a_FileName)
 {
 
+}
+
+void Font::Render()
+{
+}
+
+bool Font::operator==(const Font& other)
+{
+    return true;
 }
 
 

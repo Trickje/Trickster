@@ -25,12 +25,12 @@
 
 using namespace Trickster;
 static bool s_GLFWInitialized = false;
-#ifdef TRICKSTER_OPENGL
+
 Window* Window::Create(const WindowProps& props)
 {
 	return new WindowsWindow(props);
 }
-#endif
+
 WindowsWindow::WindowsWindow(const WindowProps& props)
 {
 	Init(props);
@@ -126,7 +126,6 @@ WindowsWindow::WindowsWindow(const WindowProps& props)
 
 WindowsWindow::~WindowsWindow()
 {
-	Shutdown();
 }
 
 void WindowsWindow::OnUpdate()
@@ -167,7 +166,9 @@ bool WindowsWindow::IsVSync() const
 
 void Trickster::WindowsWindow::Draw()
 {
+	//This will be in the RendererAPI
 
+	/*
 	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 	//Render Objects
 	EventManager::GetInstance()->GameLoopEvents.OnRender.Execute();
@@ -176,6 +177,7 @@ void Trickster::WindowsWindow::Draw()
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	EventManager::GetInstance()->GameLoopEvents.OnRenderTransparent.Execute();
 	glDisable(GL_BLEND);
+	*/
 	// Swap buffers
 	glfwSwapBuffers(m_Window);
 }
@@ -401,7 +403,9 @@ void Trickster::WindowsWindow::Resize(int a_Width, int a_Height)
 	m_Height = static_cast<unsigned int>(a_Height);
 	//int left, top, right, bottom;
 	//glfwGetWindowFrameSize(m_Window, &left, &top, &right, &bottom);
-	glViewport(0, 0, m_Width, m_Height);
+
+	//Uncomment below for opengl?
+	//glViewport(0, 0, m_Width, m_Height);
 }
 void* Trickster::WindowsWindow::GetRaw()
 {
@@ -454,15 +458,7 @@ void WindowsWindow::Init(const WindowProps& props)
 	glfwSetWindowIcon(m_Window, 1, image);
 	glfwGetWindowPos(m_Window, &m_PosX, &m_PosY);
 
-#ifdef DETAILED_CONSOLE
-	LOG("[Window] Initializing GLEW.");
-#endif
-	glewExperimental = GL_TRUE;
-	glewInit();
-	glfwSetInputMode(m_Window, GLFW_STICKY_KEYS, GL_TRUE);
-	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LESS);
-	//glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	glfwSetInputMode(m_Window, GLFW_STICKY_KEYS, GLFW_TRUE);
 	SetVSync(true);
 	//Listener to the windowclose.
 	EventManager::GetInstance()->InputEvents.OnKeyPressed.AddListener(std::bind(&WindowsWindow::SetKeyDown, this, std::placeholders::_1, true));

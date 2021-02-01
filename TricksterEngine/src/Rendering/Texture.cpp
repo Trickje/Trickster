@@ -26,6 +26,7 @@ namespace Trickster {
 		: m_FileName(a_FileName), m_LocalBuffer(nullptr),
 		m_Width(0), m_Height(0), m_BPP(0)
 	{
+#ifdef TRICKSTER_OPENGL
 		stbi_set_flip_vertically_on_load(1);
 		m_LocalBuffer = stbi_load( (Application::Get()->TexturePath + m_FileName).c_str(), &m_Width, &m_Height, &m_BPP, 0);
 		if(m_Width == 0)
@@ -62,24 +63,31 @@ namespace Trickster {
 		GLCall(glBindTexture(GL_TEXTURE_2D, m_RendererID));
 
 		GLCall(glBindTexture(GL_TEXTURE_2D, 0));
+#endif
 	}
 
 
 	Texture::~Texture()
 	{
+#ifdef TRICKSTER_OPENGL
 		GLCall(glDeleteTextures(1, &m_RendererID));
+#endif
 	}
 
 	void Texture::Bind(unsigned slot) const
 	{
+#ifdef TRICKSTER_OPENGL
 		//This is the texture slot
 		GLCall(glActiveTexture(GL_TEXTURE0 + slot));
 		GLCall(glBindTexture(GL_TEXTURE_2D, m_RendererID));
+#endif
 	}
 
 	void Texture::Unbind()
 	{
+#ifdef TRICKSTER_OPENGL
 		GLCall(glBindTexture(GL_TEXTURE_2D, 0));
+#endif
 	}
 
 	int Texture::GetWidth() const

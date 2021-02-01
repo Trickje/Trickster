@@ -16,6 +16,7 @@
 		limitations under the License.
 =================================================================================
  */
+#ifdef TRICKSTER_OPENGL
 namespace Trickster {
 	struct VertexBufferElement
 	{
@@ -57,3 +58,4 @@ namespace Trickster {
 	};
 
 }
+#endif

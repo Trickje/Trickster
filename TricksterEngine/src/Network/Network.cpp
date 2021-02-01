@@ -17,10 +17,12 @@
  */
 #include "pch.h"
 #include "Network/Network.h"
+#include "asio/ssl.hpp"
+
+#include "Network/Listener.h"
 using asio::ip::tcp;
 Trickster::Network::Network()
 {
-	
 }
 
 Trickster::Network::~Network()
@@ -34,6 +36,9 @@ const asio::io_context& Trickster::Network::Get()
 
 void Trickster::Network::ReadAndPrintPage(std::string a_Host, std::string a_Path)
 {
+	//TODO: add the readSSL function here
+	ReadSSLPageToBuffer(a_Path, a_Host);
+	return;
 	//tcp::resolver resolver(m_Context);
 	//tcp::resolver::results_type endpoints = resolver.resolve(a_URL, "443");
 	asio::error_code ec;
@@ -73,9 +78,16 @@ void Trickster::Network::ReadAndPrintPage(std::string a_Host, std::string a_Path
 				std::cout << c;
 			}
 		}
-		/*std::string reply;
-		secureSocket.write_some(asio::buffer(reply), ec);
-		LOG(ec.message());
-		secureSocket.*/
 	}
+}
+
+void Trickster::Network::ReadSSLPageToBuffer(std::string a_Path, std::string a_Host)
+{
+	asio::ssl::context context(asio::ssl::context::sslv23);
+	asio::ssl::stream<asio::ip::tcp::socket> socket(m_Context, context);
+	socket.set_verify_mode(asio::ssl::verify_peer);
+	tcp::resolver resolver(m_Context);
+	tcp::resolver::results_type endpoints = resolver.resolve(a_Host + "/" + a_Path, "http");
+	Listener listener(a_Host, a_Path, m_Context, context, endpoints);
+	m_Context.run();
 }

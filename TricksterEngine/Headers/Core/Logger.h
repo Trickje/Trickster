@@ -19,7 +19,7 @@
 #include <Windows.h>
 #include <iostream>
 #include <string>
-#ifdef _DEBUG
+#if defined(_DEBUG) && defined(TRICKSTER_OPENGL)
 #include <GL/glew.h>
 #endif
 
@@ -125,7 +125,7 @@ namespace Trickster {
 		return true;
 	}
 
-#ifdef _DEBUG
+#if defined(_DEBUG) && defined(TRICKSTER_OPENGL)
 	static void GLAPIENTRY DebugMessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
 	{
 		std::string typeString;

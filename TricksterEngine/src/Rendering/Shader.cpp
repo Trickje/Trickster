@@ -33,17 +33,23 @@ namespace Trickster {
 
 	Shader::~Shader()
 	{
+#ifdef TRICKSTER_OPENGL
 		GLCall(glDeleteProgram(m_RendererID));
+#endif
 	}
 
 	void Shader::Bind() const
 	{
+#ifdef TRICKSTER_OPENGL
 		GLCall(glUseProgram(m_RendererID));
+#endif
 	}
 
 	void Shader::Unbind() const
 	{
+#ifdef TRICKSTER_OPENGL
 		GLCall(glUseProgram(0));
+#endif
 	}
 
 	unsigned Shader::Get()
@@ -53,16 +59,21 @@ namespace Trickster {
 
 	void Shader::SetUniform4f(const std::string & name, float v0, float v1, float v2, float v3)
 	{
+#ifdef TRICKSTER_OPENGL
 		GLCall(glUniform4f(GetUniformLocation(name), v0, v1, v2, v3));
+#endif
 	}
 
 	void Shader::SetUniform1i(const std::string & name, int v0)
 	{
+#ifdef TRICKSTER_OPENGL
 		GLCall(glUniform1i(GetUniformLocation(name), v0));
+#endif
 	}
 
 	int Shader::GetUniformLocation(const std::string& name)
 	{
+#ifdef TRICKSTER_OPENGL
 		if (m_UniformLocationCache.find(name) != m_UniformLocationCache.end())
 		{
 			return m_UniformLocationCache[name];
@@ -75,6 +86,8 @@ namespace Trickster {
 		m_UniformLocationCache[name] = location;
 
 		return location;
+#endif
+		return 0;
 	}
 	/*
 	unsigned int Shader::CompileShader(unsigned int type, const std::string& source)
@@ -151,6 +164,7 @@ namespace Trickster {
 	*/
 	unsigned int Shader::LoadShaders(const char* vertex_file_path, const char* fragment_file_path)
 	{
+#ifdef TRICKSTER_OPENGL
 		// Create the shaders
 		GLuint VertexShaderID = glCreateShader(GL_VERTEX_SHADER);
 		GLuint FragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
@@ -245,5 +259,7 @@ namespace Trickster {
 		glDeleteShader(FragmentShaderID);
 
 		return ProgramID;
+#endif
+		return 0;
 	}
 }

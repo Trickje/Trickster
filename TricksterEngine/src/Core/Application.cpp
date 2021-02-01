@@ -28,6 +28,7 @@
 
 #include <curl/curl.h>
 #include <curl/mprintf.h>
+#include "Rendering/RenderAPI/RenderAPI.h"
 
 #include "Core/Version.h"
 #include "Rendering/Text/TextRenderer.h"
@@ -40,6 +41,8 @@ Application::Application()
 	m_Timer.Start();
 	m_Engine = std::make_shared<Engine>();
 	m_Window = std::unique_ptr<Window>(Window::Create());
+	m_RenderAPI = std::shared_ptr<RenderAPI>(RenderAPI::Create());
+	m_RenderAPI->Initialize();
 	m_JobSystem = std::make_shared<JobSystem>();
 	m_AudioPlayer = std::make_shared<AudioPlayer>();
 	EventManager::GetInstance()->GameLoopEvents.OnStart.AddListener(std::bind(&Application::OnStart, this));

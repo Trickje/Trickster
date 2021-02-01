@@ -22,6 +22,4 @@
 #include "Network.h"
 #include "Events.h"
 #include "UI.h"
-#ifdef TRICKSTER_OPENGL
 #include "Platform/Windows/WindowsWindow.h"
-#endif

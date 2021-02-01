@@ -16,6 +16,7 @@
 		limitations under the License.
 =================================================================================
  */
+#ifdef TRICKSTER_OPENGL
 namespace Trickster {
 	class IndexBuffer
 	{
@@ -34,3 +35,4 @@ namespace Trickster {
 	};
 
 }
+#endif

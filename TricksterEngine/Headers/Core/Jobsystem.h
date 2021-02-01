@@ -53,11 +53,6 @@ namespace Trickster {
 		//This function will pause the main thread until all worker threads are idle
 		TRICKSTER_API void AwaitAll();
 		private:
-
-
-
-
-
 		//Joinable threads
 		std::vector<std::thread> m_Threads;
 		std::vector<bool> m_Working;

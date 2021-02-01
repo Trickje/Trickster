@@ -49,9 +49,11 @@ namespace Trickster {
 		glm::vec2 m_Size;
 		//Texture file path
 		std::string m_FilePath;
+#ifdef TRICKSTER_OPENGL
 		std::unique_ptr<VertexBuffer> vb;
 		std::unique_ptr<VertexArray> va;
 		std::unique_ptr<VertexBufferLayout> layout;
+#endif
 		float m_Percentage;
 		glm::vec2 m_Scale;
 		//Location of the ScreenPos uniform in the shader

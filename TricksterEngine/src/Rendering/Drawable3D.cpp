@@ -84,6 +84,7 @@ namespace Trickster {
 	//This is handled by the engine. Don't manually draw it
 	void Drawable3D::Draw(std::shared_ptr<Camera> a_Camera)
 	{
+#ifdef TRICKSTER_OPENGL
 		if(!HasBuffers)
 		{
 			MakeBuffers();
@@ -94,15 +95,16 @@ namespace Trickster {
 			CalculateTranslationMatrix();
 			m_ModelMatrix = m_TranslationMatrix * m_RotationMatrix;// * scalematrix;
 			ShaderManager::GetShader(m_ShaderPath)->Bind();
-			const auto UniformLoc = glGetUniformLocation(ShaderManager::GetShader(m_ShaderPath)->Get(), "MVP");
-			glm::mat4 MVP = a_Camera->GetProjection() * a_Camera->GetView() * m_ModelMatrix;
-			glUniformMatrix4fv(UniformLoc, 1, GL_FALSE, &MVP[0][0]);
+			//const auto UniformLoc = glGetUniformLocation(ShaderManager::GetShader(m_ShaderPath)->Get(), "MVP");
+			//glm::mat4 MVP = a_Camera->GetProjection() * a_Camera->GetView() * m_ModelMatrix;
+			//glUniformMatrix4fv(UniformLoc, 1, GL_FALSE, &MVP[0][0]);
 
 			TextureManager::GetTexture(std::string("../Models/" + m_TextureFile))->Bind();
 			m_DrawData->vb->Bind();
 			m_DrawData->va->Bind();
 			GLCall(glDrawArrays(GL_TRIANGLES, 0, (GLsizei)m_Vertices.size()));
 		}
+#endif
 	}
 
 	void Drawable3D::LoadMesh(const std::string& a_FileName)
@@ -283,6 +285,7 @@ namespace Trickster {
 
 	void Drawable3D::MakeBuffers()
 	{
+#ifdef TRICKSTER_OPENGL
 		m_DrawData->vb =new VertexBuffer(&m_Vertices[0], (unsigned int)m_Vertices.size() * 8 * sizeof(float));
 		m_DrawData->layout = new VertexBufferLayout();
 		m_DrawData->layout->Push<float>(3);
@@ -290,6 +293,6 @@ namespace Trickster {
 		m_DrawData->layout->Push<float>(2);
 		m_DrawData->va = new VertexArray();
 		m_DrawData->va->AddBuffer(*m_DrawData->vb, *m_DrawData->layout);
-		
+#endif
 	}
 }

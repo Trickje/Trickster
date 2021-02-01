@@ -17,6 +17,10 @@ Global
 		Static_Debug|x86 = Static_Debug|x86
 		Static_Release|x64 = Static_Release|x64
 		Static_Release|x86 = Static_Release|x86
+		VulkanDebug|x64 = VulkanDebug|x64
+		VulkanDebug|x86 = VulkanDebug|x86
+		VulkanRelease|x64 = VulkanRelease|x64
+		VulkanRelease|x86 = VulkanRelease|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{46F6C29E-E601-4312-AA3D-946334E839E9}.Debug|x64.ActiveCfg = Debug|x64
@@ -35,6 +39,14 @@ Global
 		{46F6C29E-E601-4312-AA3D-946334E839E9}.Static_Release|x64.Build.0 = Static_Release|x64
 		{46F6C29E-E601-4312-AA3D-946334E839E9}.Static_Release|x86.ActiveCfg = Static_Release|Win32
 		{46F6C29E-E601-4312-AA3D-946334E839E9}.Static_Release|x86.Build.0 = Static_Release|Win32
+		{46F6C29E-E601-4312-AA3D-946334E839E9}.VulkanDebug|x64.ActiveCfg = VulkanDebug|x64
+		{46F6C29E-E601-4312-AA3D-946334E839E9}.VulkanDebug|x64.Build.0 = VulkanDebug|x64
+		{46F6C29E-E601-4312-AA3D-946334E839E9}.VulkanDebug|x86.ActiveCfg = VulkanDebug|Win32
+		{46F6C29E-E601-4312-AA3D-946334E839E9}.VulkanDebug|x86.Build.0 = VulkanDebug|Win32
+		{46F6C29E-E601-4312-AA3D-946334E839E9}.VulkanRelease|x64.ActiveCfg = VulkanRelease|x64
+		{46F6C29E-E601-4312-AA3D-946334E839E9}.VulkanRelease|x64.Build.0 = VulkanRelease|x64
+		{46F6C29E-E601-4312-AA3D-946334E839E9}.VulkanRelease|x86.ActiveCfg = VulkanRelease|Win32
+		{46F6C29E-E601-4312-AA3D-946334E839E9}.VulkanRelease|x86.Build.0 = VulkanRelease|Win32
 		{FD633804-DE47-4F35-9A06-5BAA82108DCD}.Debug|x64.ActiveCfg = Debug|x64
 		{FD633804-DE47-4F35-9A06-5BAA82108DCD}.Debug|x64.Build.0 = Debug|x64
 		{FD633804-DE47-4F35-9A06-5BAA82108DCD}.Debug|x86.ActiveCfg = Debug|Win32
@@ -51,6 +63,14 @@ Global
 		{FD633804-DE47-4F35-9A06-5BAA82108DCD}.Static_Release|x64.Build.0 = Static_Release|x64
 		{FD633804-DE47-4F35-9A06-5BAA82108DCD}.Static_Release|x86.ActiveCfg = Static_Release|Win32
 		{FD633804-DE47-4F35-9A06-5BAA82108DCD}.Static_Release|x86.Build.0 = Static_Release|Win32
+		{FD633804-DE47-4F35-9A06-5BAA82108DCD}.VulkanDebug|x64.ActiveCfg = VulkanDebug|x64
+		{FD633804-DE47-4F35-9A06-5BAA82108DCD}.VulkanDebug|x64.Build.0 = VulkanDebug|x64
+		{FD633804-DE47-4F35-9A06-5BAA82108DCD}.VulkanDebug|x86.ActiveCfg = VulkanDebug|Win32
+		{FD633804-DE47-4F35-9A06-5BAA82108DCD}.VulkanDebug|x86.Build.0 = VulkanDebug|Win32
+		{FD633804-DE47-4F35-9A06-5BAA82108DCD}.VulkanRelease|x64.ActiveCfg = VulkanRelease|x64
+		{FD633804-DE47-4F35-9A06-5BAA82108DCD}.VulkanRelease|x64.Build.0 = VulkanRelease|x64
+		{FD633804-DE47-4F35-9A06-5BAA82108DCD}.VulkanRelease|x86.ActiveCfg = VulkanRelease|Win32
+		{FD633804-DE47-4F35-9A06-5BAA82108DCD}.VulkanRelease|x86.Build.0 = VulkanRelease|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
