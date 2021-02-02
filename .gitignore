@@ -11,3 +11,6 @@
 !Lib/DLL/*
 *.obj
 !Resources/*
+/Lib/shaderc_combined.lib
+/Lib/SPIRV-Tools-opt.lib
+/Tools/glslc.exe

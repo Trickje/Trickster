@@ -80,8 +80,11 @@
 	#elif defined(TRICKSTER_VULKAN)
 		#if defined(TRICKSTER_DEBUG)
 		//DEBUG
+#include <vulkan/vulkan.h>
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
+#define GLFW_EXPOSE_NATIVE_WIN32
+#include <GLFW/glfw3native.h>
 #include <glm/vec3.hpp>
 #include <glm/mat4x4.hpp>
 #include <glm/gtc/matrix_transform.hpp>

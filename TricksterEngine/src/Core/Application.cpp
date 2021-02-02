@@ -42,7 +42,6 @@ Application::Application()
 	m_Engine = std::make_shared<Engine>();
 	m_Window = std::unique_ptr<Window>(Window::Create());
 	m_RenderAPI = std::shared_ptr<RenderAPI>(RenderAPI::Create());
-	m_RenderAPI->Initialize();
 	m_JobSystem = std::make_shared<JobSystem>();
 	m_AudioPlayer = std::make_shared<AudioPlayer>();
 	EventManager::GetInstance()->GameLoopEvents.OnStart.AddListener(std::bind(&Application::OnStart, this));
@@ -75,6 +74,7 @@ Application* Application::Get()
 
 void Application::Start()
 {
+	m_RenderAPI->Initialize();
 	if (!m_Engine->Initialize())
 	{
 		LOG_ERROR("Failed to initialize the engine!");

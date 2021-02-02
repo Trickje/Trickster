@@ -17,7 +17,6 @@ namespace Trickster
 		TRICKSTER_API Vulkan();
 		TRICKSTER_API ~Vulkan();
 		TRICKSTER_API void Initialize() override;
-		//Something with a physical device
 	private:
 
 		
@@ -62,6 +61,40 @@ namespace Trickster
 			VkBuffer get;
 			
 		};
+
+		struct TricksterWindow
+		{
+			std::shared_ptr<Window> get;
+			GLFWwindow* glfw = nullptr;
+		};
+
+		//TODO: maybe a way of changing present mode on runtime
+		struct TricksterSwapChain
+		{
+			VkSwapchainKHR get;
+			std::vector<VkImage> images;
+			std::vector<VkImageView> image_views;
+			VkSurfaceCapabilitiesKHR capabilities;
+			VkSurfaceFormatKHR format;
+		//The presentation mode will either be vertical sync
+		//VK_PRESENT_MODE_FIFO_KHR
+		//`
+		//or triple buffering, aka mailbox (when the queue is full, instead of blocking it will replace the queued images with newer ones)
+		//so no tearing and less latency than the standard vertical sync
+		//VK_PRESENT_MODE_MAILBOX_KHR
+		//`
+		//VK_PRESENT_MODE_IMMEDIATE_KHR to disable vertical sync
+		//Will result in tearing though
+			VkPresentModeKHR present_mode;
+		};
+
+		struct TricksterShader
+		{
+			VkShaderModule vertex;
+			VkShaderModule fragment;
+		};
+
+		
 		/*
 		 *  _______           _        _______ __________________ _______  _        _______ 
 		 *  (  ____ \|\     /|( (    /|(  ____ \\__   __/\__   __/(  ___  )( (    /|(  ____ \
@@ -79,6 +112,16 @@ namespace Trickster
 		TRICKSTER_API void SetupApp(const char* a_ApplicationName);
 		TRICKSTER_API void SetupDevice();
 		TRICKSTER_API void SetupCommandPool();
+		TRICKSTER_API void SetupWindow();
+		TRICKSTER_API void SetupSwapChain();
+		//You are not able to change the pipeline after this, so make it count.
+		TRICKSTER_API void SetupGraphicsPipeline();
+		//Combiner function to make code more readable
+		//Returns the shader so that you can change things to it
+		TRICKSTER_API TricksterShader& AddShader(const std::string& filenameVertexShader, const std::string& filenameFragmentShader);
+		TRICKSTER_API std::vector<char> ReadShaderFile(const std::string& filename);
+		TRICKSTER_API VkShaderModule CreateShaderModule(const std::vector<char>& code);
+		TRICKSTER_API TricksterSwapChain QuerySwapChainInfo();
 		/*
 		 @Args
 		 a_Data: the std::vector.data() that you want to flush
@@ -116,10 +159,15 @@ namespace Trickster
 
 		
 		VkInstance m_Instance;
+		VkSurfaceKHR m_Surface;
+		VkQueue m_GraphicsQueue;
 		//Information about the GPU and has a handle to the vulkan physical device
 		TricksterPhysicalDevice m_PhysicalDevice;
 		TricksterDevice m_Device;
 		TricksterCommandPool m_CommandPool;
+		TricksterWindow m_Window;
+		TricksterSwapChain m_SwapChain;
+		std::vector<TricksterShader> m_Shaders;
 		std::vector<const char*> validationLayers;
 	};
 }

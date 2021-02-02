@@ -166,6 +166,7 @@ bool WindowsWindow::IsVSync() const
 
 void Trickster::WindowsWindow::Draw()
 {
+	
 	//This will be in the RendererAPI
 
 	/*
@@ -442,6 +443,9 @@ void WindowsWindow::Init(const WindowProps& props)
 		ASSERT(success);
 		s_GLFWInitialized = true;
 	}
+#ifdef TRICKSTER_VULKAN
+	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+#endif
 	m_Window = glfwCreateWindow(static_cast<int>(props.width), static_cast<int>(props.height), m_Title.c_str(), nullptr, nullptr);
 	glfwMakeContextCurrent(m_Window);
 	glfwSetWindowUserPointer(m_Window, this);

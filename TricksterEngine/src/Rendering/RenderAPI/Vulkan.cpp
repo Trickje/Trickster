@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "Rendering/RenderAPI/Vulkan.h"
 
+
+#include "Core/Application.h"
 #include "Core/Version.h"
 
 namespace Trickster {
@@ -16,6 +18,17 @@ namespace Trickster {
     Trickster::Vulkan::~Vulkan()
     {
         vkDestroyCommandPool(m_Device.get, m_CommandPool.get, nullptr);
+        vkDestroySurfaceKHR(m_Instance, m_Surface, nullptr);
+    	for(auto view : m_SwapChain.image_views)
+    	{
+            vkDestroyImageView(m_Device.get, view, nullptr);
+    	}
+    	for(auto shader : m_Shaders)
+    	{
+            vkDestroyShaderModule(m_Device.get, shader.vertex, nullptr);
+            vkDestroyShaderModule(m_Device.get, shader.fragment, nullptr);
+    	}
+        vkDestroySwapchainKHR(m_Device.get, m_SwapChain.get, nullptr);
         vkDestroyDevice(m_Device.get, nullptr);
         vkDestroyInstance(m_Instance, nullptr);
     }
@@ -26,13 +39,25 @@ namespace Trickster {
     void Trickster::Vulkan::Initialize()
     {
         LOG("Rendering API: Vulkan");
+        m_Window.get = nullptr;
+        m_Window.get = Trickster::Application::Get()->GetWindow();
+        m_Window.glfw = static_cast<GLFWwindow*>(m_Window.get->GetRaw());
+    	if(m_Window.get == nullptr)
+    	{
+            LOG_ERROR("[Vulkan] Window is not made yet. You have to initialize Window before Vulkan.");
+    	}
         SetupApp("Trickster Engine");
         //Getting the physical device
         SetupPhysicalDevice();
         LOG(std::string("[Vulkan] Using GPU ") + m_PhysicalDevice.properties.deviceName);
         SetupDevice();
+        SetupWindow();
         SetupCommandPool();
+        SetupSwapChain();
+        SetupGraphicsPipeline();
 
+
+    	
         //Descriptor stuff that needs to move to it's seperate function that I can call
     	//But should also be optimized to use multiple buffers instead of one
     	//Because otherwise it would make no difference using OpenGL if I don't use the
@@ -265,6 +290,9 @@ namespace Trickster {
         {
             LOG_ERROR("[Vulkan] Device failed to create.");
         }
+        vkGetDeviceQueue(m_Device.get, m_PhysicalDevice.queue_family_index, 0, &m_GraphicsQueue);
+
+    	
     	
     }
 
@@ -287,6 +315,216 @@ namespace Trickster {
             LOG_ERROR("[Vulkan] Failed to create Command Pool");
     	}
         m_CommandPool.get = command_pool;
+    }
+
+    void Vulkan::SetupWindow()
+    {
+        VkResult ec = glfwCreateWindowSurface(m_Instance, m_Window.glfw, nullptr, &m_Surface);
+    	if(ec != VK_SUCCESS)
+    	{
+            LOG_ERROR("[Vulkan] Could not bind to the GLFW window.");
+    	}
+        VkBool32 presentSupport = false;
+        vkGetPhysicalDeviceSurfaceSupportKHR(m_PhysicalDevice.get, m_PhysicalDevice.queue_family_index, m_Surface, &presentSupport);
+        if(!presentSupport)
+        {
+            LOG_ERROR("[Vulkan] Graphics card does not support a graphics queue.");
+        }
+    }
+
+    void Vulkan::SetupSwapChain()
+    {
+        m_SwapChain = QuerySwapChainInfo();
+        VkSwapchainCreateInfoKHR createInfo{};
+        createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
+        createInfo.surface = m_Surface;
+        createInfo.minImageCount = m_SwapChain.capabilities.minImageCount + 1;
+        createInfo.imageFormat = m_SwapChain.format.format;
+        createInfo.imageColorSpace = m_SwapChain.format.colorSpace;
+        createInfo.imageExtent = m_SwapChain.capabilities.currentExtent;
+        createInfo.imageArrayLayers = 1;
+        createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+        createInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
+        createInfo.queueFamilyIndexCount = 0; // Optional
+        createInfo.pQueueFamilyIndices = nullptr; // Optional
+        createInfo.preTransform = m_SwapChain.capabilities.currentTransform;
+        createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
+        createInfo.presentMode = m_SwapChain.present_mode;
+        createInfo.clipped = VK_TRUE;
+        createInfo.oldSwapchain = VK_NULL_HANDLE;
+
+        VkResult ec = vkCreateSwapchainKHR(m_Device.get, &createInfo, nullptr, &m_SwapChain.get);
+    	if(ec != VK_SUCCESS)
+    	{
+            LOG_ERROR("[Vulkan] Failed to create Swapchain.");
+    	}
+    	//Now just allocate the images in the struct
+        uint32_t imageCount;
+        vkGetSwapchainImagesKHR(m_Device.get, m_SwapChain.get, &imageCount, nullptr);
+        m_SwapChain.images.resize(imageCount);
+        vkGetSwapchainImagesKHR(m_Device.get, m_SwapChain.get, &imageCount, m_SwapChain.images.data());
+
+        //Create the image views
+        m_SwapChain.image_views.resize(m_SwapChain.images.size());
+
+    	//Loop over the swap chain images
+    	for(uint32_t i = 0; i < m_SwapChain.images.size(); i++)
+    	{
+    		//Create a view for this image
+            VkImageViewCreateInfo create_info{};
+            create_info.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+            create_info.image = m_SwapChain.images[i];
+            create_info.viewType = VK_IMAGE_VIEW_TYPE_2D;
+            create_info.format = m_SwapChain.format.format;
+            create_info.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
+            create_info.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
+            create_info.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
+            create_info.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
+            create_info.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+            create_info.subresourceRange.baseMipLevel = 0;
+            create_info.subresourceRange.levelCount = 1;
+            create_info.subresourceRange.baseArrayLayer = 0;
+            create_info.subresourceRange.layerCount = 1;
+            VkResult viewError = vkCreateImageView(m_Device.get, &create_info, nullptr, &m_SwapChain.image_views[i]);
+    		if(viewError != VK_SUCCESS)
+    		{
+                LOG_ERROR("[Vulkan] Failed to create Image View (Swap Chain).");
+    		}
+    	}
+
+    }
+    // https://vulkan-tutorial.com/Drawing_a_triangle/Graphics_pipeline_basics/Introduction 
+    void Vulkan::SetupGraphicsPipeline()
+    {
+        auto shader = AddShader("vert.spv", "frag.spv");
+        VkPipelineShaderStageCreateInfo vertexShaderStageInfo{};
+        vertexShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+        vertexShaderStageInfo.stage = VK_SHADER_STAGE_VERTEX_BIT;
+        vertexShaderStageInfo.module = shader.vertex;
+        vertexShaderStageInfo.pName = "main";
+
+        VkPipelineShaderStageCreateInfo fragmentShaderStageInfo{};
+        fragmentShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+        fragmentShaderStageInfo.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
+        fragmentShaderStageInfo.module = shader.fragment;
+        fragmentShaderStageInfo.pName = "main";
+
+    	//TODO some stuff here. I left off here, and last line from previous hasn't been saved https://vulkan-tutorial.com/Drawing_a_triangle/Graphics_pipeline_basics/Fixed_functions
+    }
+
+	//The filenames are already in the shader directory of Application:: ShaderPath
+    Trickster::Vulkan::TricksterShader& Vulkan::AddShader(const std::string& filenameVertexShader, const std::string& filenameFragmentShader)
+    {
+        m_Shaders.push_back(
+            {
+            CreateShaderModule(
+                ReadShaderFile(
+                    Application::Get()->ShaderPath + filenameVertexShader))
+            ,
+            CreateShaderModule(
+                ReadShaderFile(
+                    Application::Get()->ShaderPath + filenameFragmentShader))
+            });
+        return m_Shaders[m_Shaders.size() - 1];
+    }
+
+    std::vector<char> Vulkan::ReadShaderFile(const std::string& filename)
+    {
+        std::ifstream file(filename, std::ios::ate | std::ios::binary);
+
+        if (!file.is_open()) {
+            LOG_ERROR("[Vulkan] Failed to open shader file " + filename);
+            return {};
+        }
+        size_t fileSize = (size_t)file.tellg();
+        std::vector<char> buffer(fileSize);
+        file.seekg(0);
+        file.read(buffer.data(), fileSize);
+        file.close();
+
+        return buffer;
+    }
+
+    VkShaderModule Vulkan::CreateShaderModule(const std::vector<char>& code)
+    {
+        VkShaderModuleCreateInfo create_info{};
+        create_info.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+        create_info.codeSize = code.size();
+        create_info.pCode = reinterpret_cast<const uint32_t*>(code.data());
+
+        VkShaderModule shader_module;
+        VkResult ec = vkCreateShaderModule(m_Device.get, &create_info, nullptr, &shader_module);
+    	if(ec != VK_SUCCESS)
+    	{
+            LOG_ERROR("[Vulkan] Failed to create Shader Module.");
+    	}
+        return shader_module;
+    }
+
+    Vulkan::TricksterSwapChain Vulkan::QuerySwapChainInfo()
+    {
+        TricksterSwapChain info;
+        std::vector<VkSurfaceFormatKHR> formats;
+        std::vector<VkPresentModeKHR> present_modes;
+    	vkGetPhysicalDeviceSurfaceCapabilitiesKHR(m_PhysicalDevice.get, m_Surface, &info.capabilities);
+        uint32_t formatCount;
+        vkGetPhysicalDeviceSurfaceFormatsKHR(m_PhysicalDevice.get, m_Surface, &formatCount, nullptr);
+
+        if (formatCount != 0) {
+            formats.resize(formatCount);
+            vkGetPhysicalDeviceSurfaceFormatsKHR(m_PhysicalDevice.get, m_Surface, &formatCount, formats.data());
+        }
+        uint32_t presentModeCount;
+        vkGetPhysicalDeviceSurfacePresentModesKHR(m_PhysicalDevice.get, m_Surface, &presentModeCount, nullptr);
+
+        if (presentModeCount != 0) {
+            present_modes.resize(presentModeCount);
+            vkGetPhysicalDeviceSurfacePresentModesKHR(m_PhysicalDevice.get, m_Surface, &presentModeCount, present_modes.data());
+        }
+
+        if(formats.empty() && present_modes.empty())
+        {
+            LOG_ERROR("[Vulkan] Trying to bind not suitable SwapChain.");
+        }
+        info.format = formats[0]; //Just initializing it as failsafe
+        //Get the right color formats
+    	for(auto& format : formats)
+    	{
+    		if(format.format == VK_FORMAT_B8G8R8A8_SRGB && format.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR)
+    		{
+                info.format = format;
+    		}
+    	}
+    	
+        
+
+        //Set the present_mode to FIFO so that will be used when Mailbox is not available
+        info.present_mode = VK_PRESENT_MODE_FIFO_KHR;
+    	//Check if Mailbox is available, if not use FIFO
+        for(auto& present_mode : present_modes)
+        {
+	        if(present_mode == VK_PRESENT_MODE_MAILBOX_KHR)
+	        {
+                info.present_mode = present_mode;
+	        }
+        }
+
+
+        //Decide the resolution of swap images (probably the screen resolution)
+    	//Can also be higher for better visual quality
+
+        int width, height;
+        glfwGetFramebufferSize(m_Window.glfw, &width, &height);
+
+        VkExtent2D extent = {
+            static_cast<uint32_t>(width),
+            static_cast<uint32_t>(height)
+        };
+        extent.width = std::max(info.capabilities.minImageExtent.width, std::min(info.capabilities.maxImageExtent.width, extent.width));
+        extent.height = std::max(info.capabilities.minImageExtent.height, std::min(info.capabilities.maxImageExtent.height, extent.height));
+        info.capabilities.currentExtent = extent;
+        info.get = VK_NULL_HANDLE;
+    	return info;
     }
 
     void Vulkan::FlushBufferToGPU(void* a_Data, uint64_t a_TypeSize, uint64_t a_Count)
