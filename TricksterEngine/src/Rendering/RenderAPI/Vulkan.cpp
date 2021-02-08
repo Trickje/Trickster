@@ -17,8 +17,17 @@ namespace Trickster {
 
     Trickster::Vulkan::~Vulkan()
     {
-        vkDestroyCommandPool(m_Device.get, m_CommandPool.get, nullptr);
+        vkDestroySemaphore(m_Device.get, m_Semaphores.render_finished, nullptr);
+        vkDestroySemaphore(m_Device.get, m_Semaphores.image_available, nullptr);
+        for (auto framebuffer : m_SwapChain.frame_buffers) {
+            vkDestroyFramebuffer(m_Device.get, framebuffer, nullptr);
+        }
+
+        vkDestroyCommandPool(m_Device.get, m_Command.pool, nullptr);
         vkDestroySurfaceKHR(m_Instance, m_Surface, nullptr);
+        vkDestroyPipeline(m_Device.get, m_Pipeline.get, nullptr);
+        vkDestroyPipelineLayout(m_Device.get, m_Pipeline.layout, nullptr);
+        vkDestroyRenderPass(m_Device.get, m_Pipeline.render_pass, nullptr);
     	for(auto view : m_SwapChain.image_views)
     	{
             vkDestroyImageView(m_Device.get, view, nullptr);
@@ -52,13 +61,16 @@ namespace Trickster {
         LOG(std::string("[Vulkan] Using GPU ") + m_PhysicalDevice.properties.deviceName);
         SetupDevice();
         SetupWindow();
-        SetupCommandPool();
         SetupSwapChain();
         SetupGraphicsPipeline();
+        SetupFrameBuffers();
+        SetupCommandPool();
+        SetupCommandBuffers();
+        SetupSemaphores();
 
 
     	
-        //Descriptor stuff that needs to move to it's seperate function that I can call
+        //Descriptor stuff that needs to move to it's separate function that I can call
     	//But should also be optimized to use multiple buffers instead of one
     	//Because otherwise it would make no difference using OpenGL if I don't use the
     	//optimizations that Vulkan has to offer.
@@ -166,6 +178,49 @@ namespace Trickster {
 
     }
 
+	/*****************************************
+	 *****************************************
+	 The drawing of the frame
+	 
+	 *****************************************
+	 *****************************************/
+    void Vulkan::DrawFrame()
+    {
+        uint32_t imageIndex;
+        vkAcquireNextImageKHR(m_Device.get, m_SwapChain.get, UINT64_MAX, m_Semaphores.image_available, VK_NULL_HANDLE, &imageIndex);
+
+        VkSubmitInfo submitInfo{};
+        submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+
+        VkSemaphore waitSemaphores[] = { m_Semaphores.image_available };
+        VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
+        submitInfo.waitSemaphoreCount = 1;
+        submitInfo.pWaitSemaphores = waitSemaphores;
+        submitInfo.pWaitDstStageMask = waitStages;
+        submitInfo.commandBufferCount = 1;
+        submitInfo.pCommandBuffers = &m_Command.buffers[imageIndex];
+
+        VkSemaphore signalSemaphores[] = { m_Semaphores.render_finished };
+        submitInfo.signalSemaphoreCount = 1;
+        submitInfo.pSignalSemaphores = signalSemaphores;
+    	
+        if (vkQueueSubmit(m_GraphicsQueue, 1, &submitInfo, VK_NULL_HANDLE) != VK_SUCCESS) {
+            throw std::runtime_error("failed to submit draw command buffer!");
+        }
+
+        VkPresentInfoKHR presentInfo{};
+        presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+
+        presentInfo.waitSemaphoreCount = 1;
+        presentInfo.pWaitSemaphores = signalSemaphores;
+        VkSwapchainKHR swapChains[] = { m_SwapChain.get };
+        presentInfo.swapchainCount = 1;
+        presentInfo.pSwapchains = swapChains;
+        presentInfo.pImageIndices = &imageIndex;
+        presentInfo.pResults = nullptr; // Optional
+        vkQueuePresentKHR(m_PresentQueue, &presentInfo);
+    }
+
     void Vulkan::SetupPhysicalDevice()
     {
     	//Populate an array of devices
@@ -193,7 +248,6 @@ namespace Trickster {
     			//Check if the GPU has the QueueFamilies we want
     			if(GetQueueFamily(devices[i], VkQueueFlagBits::VK_QUEUE_GRAPHICS_BIT, queue_family_index))
     			{
-
                     VkPhysicalDeviceProperties properties;
                     VkPhysicalDeviceFeatures features;
                     VkPhysicalDeviceMemoryProperties memory_properties;
@@ -291,7 +345,7 @@ namespace Trickster {
             LOG_ERROR("[Vulkan] Device failed to create.");
         }
         vkGetDeviceQueue(m_Device.get, m_PhysicalDevice.queue_family_index, 0, &m_GraphicsQueue);
-
+        vkGetDeviceQueue(m_Device.get, m_PhysicalDevice.queue_family_index, 0, &m_PresentQueue);
     	
     	
     }
@@ -314,7 +368,61 @@ namespace Trickster {
     	{
             LOG_ERROR("[Vulkan] Failed to create Command Pool");
     	}
-        m_CommandPool.get = command_pool;
+        m_Command.pool = command_pool;
+    }
+
+    void Vulkan::SetupCommandBuffers()
+    {
+        m_Command.buffers.resize(m_SwapChain.frame_buffers.size());
+        VkCommandBufferAllocateInfo allocInfo{};
+        allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+        allocInfo.commandPool = m_Command.pool;
+        allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+        allocInfo.commandBufferCount = (uint32_t)m_Command.buffers.size();
+        VkResult ec = vkAllocateCommandBuffers(m_Device.get, &allocInfo, m_Command.buffers.data());
+    	if(ec != VK_SUCCESS)
+    	{
+            LOG_ERROR("[Vulkan] Failed to allocate CommandBuffers");
+    	}
+
+
+        for (size_t i = 0; i < m_Command.buffers.size(); i++) {
+            VkCommandBufferBeginInfo beginInfo{};
+            beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+            beginInfo.flags = 0; // Optional
+            beginInfo.pInheritanceInfo = nullptr; // Optional
+
+            if (vkBeginCommandBuffer(m_Command.buffers[i], &beginInfo) != VK_SUCCESS) {
+                LOG_ERROR("[Vulkan] Failed to begin recording CommandBuffer");
+            }
+
+
+            VkRenderPassBeginInfo renderPassInfo{};
+            renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+            renderPassInfo.renderPass = m_Pipeline.render_pass;
+            renderPassInfo.framebuffer = m_SwapChain.frame_buffers[i];
+            renderPassInfo.renderArea.offset = { 0, 0 };
+            renderPassInfo.renderArea.extent = m_SwapChain.capabilities.currentExtent;
+
+            VkClearValue clearColor = { 0.0f, 0.0f, 0.0f, 1.0f };
+            renderPassInfo.clearValueCount = 1;
+            renderPassInfo.pClearValues = &clearColor;
+
+            vkCmdBeginRenderPass(m_Command.buffers[i], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+
+            vkCmdBindPipeline(m_Command.buffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, m_Pipeline.get);
+
+        	//Very temporary
+            vkCmdDraw(m_Command.buffers[i], 3, 1, 0, 0);
+
+            vkCmdEndRenderPass(m_Command.buffers[i]);
+
+            if (vkEndCommandBuffer(m_Command.buffers[i]) != VK_SUCCESS) {
+                throw std::runtime_error("failed to record command buffer!");
+            }
+        }
+
+    	
     }
 
     void Vulkan::SetupWindow()
@@ -409,10 +517,241 @@ namespace Trickster {
         fragmentShaderStageInfo.module = shader.fragment;
         fragmentShaderStageInfo.pName = "main";
 
+        shader.vertex_info = vertexShaderStageInfo;
+        shader.fragment_info = fragmentShaderStageInfo;
     	//TODO some stuff here. I left off here, and last line from previous hasn't been saved https://vulkan-tutorial.com/Drawing_a_triangle/Graphics_pipeline_basics/Fixed_functions
+        VkPipelineShaderStageCreateInfo shaderStages[] = { vertexShaderStageInfo, fragmentShaderStageInfo };
+
+        VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
+        vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
+        vertexInputInfo.vertexBindingDescriptionCount = 0;
+        vertexInputInfo.pVertexBindingDescriptions = nullptr; // Optional
+        vertexInputInfo.vertexAttributeDescriptionCount = 0;
+        vertexInputInfo.pVertexAttributeDescriptions = nullptr; // Optional
+        //Input assembly
+        VkPipelineInputAssemblyStateCreateInfo inputAssembly{};
+        inputAssembly.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
+        inputAssembly.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+        inputAssembly.primitiveRestartEnable = VK_FALSE;
+        //Viewport
+        VkViewport viewport{};
+        viewport.x = 0.0f;
+        viewport.y = 0.0f;
+        viewport.width = (float)m_SwapChain.capabilities.currentExtent.width;
+        viewport.height = (float)m_SwapChain.capabilities.currentExtent.height;
+        viewport.minDepth = 0.0f;
+        viewport.maxDepth = 1.0f;
+
+        //Scissor
+        VkRect2D scissor{};
+        scissor.offset = { 0, 0 };
+        scissor.extent = m_SwapChain.capabilities.currentExtent;
+
+        //Combine the scissor and viewport into a viewport state
+        VkPipelineViewportStateCreateInfo viewportState{};
+        viewportState.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
+        viewportState.viewportCount = 1;
+        viewportState.pViewports = &viewport;
+        viewportState.scissorCount = 1;
+        viewportState.pScissors = &scissor;
+
+        //Rasterizer
+        //Can also make the renderer a skeletal renderer by VK_POLYGON_MODE_LINE
+        //But that will require enabling a GPU feature
+        VkPipelineRasterizationStateCreateInfo rasterizer{};
+        rasterizer.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
+        rasterizer.depthClampEnable = VK_FALSE;
+        rasterizer.rasterizerDiscardEnable = VK_FALSE;
+        rasterizer.polygonMode = VK_POLYGON_MODE_FILL;
+        rasterizer.lineWidth = 1.0f;
+        rasterizer.cullMode = VK_CULL_MODE_BACK_BIT;
+        rasterizer.frontFace = VK_FRONT_FACE_CLOCKWISE;
+        rasterizer.depthBiasEnable = VK_FALSE;
+        rasterizer.depthBiasConstantFactor = 0.0f; // Optional
+        rasterizer.depthBiasClamp = 0.0f; // Optional
+        rasterizer.depthBiasSlopeFactor = 0.0f; // Optional
+
+        //Multisampling
+        VkPipelineMultisampleStateCreateInfo multisampling{};
+        multisampling.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
+        multisampling.sampleShadingEnable = VK_FALSE;
+        multisampling.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
+        multisampling.minSampleShading = 1.0f; // Optional
+        multisampling.pSampleMask = nullptr; // Optional
+        multisampling.alphaToCoverageEnable = VK_FALSE; // Optional
+        multisampling.alphaToOneEnable = VK_FALSE; // Optional
+
+        //Color blending
+        VkPipelineColorBlendAttachmentState colorBlendAttachment{};
+        colorBlendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+        colorBlendAttachment.blendEnable = VK_TRUE;
+        colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
+        colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+        colorBlendAttachment.colorBlendOp = VK_BLEND_OP_ADD;
+        colorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
+        colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
+        colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD;
+
+        //idk re-read the 
+        VkPipelineColorBlendStateCreateInfo colorBlending{};
+        colorBlending.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
+        colorBlending.logicOpEnable = VK_FALSE;
+        colorBlending.logicOp = VK_LOGIC_OP_COPY; // Optional
+        colorBlending.attachmentCount = 1;
+        colorBlending.pAttachments = &colorBlendAttachment;
+        colorBlending.blendConstants[0] = 0.0f; // Optional
+        colorBlending.blendConstants[1] = 0.0f; // Optional
+        colorBlending.blendConstants[2] = 0.0f; // Optional
+        colorBlending.blendConstants[3] = 0.0f; // Optional
+
+
+        //A limited amount of the state that we've specified in the
+        //previous structs can actually be changed without recreating the pipeline. 
+        VkDynamicState dynamicStates[] = {
+    VK_DYNAMIC_STATE_VIEWPORT,
+    VK_DYNAMIC_STATE_LINE_WIDTH
+        };
+
+        VkPipelineDynamicStateCreateInfo dynamicState{};
+        dynamicState.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
+        dynamicState.dynamicStateCount = 2;
+        dynamicState.pDynamicStates = dynamicStates;
+
+        VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
+        pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+        pipelineLayoutInfo.setLayoutCount = 0; // Optional
+        pipelineLayoutInfo.pSetLayouts = nullptr; // Optional
+        pipelineLayoutInfo.pushConstantRangeCount = 0; // Optional
+        pipelineLayoutInfo.pPushConstantRanges = nullptr; // Optional
+
+        VkResult ec = vkCreatePipelineLayout(m_Device.get, &pipelineLayoutInfo, nullptr, &m_Pipeline.layout);
+        if (ec != VK_SUCCESS) {
+            LOG_ERROR("[Vulkan] Failed to create Pipeline Layout");
+        }
+    	
+        SetupRenderPass();
+
+    	//Creating the graphics pipeline here
+    	//https://vulkan-tutorial.com/Drawing_a_triangle/Graphics_pipeline_basics/Conclusion
+    	
+        VkGraphicsPipelineCreateInfo pipelineInfo{};
+        pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
+        pipelineInfo.stageCount = 2;
+        pipelineInfo.pStages = shaderStages;
+        pipelineInfo.pVertexInputState = &vertexInputInfo;
+        pipelineInfo.pInputAssemblyState = &inputAssembly;
+        pipelineInfo.pViewportState = &viewportState;
+        pipelineInfo.pRasterizationState = &rasterizer;
+        pipelineInfo.pMultisampleState = &multisampling;
+        pipelineInfo.pDepthStencilState = nullptr; // Optional
+        pipelineInfo.pColorBlendState = &colorBlending;
+        pipelineInfo.pDynamicState = nullptr; // Optional
+        pipelineInfo.layout = m_Pipeline.layout;
+        pipelineInfo.renderPass = m_Pipeline.render_pass;
+        pipelineInfo.subpass = 0;
+        pipelineInfo.basePipelineHandle = VK_NULL_HANDLE; // Optional
+        pipelineInfo.basePipelineIndex = -1; // Optional
+
+        VkResult error_create_pipeline = vkCreateGraphicsPipelines(m_Device.get, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_Pipeline.get);
+    	if(error_create_pipeline != VK_SUCCESS)
+    	{
+            LOG_ERROR("[Vulkan] Failed to create Graphics Pipeline");
+    	}
     }
 
-	//The filenames are already in the shader directory of Application:: ShaderPath
+    void Vulkan::SetupFixedFunctions()
+    {
+    	//Vertex input (how will the vertex input look)
+    	//TODO: this is very temporary and will be replaced soon by an actual vertex input
+      
+    }
+
+    TRICKSTER_API void Vulkan::SetupRenderPass()
+    {
+    	//TODO: Read more about this when creating the actual non-temporary system
+        //https://vulkan-tutorial.com/Drawing_a_triangle/Graphics_pipeline_basics/Render_passes
+        VkAttachmentDescription colorAttachment{};
+        colorAttachment.format = m_SwapChain.format.format;
+        colorAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
+        colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+        colorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+        colorAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+        colorAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+        colorAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+        colorAttachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+
+        VkAttachmentReference colorAttachmentRef{};
+        colorAttachmentRef.attachment = 0;
+        colorAttachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+
+        VkSubpassDescription subpass{};
+        subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
+        subpass.colorAttachmentCount = 1;
+        subpass.pColorAttachments = &colorAttachmentRef;
+
+        VkSubpassDependency dependency{};
+        dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
+        dependency.dstSubpass = 0;
+        dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+        dependency.srcAccessMask = 0;
+        dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+        dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+
+        VkRenderPassCreateInfo renderPassInfo{};
+        renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
+        renderPassInfo.attachmentCount = 1;
+        renderPassInfo.pAttachments = &colorAttachment;
+        renderPassInfo.subpassCount = 1;
+        renderPassInfo.pSubpasses = &subpass;
+        renderPassInfo.dependencyCount = 1;
+        renderPassInfo.pDependencies = &dependency;
+
+        VkResult ec = vkCreateRenderPass(m_Device.get, &renderPassInfo, nullptr, &m_Pipeline.render_pass);
+    	if(ec != VK_SUCCESS)
+    	{
+            LOG_ERROR("[Vulkan] Failed to create Render Pass");
+    	}
+
+    	
+    }
+
+    void Vulkan::SetupFrameBuffers()
+    {
+        m_SwapChain.frame_buffers.resize(m_SwapChain.image_views.size());
+        for (size_t i = 0; i < m_SwapChain.image_views.size(); i++) {
+            VkImageView attachments[] = {
+                m_SwapChain.image_views[i]
+            };
+
+            VkFramebufferCreateInfo framebufferInfo{};
+            framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+            framebufferInfo.renderPass = m_Pipeline.render_pass;
+            framebufferInfo.attachmentCount = 1;
+            framebufferInfo.pAttachments = attachments;
+            framebufferInfo.width = m_SwapChain.capabilities.currentExtent.width;
+            framebufferInfo.height = m_SwapChain.capabilities.currentExtent.height;
+            framebufferInfo.layers = 1;
+
+            VkResult ec = vkCreateFramebuffer(m_Device.get, &framebufferInfo, nullptr, &m_SwapChain.frame_buffers[i]);
+             if(ec != VK_SUCCESS)
+             {
+                 LOG_ERROR("[Vulkan] Failed to create Framebuffer");
+             }
+        }
+    }
+
+    void Vulkan::SetupSemaphores()
+    {
+        VkSemaphoreCreateInfo semaphoreInfo{};
+        semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+        if (vkCreateSemaphore(m_Device.get, &semaphoreInfo, nullptr, &m_Semaphores.image_available) != VK_SUCCESS ||
+            vkCreateSemaphore(m_Device.get, &semaphoreInfo, nullptr, &m_Semaphores.render_finished) != VK_SUCCESS) {
+
+            throw std::runtime_error("failed to create semaphores!");
+        }
+    }
+
+    //The filenames are already in the shader directory of Application:: ShaderPath
     Trickster::Vulkan::TricksterShader& Vulkan::AddShader(const std::string& filenameVertexShader, const std::string& filenameFragmentShader)
     {
         m_Shaders.push_back(
@@ -461,7 +800,7 @@ namespace Trickster {
         return shader_module;
     }
 
-    Vulkan::TricksterSwapChain Vulkan::QuerySwapChainInfo()
+    Trickster::Vulkan::TricksterSwapChain Vulkan::QuerySwapChainInfo()
     {
         TricksterSwapChain info;
         std::vector<VkSurfaceFormatKHR> formats;
@@ -719,4 +1058,6 @@ namespace Trickster {
         LOG_ERROR("[Vulkan] Trying to find an invalid memory type.");
         return -1;
     }
+
+  
 }

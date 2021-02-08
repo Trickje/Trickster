@@ -107,6 +107,7 @@ void Application::Start()
 void Application::Draw()
 {
 	m_Window->Draw();
+	m_RenderAPI->DrawFrame();
 }
 
 bool Trickster::Application::Update()
