@@ -25,7 +25,8 @@ namespace Trickster {
             vkDestroySemaphore(m_Device.get, m_SwapChain.semaphores[i].image_available, nullptr);
             vkDestroyFence(m_Device.get, m_SwapChain.fences[i], nullptr);
     	}
-       
+        CleanBuffer(m_VertexBuffer);
+        CleanBuffer(m_IndexBuffer);
         vkDestroyCommandPool(m_Device.get, m_Command.pool, nullptr);
         vkDestroySurfaceKHR(m_Instance, m_Surface, nullptr);
     	for(auto shader : m_Shaders)
@@ -58,118 +59,13 @@ namespace Trickster {
         SetupWindow();
         SetupSwapChain();
         SetupGraphicsPipeline();
-        SetupFrameBuffers();
         SetupCommandPool();
+        SetupVertexBuffer();
+        SetupIndexBuffer();
+        SetupFrameBuffers();
         SetupCommandBuffers();
         SetupSync();
         SetupSubscriptions();
-
-    	
-        //Descriptor stuff that needs to move to it's separate function that I can call
-    	//But should also be optimized to use multiple buffers instead of one
-    	//Because otherwise it would make no difference using OpenGL if I don't use the
-    	//optimizations that Vulkan has to offer.
-    	
-        VkDescriptorPool descriptor_pool;
-        VkDescriptorSetLayout descriptor_set_layout;
-        VkDescriptorSet descriptor_set;
-        VkWriteDescriptorSet descriptor_write_set;
-
-        {
-            VkDescriptorPoolSize pool_size = {};
-            pool_size.type = VkDescriptorType::VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-            pool_size.descriptorCount = 1;
-
-            VkDescriptorPoolCreateInfo create_info = {};
-            create_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-            create_info.poolSizeCount = 1;
-            create_info.pPoolSizes = &pool_size;
-        	//For example how many unique textures do you want to bind to the GPU
-            create_info.maxSets = 1;
-
-            VkResult create_descriptor_pool = vkCreateDescriptorPool(
-                m_Device.get,
-                &create_info,
-                nullptr,
-                &descriptor_pool
-                );
-        	if(create_descriptor_pool != VK_SUCCESS)
-        	{
-                LOG_ERROR("[Vulkan] Failed to create descriptor pool.");
-        	}
-        }
-    	//Creating descriptor pool layout
-        {
-            VkDescriptorSetLayoutBinding layout_binding = {};
-        	//This is the layout number. This should not be 0 in the real implementation
-            layout_binding.binding = 0;
-            layout_binding.descriptorType = VkDescriptorType::VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-            layout_binding.descriptorCount = 1;
-        	//Which shader will the descriptor be visible for
-            layout_binding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
-
-            VkDescriptorSetLayoutCreateInfo layout_info = {};
-            layout_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-            layout_info.bindingCount = 1;
-            layout_info.pBindings = &layout_binding;
-
-            VkResult create_descriptor_result = vkCreateDescriptorSetLayout(
-                m_Device.get,
-                &layout_info,
-                nullptr,
-                &descriptor_set_layout
-                );
-        	if(create_descriptor_result != VK_SUCCESS)
-        	{
-                LOG_ERROR("[Vulkan] Failed to create descriptor set layout.");
-        	}
-        }
-
-    	//Create Descriptor set
-        {
-            VkDescriptorSetAllocateInfo alloc_info = {};
-            alloc_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-            alloc_info.descriptorPool = descriptor_pool;
-            alloc_info.descriptorSetCount = 1;
-            alloc_info.pSetLayouts = &descriptor_set_layout;
-
-            VkResult allocate_result = vkAllocateDescriptorSets(
-                m_Device.get,
-                &alloc_info,
-                &descriptor_set
-                );
-        	if(allocate_result != VK_SUCCESS)
-        	{
-                LOG_ERROR("[Vulkan] Failed to allocate descriptor sets");
-        	}
-        }
-
-        {
-            VkDescriptorBufferInfo buffer_info = {};
-            buffer_info.buffer = NULL;
-            buffer_info.offset = 0;
-            buffer_info.range = NULL;
-
-            descriptor_write_set = {};
-            descriptor_write_set.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-            descriptor_write_set.dstSet = descriptor_set;
-        	//Id on the shader
-        	//Must be the same as the binding of layout_binding
-            descriptor_write_set.dstBinding = 0;
-            descriptor_write_set.dstArrayElement = 0;
-            descriptor_write_set.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-            descriptor_write_set.descriptorCount = 1;
-            descriptor_write_set.pBufferInfo = &buffer_info;
-
-            vkUpdateDescriptorSets(
-                m_Device.get,
-                1,
-                &descriptor_write_set,
-                0,
-                NULL
-                );
-        	
-        }
 
     }
 
@@ -181,6 +77,7 @@ namespace Trickster {
 	 *****************************************/
     void Vulkan::DrawFrame()
     {
+        
     	//This is for the v-sync
         vkWaitForFences(m_Device.get, 1, &m_SwapChain.fences[m_SwapChain.currentFrame], VK_TRUE, UINT64_MAX);
     	
@@ -307,9 +204,9 @@ namespace Trickster {
         VkApplicationInfo appInfo{};
         appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
         appInfo.pApplicationName = a_ApplicationName;
-        appInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
+        appInfo.applicationVersion = VK_MAKE_VERSION(TRICKSTER_VERSION_MAJOR, TRICKSTER_VERSION_MINOR, TRICKSTER_VERSION_PATCH);
         appInfo.pEngineName = "Trickster Engine";
-        appInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
+        appInfo.engineVersion = VK_MAKE_VERSION(TRICKSTER_VERSION_MAJOR, TRICKSTER_VERSION_MINOR, TRICKSTER_VERSION_PATCH);
         appInfo.apiVersion = VK_API_VERSION_1_0;
 
         VkInstanceCreateInfo createInfo{};
@@ -431,9 +328,17 @@ namespace Trickster {
 
             vkCmdBindPipeline(m_Command.buffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, m_Pipeline.get);
 
-        	//Very temporary
-            vkCmdDraw(m_Command.buffers[i], 3, 1, 0, 0);
+            VkBuffer vertexBuffers[] = { m_VertexBuffer.get };
+            VkDeviceSize offsets[] = { 0 };
 
+            vkCmdBindVertexBuffers(m_Command.buffers[i], 0, 1, vertexBuffers, offsets);
+            vkCmdBindIndexBuffer(m_Command.buffers[i], m_IndexBuffer.get, 0, VK_INDEX_TYPE_UINT16);
+        	
+        	//Very temporary
+            vkCmdDrawIndexed(m_Command.buffers[i], static_cast<uint32_t>(indices.size()), 1, 0, 0,0);
+
+
+        	
             vkCmdEndRenderPass(m_Command.buffers[i]);
 
             if (vkEndCommandBuffer(m_Command.buffers[i]) != VK_SUCCESS) {
@@ -523,7 +428,7 @@ namespace Trickster {
     // https://vulkan-tutorial.com/Drawing_a_triangle/Graphics_pipeline_basics/Introduction 
     void Vulkan::SetupGraphicsPipeline()
     {
-        auto shader = AddShader("vert.spv", "frag.spv");
+        auto shader = AddShader("Vulkanvert.spv", "Vulkanfrag.spv");
         VkPipelineShaderStageCreateInfo vertexShaderStageInfo{};
         vertexShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
         vertexShaderStageInfo.stage = VK_SHADER_STAGE_VERTEX_BIT;
@@ -541,12 +446,15 @@ namespace Trickster {
     	//TODO some stuff here. I left off here, and last line from previous hasn't been saved https://vulkan-tutorial.com/Drawing_a_triangle/Graphics_pipeline_basics/Fixed_functions
         VkPipelineShaderStageCreateInfo shaderStages[] = { vertexShaderStageInfo, fragmentShaderStageInfo };
 
+    	
+        auto bindingDescription = TricksterVertex::GetBindingDescription();
+        auto attributeDescriptions = TricksterVertex::GetAttributeDescriptions();
         VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
         vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
-        vertexInputInfo.vertexBindingDescriptionCount = 0;
-        vertexInputInfo.pVertexBindingDescriptions = nullptr; // Optional
-        vertexInputInfo.vertexAttributeDescriptionCount = 0;
-        vertexInputInfo.pVertexAttributeDescriptions = nullptr; // Optional
+        vertexInputInfo.vertexBindingDescriptionCount = 1;
+        vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
+        vertexInputInfo.pVertexBindingDescriptions = &bindingDescription; // Optional
+        vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions.data(); // Optional
         //Input assembly
         VkPipelineInputAssemblyStateCreateInfo inputAssembly{};
         inputAssembly.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
@@ -786,6 +694,128 @@ namespace Trickster {
         EventManager::GetInstance()->WindowEvents.OnWindowResize.AddListener(std::bind(&Trickster::Vulkan::Resize, this, std::placeholders::_1, std::placeholders::_2));
     }
 
+    void Vulkan::SetupVertexBuffer()
+    {
+        VkDeviceSize bufferSize = sizeof(vertices[0]) * vertices.size();
+        m_StagingBuffer = {};
+        m_VertexBuffer = {};
+
+    	
+        SetupBuffer(
+            bufferSize, 
+            VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+            VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, 
+            m_StagingBuffer.get, 
+            m_StagingBuffer.memory);
+
+        void* data;
+        vkMapMemory(m_Device.get, m_StagingBuffer.memory, 0, bufferSize, 0, &data);
+        memcpy(data, vertices.data(), (size_t)bufferSize);
+        vkUnmapMemory(m_Device.get, m_StagingBuffer.memory);
+
+        SetupBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
+            VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+            m_VertexBuffer.get,
+            m_VertexBuffer.memory);
+
+        CopyBuffer(m_StagingBuffer, m_VertexBuffer, bufferSize);
+        CleanBuffer(m_StagingBuffer);
+    }
+
+	//https://vulkan-tutorial.com/Vertex_buffers/Index_buffer 
+    void Vulkan::SetupIndexBuffer()
+    {
+        VkDeviceSize bufferSize = sizeof(indices[0]) * indices.size();
+
+        
+        SetupBuffer(bufferSize, 
+            VK_BUFFER_USAGE_TRANSFER_SRC_BIT, 
+            VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, 
+            m_StagingBuffer.get, 
+            m_StagingBuffer.memory);
+
+        void* data;
+        vkMapMemory(m_Device.get, m_StagingBuffer.memory, 0, bufferSize, 0, &data);
+        memcpy(data, indices.data(), (size_t)bufferSize);
+        vkUnmapMemory(m_Device.get, m_StagingBuffer.memory);
+
+        SetupBuffer(bufferSize, 
+            VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT, 
+            VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, 
+            m_IndexBuffer.get,
+            m_IndexBuffer.memory);
+
+        CopyBuffer(m_StagingBuffer, m_IndexBuffer, bufferSize);
+
+        CleanBuffer(m_StagingBuffer);
+    }
+
+    void Vulkan::SetupBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties,
+                             VkBuffer& buffer, VkDeviceMemory& bufferMemory)
+    {
+        VkBufferCreateInfo bufferInfo{};
+        bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+        bufferInfo.size = size;
+        bufferInfo.usage = usage;
+        bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+
+        VkResult result;
+        result = vkCreateBuffer(m_Device.get, &bufferInfo, nullptr, &buffer);
+    	if(result != VK_SUCCESS)
+    	{
+            LOG_ERROR("[Vulkan] Failed to create Buffer!");
+    	}
+        VkMemoryRequirements memRequirements{};
+        vkGetBufferMemoryRequirements(m_Device.get, buffer, &memRequirements);
+
+        VkMemoryAllocateInfo allocInfo{};
+        allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+        allocInfo.allocationSize = memRequirements.size;
+        allocInfo.memoryTypeIndex = FindMemoryType(memRequirements.memoryTypeBits, properties);
+
+        result = vkAllocateMemory(m_Device.get, &allocInfo, nullptr, &bufferMemory);
+    	if(result != VK_SUCCESS)
+    	{
+            LOG_ERROR("[Vulkan] Failed to allocate Buffer Memory!");
+    	}
+        vkBindBufferMemory(m_Device.get, buffer, bufferMemory, 0);
+    }
+
+    void Vulkan::CopyBuffer(TricksterBuffer& srcBuffer, TricksterBuffer& dstBuffer, VkDeviceSize size)
+    {
+        VkCommandBufferAllocateInfo allocInfo{};
+        allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+        allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+        allocInfo.commandPool = m_Command.pool;
+        allocInfo.commandBufferCount = 1;
+
+        VkCommandBuffer commandBuffer;
+        vkAllocateCommandBuffers(m_Device.get, &allocInfo, &commandBuffer);
+        VkCommandBufferBeginInfo beginInfo{};
+        beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+        beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+
+        vkBeginCommandBuffer(commandBuffer, &beginInfo);
+
+        VkBufferCopy copyRegion{};
+        copyRegion.srcOffset = 0; // Optional
+        copyRegion.dstOffset = 0; // Optional
+        copyRegion.size = size;
+        vkCmdCopyBuffer(commandBuffer, srcBuffer.get, dstBuffer.get, 1, &copyRegion);
+        vkEndCommandBuffer(commandBuffer);
+        VkSubmitInfo submitInfo{};
+        submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+        submitInfo.commandBufferCount = 1;
+        submitInfo.pCommandBuffers = &commandBuffer;
+
+        vkQueueSubmit(m_GraphicsQueue, 1, &submitInfo, VK_NULL_HANDLE);
+    	//TODO:
+    	//A fence would allow you to schedule multiple transfers simultaneously
+    	//and wait for all of them complete, instead of executing one at a time.
+        vkQueueWaitIdle(m_GraphicsQueue);
+        vkFreeCommandBuffers(m_Device.get, m_Command.pool, 1, &commandBuffer);
+    }
+
     void Vulkan::RecreateSwapChain()
     {
         vkDeviceWaitIdle(m_Device.get);
@@ -817,6 +847,12 @@ namespace Trickster {
         }
 
         vkDestroySwapchainKHR(m_Device.get, m_SwapChain.get, nullptr);
+    }
+
+    void Vulkan::CleanBuffer(TricksterBuffer& buffer)
+    {
+        vkDestroyBuffer(m_Device.get, buffer.get, nullptr);
+        vkFreeMemory(m_Device.get, buffer.memory, nullptr);
     }
 
     //The filenames are already in the shader directory of Application:: ShaderPath

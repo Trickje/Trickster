@@ -50,6 +50,7 @@
 	#include <condition_variable>
 	#include <atomic>
 	#include <map>
+	#include <array>
 	#include <cstdint>
 //External header files
 #ifdef TRICKSTER_WINDOWS
