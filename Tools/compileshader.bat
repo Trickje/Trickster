@@ -18,8 +18,3 @@ echo Compiled %%~ni.vert to %%~nivert.spv
 set /A "count=count+1")
 echo:
 echo Compiled %count% shaders!
-ping -n 4 127.0.0.1 > nul
-echo:
-echo:
-echo Exiting program
-ping -n 2 127.0.0.1 > nul

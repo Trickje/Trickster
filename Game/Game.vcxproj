@@ -231,9 +231,8 @@ Xcopy /E /I /Y "$(SolutionDir)Resources" "$(OutDir)Resources"</Command>
       </SubSystem>
     </Link>
     <PostBuildEvent>
-      <Command>
-Xcopy /E /I /Y "$(SolutionDir)Lib\DLL\$(Configuration)" "$(OutDir)"
-Xcopy /E /I /Y "$(SolutionDir)Resources" "$(OutDir)Resources"</Command>
+      <Command>Xcopy /E /I /Y "$(SolutionDir)Lib\DLL\$(Configuration)" "$(OutDir)" &gt; nul
+Xcopy /E /I /Y "$(SolutionDir)Resources" "$(OutDir)Resources" &gt; nul</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Static_Debug|x64'">
