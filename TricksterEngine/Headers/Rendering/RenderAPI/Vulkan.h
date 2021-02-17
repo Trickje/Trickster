@@ -5,9 +5,9 @@ namespace Trickster
 {
 	//TODO:
 	//CREATE A DESCRIPTOR LAYOUT / SET MANAGING SYSTEM THAT ALLOWS FOR ONE BIND CALL.
-	//ADD A SWAPCHAIN SYSTEM
-	//CREATE A DRAW QUEUE
-	//MANAGE THE COMMAND QUEUE
+	//ADD A SWAPCHAIN SYSTEM -> should be more dynamic, where I can choose as a end-user what kind of swapchain I want.
+	//CREATE A DRAW QUEUE -> is the command queue that we have (instructions that we send to the GPU)
+	//MANAGE THE COMMAND QUEUE yeah idk what I imagined here, but lets manage it
 	//DRAW THE BUFFERS THAT YOU GET PASSED IN
 	
 	
@@ -18,6 +18,7 @@ namespace Trickster
 		TRICKSTER_API ~Vulkan();
 		TRICKSTER_API void Initialize() override;
 		TRICKSTER_API void DrawFrame() override;
+		TRICKSTER_API void Resize(int width, int height) override;
 	private:
 
 		
@@ -69,13 +70,20 @@ namespace Trickster
 			std::shared_ptr<Window> get;
 			GLFWwindow* glfw = nullptr;
 		};
-
+		struct TricksterSemaphores
+		{
+			VkSemaphore image_available;
+			VkSemaphore render_finished;
+		};
 		//TODO: maybe a way of changing present mode on runtime
 		struct TricksterSwapChain
 		{
 			VkSwapchainKHR get;
 			std::vector<VkImage> images;
 			std::vector<VkImageView> image_views;
+			std::vector<TricksterSemaphores> semaphores;
+			std::vector<VkFence> fences;
+			std::vector<VkFence> imagesInFlight;
 			VkSurfaceCapabilitiesKHR capabilities;
 			VkSurfaceFormatKHR format;
 		//The presentation mode will either be vertical sync
@@ -89,6 +97,11 @@ namespace Trickster
 		//Will result in tearing though
 			VkPresentModeKHR present_mode;
 			std::vector<VkFramebuffer> frame_buffers;
+			//How many frames should be processed concurrently
+			int MAX_FRAMES_IN_FLIGHT = 2;
+			size_t currentFrame = 0;
+			bool vertical_sync = true;
+			
 		};
 
 		struct TricksterShader
@@ -108,11 +121,7 @@ namespace Trickster
 			VkPipelineLayout layout;
 		};
 
-		struct TricksterSemaphores
-		{
-			VkSemaphore image_available;
-			VkSemaphore render_finished;
-		};
+		
 
 		
 		/*
@@ -143,7 +152,10 @@ namespace Trickster
 		//This should be called after the SwapChain is created
 		//And after the Pipeline has been created (uses render pass)
 		TRICKSTER_API void SetupFrameBuffers();
-		TRICKSTER_API void SetupSemaphores();
+		TRICKSTER_API void SetupSync();
+		TRICKSTER_API void SetupSubscriptions();
+		TRICKSTER_API void RecreateSwapChain();
+		TRICKSTER_API void CleanSwapChain();
 		//Combiner function to make code more readable
 		//Returns the shader so that you can change things to it
 		TRICKSTER_API Trickster::Vulkan::TricksterShader& AddShader(const std::string& filenameVertexShader, const std::string& filenameFragmentShader);
@@ -200,7 +212,6 @@ namespace Trickster
 		TricksterWindow m_Window;
 		TricksterSwapChain m_SwapChain;
 		TricksterPipeline m_Pipeline;
-		TricksterSemaphores m_Semaphores;
 		std::vector<TricksterShader> m_Shaders;
 		std::vector<const char*> validationLayers;
 	};

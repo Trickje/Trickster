@@ -4,6 +4,7 @@
 
 #include "Core/Application.h"
 #include "Core/Version.h"
+#include "Events/EventManager.h"
 
 namespace Trickster {
     Trickster::Vulkan::Vulkan()
@@ -17,27 +18,21 @@ namespace Trickster {
 
     Trickster::Vulkan::~Vulkan()
     {
-        vkDestroySemaphore(m_Device.get, m_Semaphores.render_finished, nullptr);
-        vkDestroySemaphore(m_Device.get, m_Semaphores.image_available, nullptr);
-        for (auto framebuffer : m_SwapChain.frame_buffers) {
-            vkDestroyFramebuffer(m_Device.get, framebuffer, nullptr);
-        }
-
+        CleanSwapChain();
+    	for(size_t i = 0; i < m_SwapChain.MAX_FRAMES_IN_FLIGHT; i++)
+    	{
+            vkDestroySemaphore(m_Device.get, m_SwapChain.semaphores[i].render_finished, nullptr);
+            vkDestroySemaphore(m_Device.get, m_SwapChain.semaphores[i].image_available, nullptr);
+            vkDestroyFence(m_Device.get, m_SwapChain.fences[i], nullptr);
+    	}
+       
         vkDestroyCommandPool(m_Device.get, m_Command.pool, nullptr);
         vkDestroySurfaceKHR(m_Instance, m_Surface, nullptr);
-        vkDestroyPipeline(m_Device.get, m_Pipeline.get, nullptr);
-        vkDestroyPipelineLayout(m_Device.get, m_Pipeline.layout, nullptr);
-        vkDestroyRenderPass(m_Device.get, m_Pipeline.render_pass, nullptr);
-    	for(auto view : m_SwapChain.image_views)
-    	{
-            vkDestroyImageView(m_Device.get, view, nullptr);
-    	}
     	for(auto shader : m_Shaders)
     	{
             vkDestroyShaderModule(m_Device.get, shader.vertex, nullptr);
             vkDestroyShaderModule(m_Device.get, shader.fragment, nullptr);
     	}
-        vkDestroySwapchainKHR(m_Device.get, m_SwapChain.get, nullptr);
         vkDestroyDevice(m_Device.get, nullptr);
         vkDestroyInstance(m_Instance, nullptr);
     }
@@ -66,8 +61,8 @@ namespace Trickster {
         SetupFrameBuffers();
         SetupCommandPool();
         SetupCommandBuffers();
-        SetupSemaphores();
-
+        SetupSync();
+        SetupSubscriptions();
 
     	
         //Descriptor stuff that needs to move to it's separate function that I can call
@@ -186,13 +181,24 @@ namespace Trickster {
 	 *****************************************/
     void Vulkan::DrawFrame()
     {
+    	//This is for the v-sync
+        vkWaitForFences(m_Device.get, 1, &m_SwapChain.fences[m_SwapChain.currentFrame], VK_TRUE, UINT64_MAX);
+    	
         uint32_t imageIndex;
-        vkAcquireNextImageKHR(m_Device.get, m_SwapChain.get, UINT64_MAX, m_Semaphores.image_available, VK_NULL_HANDLE, &imageIndex);
+        vkAcquireNextImageKHR(m_Device.get, m_SwapChain.get, UINT64_MAX, m_SwapChain.semaphores[m_SwapChain.currentFrame].image_available, VK_NULL_HANDLE, &imageIndex);
 
+    	// Check if a previous frame is using this image (i.e. there is its fence to wait on)
+        if (m_SwapChain.imagesInFlight[imageIndex] != VK_NULL_HANDLE) {
+            vkWaitForFences(m_Device.get, 1, &m_SwapChain.imagesInFlight[imageIndex], VK_TRUE, UINT64_MAX);
+        }
+        // Mark the image as now being in use by this frame
+        m_SwapChain.imagesInFlight[imageIndex] = m_SwapChain.fences[m_SwapChain.currentFrame];
+
+    	
         VkSubmitInfo submitInfo{};
         submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 
-        VkSemaphore waitSemaphores[] = { m_Semaphores.image_available };
+        VkSemaphore waitSemaphores[] = { m_SwapChain.semaphores[m_SwapChain.currentFrame].image_available };
         VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
         submitInfo.waitSemaphoreCount = 1;
         submitInfo.pWaitSemaphores = waitSemaphores;
@@ -200,11 +206,12 @@ namespace Trickster {
         submitInfo.commandBufferCount = 1;
         submitInfo.pCommandBuffers = &m_Command.buffers[imageIndex];
 
-        VkSemaphore signalSemaphores[] = { m_Semaphores.render_finished };
+        VkSemaphore signalSemaphores[] = { m_SwapChain.semaphores[m_SwapChain.currentFrame].render_finished };
         submitInfo.signalSemaphoreCount = 1;
         submitInfo.pSignalSemaphores = signalSemaphores;
-    	
-        if (vkQueueSubmit(m_GraphicsQueue, 1, &submitInfo, VK_NULL_HANDLE) != VK_SUCCESS) {
+
+        vkResetFences(m_Device.get, 1, &m_SwapChain.fences[m_SwapChain.currentFrame]);
+        if (vkQueueSubmit(m_GraphicsQueue, 1, &submitInfo, m_SwapChain.fences[m_SwapChain.currentFrame]) != VK_SUCCESS) {
             throw std::runtime_error("failed to submit draw command buffer!");
         }
 
@@ -218,7 +225,19 @@ namespace Trickster {
         presentInfo.pSwapchains = swapChains;
         presentInfo.pImageIndices = &imageIndex;
         presentInfo.pResults = nullptr; // Optional
-        vkQueuePresentKHR(m_PresentQueue, &presentInfo);
+        VkResult result = vkQueuePresentKHR(m_PresentQueue, &presentInfo);
+        vkQueueWaitIdle(m_PresentQueue);
+        m_SwapChain.currentFrame = (m_SwapChain.currentFrame + 1) % m_SwapChain.MAX_FRAMES_IN_FLIGHT;
+
+        if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR) {
+            RecreateSwapChain();
+        }
+    	//TODO: Left off after the triangle on the tutorial
+    }
+
+    void Vulkan::Resize(int width, int height)
+    {
+        RecreateSwapChain();
     }
 
     void Vulkan::SetupPhysicalDevice()
@@ -740,15 +759,64 @@ namespace Trickster {
         }
     }
 
-    void Vulkan::SetupSemaphores()
+    void Vulkan::SetupSync()
     {
+    	//Semaphores and fences
+        m_SwapChain.semaphores.resize(m_SwapChain.MAX_FRAMES_IN_FLIGHT);
+        m_SwapChain.fences.resize(m_SwapChain.MAX_FRAMES_IN_FLIGHT);
+        m_SwapChain.imagesInFlight.resize(m_SwapChain.images.size(), VK_NULL_HANDLE);
         VkSemaphoreCreateInfo semaphoreInfo{};
         semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
-        if (vkCreateSemaphore(m_Device.get, &semaphoreInfo, nullptr, &m_Semaphores.image_available) != VK_SUCCESS ||
-            vkCreateSemaphore(m_Device.get, &semaphoreInfo, nullptr, &m_Semaphores.render_finished) != VK_SUCCESS) {
+        VkFenceCreateInfo fenceInfo{};
+        fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+        fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
+        for (size_t i = 0; i < m_SwapChain.MAX_FRAMES_IN_FLIGHT; i++) {
+            if (vkCreateSemaphore(m_Device.get, &semaphoreInfo, nullptr, &m_SwapChain.semaphores[i].image_available) != VK_SUCCESS ||
+                vkCreateSemaphore(m_Device.get, &semaphoreInfo, nullptr, &m_SwapChain.semaphores[i].render_finished) != VK_SUCCESS ||
+                vkCreateFence(m_Device.get, &fenceInfo, nullptr, &m_SwapChain.fences[i]) != VK_SUCCESS) {
 
-            throw std::runtime_error("failed to create semaphores!");
+                LOG_ERROR("[Vulkan] Failed to create Sync objects for a frame");
+            }
         }
+    	
+    }
+
+    void Vulkan::SetupSubscriptions()
+    {
+        EventManager::GetInstance()->WindowEvents.OnWindowResize.AddListener(std::bind(&Trickster::Vulkan::Resize, this, std::placeholders::_1, std::placeholders::_2));
+    }
+
+    void Vulkan::RecreateSwapChain()
+    {
+        vkDeviceWaitIdle(m_Device.get);
+        CleanSwapChain();
+
+        SetupSwapChain();
+        SetupGraphicsPipeline();
+        SetupFrameBuffers();
+        SetupCommandBuffers();
+        SetupSync();
+    	
+    }
+
+    void Vulkan::CleanSwapChain()
+    {
+    	//https://vulkan-tutorial.com/Drawing_a_triangle/Swap_chain_recreation
+        for (size_t i = 0; i < m_SwapChain.frame_buffers.size(); i++) {
+            vkDestroyFramebuffer(m_Device.get, m_SwapChain.frame_buffers[i], nullptr);
+        }
+
+        vkFreeCommandBuffers(m_Device.get, m_Command.pool, static_cast<uint32_t>(m_Command.buffers.size()), m_Command.buffers.data());
+
+        vkDestroyPipeline(m_Device.get, m_Pipeline.get, nullptr);
+        vkDestroyPipelineLayout(m_Device.get, m_Pipeline.layout, nullptr);
+        vkDestroyRenderPass(m_Device.get, m_Pipeline.render_pass, nullptr);
+
+        for (size_t i = 0; i < m_SwapChain.image_views.size(); i++) {
+            vkDestroyImageView(m_Device.get, m_SwapChain.image_views[i], nullptr);
+        }
+
+        vkDestroySwapchainKHR(m_Device.get, m_SwapChain.get, nullptr);
     }
 
     //The filenames are already in the shader directory of Application:: ShaderPath
@@ -844,7 +912,9 @@ namespace Trickster {
         {
 	        if(present_mode == VK_PRESENT_MODE_MAILBOX_KHR)
 	        {
-                info.present_mode = present_mode;
+                if (!m_SwapChain.vertical_sync) {
+                    info.present_mode = present_mode;
+                }
 	        }
         }
 

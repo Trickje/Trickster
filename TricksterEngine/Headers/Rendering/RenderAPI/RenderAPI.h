@@ -27,6 +27,7 @@ Draws the queue that the Render API has stored
 
 		TRICKSTER_API virtual void Initialize() = 0;
 		TRICKSTER_API virtual void DrawFrame() = 0;
+		TRICKSTER_API virtual void Resize(int width, int height) =0;
 		/*
 		TRICKSTER_API virtual bool Draw();
 		TRICKSTER_API virtual void SetUniform2f();
