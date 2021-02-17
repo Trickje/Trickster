@@ -1,6 +1,7 @@
 #pragma once
 #include "RenderAPI.h"
-
+#define GLM_FORCE_RADIANS
+#define GLM_FORCE_DEFAULT_ALIGNED_GENTYPES
 namespace Trickster
 {
 	//TODO:
@@ -9,12 +10,22 @@ namespace Trickster
 	//CREATE A DRAW QUEUE -> is the command queue that we have (instructions that we send to the GPU)
 	//MANAGE THE COMMAND QUEUE yeah idk what I imagined here, but lets manage it
 	//DRAW THE BUFFERS THAT YOU GET PASSED IN
+
+	//TODO:
+	//The previous chapter already mentioned that you should allocate multiple
+	//resources like buffers from a single memory allocation,
+	//but in fact you should go a step further. Driver developers
+	//recommend that you also store multiple buffers,
+	//like the vertex and index buffer, into a single VkBuffer
+	//and use offsets in commands like vkCmdBindVertexBuffers. 
+
 	
 	//The vertex that will be used in all of my programs
 	struct TricksterVertex
 	{
 		glm::vec3 position;
 		glm::vec3 color; //Temp
+		glm::vec2 texCoord;
 		TRICKSTER_API static VkVertexInputBindingDescription  GetBindingDescription()
 		{
 			VkVertexInputBindingDescription bindingDescription{};
@@ -23,8 +34,8 @@ namespace Trickster
 			bindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX; //This will change for instanced rendering
 			return bindingDescription;
 		}
-		TRICKSTER_API static std::array<VkVertexInputAttributeDescription, 2> GetAttributeDescriptions() {
-			std::array<VkVertexInputAttributeDescription, 2> attributeDescriptions{};
+		TRICKSTER_API static std::array<VkVertexInputAttributeDescription, 3> GetAttributeDescriptions() {
+			std::array<VkVertexInputAttributeDescription, 3> attributeDescriptions{};
 			//Do this for every element in the vertex
 			attributeDescriptions[0].binding = 0;
 			attributeDescriptions[0].location = 0;
@@ -35,8 +46,20 @@ namespace Trickster
 			attributeDescriptions[1].location = 1;
 			attributeDescriptions[1].format = VK_FORMAT_R32G32B32_SFLOAT;
 			attributeDescriptions[1].offset = offsetof(TricksterVertex, color);
+			
+			attributeDescriptions[2].binding = 0;
+			attributeDescriptions[2].location = 2;
+			attributeDescriptions[2].format = VK_FORMAT_R32G32_SFLOAT;
+			attributeDescriptions[2].offset = offsetof(TricksterVertex, texCoord);
 			return attributeDescriptions;
 		}
+	};
+
+	struct UniformBufferObject
+	{
+		alignas(16) glm::mat4 model;
+		alignas(16) glm::mat4 view;
+		alignas(16) glm::mat4 projection;
 	};
 	
 	class Vulkan : public RenderAPI
@@ -154,8 +177,26 @@ namespace Trickster
 		{
 			VkVertexInputBindingDescription binding_description;
 		};
-		
 
+		struct TricksterDescriptor
+		{
+			VkDescriptorSetLayout set_layout;
+			VkDescriptorPool pool;
+			std::vector<VkDescriptorSet> sets;
+			//more stuff to be added here
+		};
+		struct TricksterImage
+		{
+			VkImage get;
+			VkDeviceMemory memory;
+			VkImageView view;
+			VkFormat format;
+			int width;
+			int height;
+			int channels;
+		};
+
+		
 		
 		/*
 		 *  _______           _        _______ __________________ _______  _        _______ 
@@ -186,12 +227,20 @@ namespace Trickster
 		//And after the Pipeline has been created (uses render pass)
 		TRICKSTER_API void SetupFrameBuffers();
 		TRICKSTER_API void SetupSync();
+		//working on currently TODO: stuff
+		TRICKSTER_API void SetupDescriptorSetLayout();
+		TRICKSTER_API void SetupDescriptorPool();
+		TRICKSTER_API void SetupDescriptorSets();
 		TRICKSTER_API void SetupSubscriptions();
 		TRICKSTER_API void SetupVertexBuffer();
 		TRICKSTER_API void SetupIndexBuffer();
+		TRICKSTER_API void SetupUniformBuffers();
+		TRICKSTER_API void UpdateUniformBuffer(uint32_t currentImage);
+		TRICKSTER_API void SetupImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, TricksterImage& image);
 		TRICKSTER_API void SetupBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
 		TRICKSTER_API void CopyBuffer(TricksterBuffer& srcBuffer, TricksterBuffer& dstBuffer, VkDeviceSize size);
 		TRICKSTER_API void RecreateSwapChain();
+		TRICKSTER_API void SetupTextureImage();
 		TRICKSTER_API void CleanSwapChain();
 		TRICKSTER_API void CleanBuffer(TricksterBuffer& buffer);
 		//Combiner function to make code more readable
@@ -221,9 +270,13 @@ namespace Trickster
 			uint32_t& queue_family_index);
 
 		TRICKSTER_API uint32_t FindMemoryType(uint32_t type_filter, VkMemoryPropertyFlags properties);
-		
-
-		
+		TRICKSTER_API VkCommandBuffer StartSingleUseCommand();
+		TRICKSTER_API void EndSingleUseCommand(VkCommandBuffer commandBuffer);
+		TRICKSTER_API void TransitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout);
+		TRICKSTER_API void CopyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height);
+		TRICKSTER_API void CleanImage(TricksterImage& image);
+		TRICKSTER_API void SetupImageView(TricksterImage& image);
+		TRICKSTER_API void SetupTextureSampler();
 
 		/*
 		 *  _______  _______  _______  ______   _______  _______  _______ 
@@ -238,10 +291,11 @@ namespace Trickster
 
 
 		const std::vector<TricksterVertex> vertices = {
-	{{-0.5f, -0.5f,1.f}, {1.0f, 0.0f, 0.0f}},
-	{{0.5f, -0.5f,1.f}, {0.0f, 1.0f, 0.0f}},
-	{{0.5f, 0.5f,1.f}, {0.0f, 0.0f, 1.0f}},
-	{{-0.5f, 0.5f,1.f}, {1.0f, 1.0f, 1.0f}}
+
+	{{-0.5f, -0.5f, 0.f}, {1.0f, 0.0f, 0.0f}, {1.0f, 0.0f}},
+	{{0.5f, -0.5f, 0.f}, {0.0f, 1.0f, 0.0f}, {0.0f, 0.0f}},
+	{{0.5f, 0.5f, 0.f}, {0.0f, 0.0f, 1.0f}, {0.0f, 1.0f}},
+	{{-0.5f, 0.5f, 0.f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}}
 		};
 		const std::vector<uint16_t> indices = {
 	0, 1, 2, 2, 3, 0
@@ -250,9 +304,11 @@ namespace Trickster
 		VkSurfaceKHR m_Surface;
 		VkQueue m_GraphicsQueue;
 		VkQueue m_PresentQueue;
+		VkSampler m_TextureSampler;
 		TricksterBuffer m_VertexBuffer;
 		TricksterBuffer m_StagingBuffer;
 		TricksterBuffer m_IndexBuffer;
+		std::vector<TricksterBuffer> m_UniformBuffers;
 		//Information about the GPU and has a handle to the vulkan physical device
 		TricksterPhysicalDevice m_PhysicalDevice;
 		TricksterDevice m_Device;
@@ -260,6 +316,8 @@ namespace Trickster
 		TricksterWindow m_Window;
 		TricksterSwapChain m_SwapChain;
 		TricksterPipeline m_Pipeline;
+		TricksterDescriptor m_Descriptor;
+		TricksterImage m_Image;
 		std::vector<TricksterShader> m_Shaders;
 		std::vector<const char*> validationLayers;
 	};

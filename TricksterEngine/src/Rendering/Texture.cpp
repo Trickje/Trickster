@@ -16,7 +16,7 @@
 =================================================================================
  */
 #include "pch.h"
-#define STB_IMAGE_IMPLEMENTATION
+//#define STB_IMAGE_IMPLEMENTATION
 #include "Rendering/Texture.h"
 #include "Core/Application.h"
 #include "Rendering/Window.h"

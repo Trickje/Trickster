@@ -5,6 +5,10 @@
 #include "Core/Application.h"
 #include "Core/Version.h"
 #include "Events/EventManager.h"
+#include "Rendering/MeshManager.h"
+#include "Rendering/Camera.h"
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
 
 namespace Trickster {
     Trickster::Vulkan::Vulkan()
@@ -19,6 +23,7 @@ namespace Trickster {
     Trickster::Vulkan::~Vulkan()
     {
         CleanSwapChain();
+        vkDestroyDescriptorSetLayout(m_Device.get, m_Descriptor.set_layout, nullptr);
     	for(size_t i = 0; i < m_SwapChain.MAX_FRAMES_IN_FLIGHT; i++)
     	{
             vkDestroySemaphore(m_Device.get, m_SwapChain.semaphores[i].render_finished, nullptr);
@@ -27,6 +32,8 @@ namespace Trickster {
     	}
         CleanBuffer(m_VertexBuffer);
         CleanBuffer(m_IndexBuffer);
+        CleanImage(m_Image);
+        vkDestroySampler(m_Device.get, m_TextureSampler, nullptr);
         vkDestroyCommandPool(m_Device.get, m_Command.pool, nullptr);
         vkDestroySurfaceKHR(m_Instance, m_Surface, nullptr);
     	for(auto shader : m_Shaders)
@@ -58,11 +65,17 @@ namespace Trickster {
         SetupDevice();
         SetupWindow();
         SetupSwapChain();
+        SetupDescriptorSetLayout();
         SetupGraphicsPipeline();
         SetupCommandPool();
+        SetupTextureImage();
+        SetupTextureSampler();
         SetupVertexBuffer();
         SetupIndexBuffer();
         SetupFrameBuffers();
+        SetupUniformBuffers();
+    	SetupDescriptorPool();
+        SetupDescriptorSets();
         SetupCommandBuffers();
         SetupSync();
         SetupSubscriptions();
@@ -91,6 +104,7 @@ namespace Trickster {
         // Mark the image as now being in use by this frame
         m_SwapChain.imagesInFlight[imageIndex] = m_SwapChain.fences[m_SwapChain.currentFrame];
 
+        UpdateUniformBuffer(imageIndex);
     	
         VkSubmitInfo submitInfo{};
         submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -186,6 +200,7 @@ namespace Trickster {
                     {
                         m_PhysicalDevice.get = devices[i];
                         m_PhysicalDevice.properties = properties;
+                        features.samplerAnisotropy = VK_TRUE;
                         m_PhysicalDevice.features = features;
                         m_PhysicalDevice.memory_properties = memory_properties;
                         m_PhysicalDevice.queue_family_index = queue_family_index;
@@ -333,7 +348,7 @@ namespace Trickster {
 
             vkCmdBindVertexBuffers(m_Command.buffers[i], 0, 1, vertexBuffers, offsets);
             vkCmdBindIndexBuffer(m_Command.buffers[i], m_IndexBuffer.get, 0, VK_INDEX_TYPE_UINT16);
-        	
+            vkCmdBindDescriptorSets(m_Command.buffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, m_Pipeline.layout, 0, 1, &m_Descriptor.sets[i], 0, nullptr);
         	//Very temporary
             vkCmdDrawIndexed(m_Command.buffers[i], static_cast<uint32_t>(indices.size()), 1, 0, 0,0);
 
@@ -443,8 +458,7 @@ namespace Trickster {
 
         shader.vertex_info = vertexShaderStageInfo;
         shader.fragment_info = fragmentShaderStageInfo;
-    	//TODO some stuff here. I left off here, and last line from previous hasn't been saved https://vulkan-tutorial.com/Drawing_a_triangle/Graphics_pipeline_basics/Fixed_functions
-        VkPipelineShaderStageCreateInfo shaderStages[] = { vertexShaderStageInfo, fragmentShaderStageInfo };
+    	 VkPipelineShaderStageCreateInfo shaderStages[] = { vertexShaderStageInfo, fragmentShaderStageInfo };
 
     	
         auto bindingDescription = TricksterVertex::GetBindingDescription();
@@ -492,7 +506,7 @@ namespace Trickster {
         rasterizer.polygonMode = VK_POLYGON_MODE_FILL;
         rasterizer.lineWidth = 1.0f;
         rasterizer.cullMode = VK_CULL_MODE_BACK_BIT;
-        rasterizer.frontFace = VK_FRONT_FACE_CLOCKWISE;
+        rasterizer.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
         rasterizer.depthBiasEnable = VK_FALSE;
         rasterizer.depthBiasConstantFactor = 0.0f; // Optional
         rasterizer.depthBiasClamp = 0.0f; // Optional
@@ -546,8 +560,8 @@ namespace Trickster {
 
         VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
         pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-        pipelineLayoutInfo.setLayoutCount = 0; // Optional
-        pipelineLayoutInfo.pSetLayouts = nullptr; // Optional
+        pipelineLayoutInfo.setLayoutCount = 1; // Optional
+        pipelineLayoutInfo.pSetLayouts = &m_Descriptor.set_layout; // Optional
         pipelineLayoutInfo.pushConstantRangeCount = 0; // Optional
         pipelineLayoutInfo.pPushConstantRanges = nullptr; // Optional
 
@@ -689,6 +703,122 @@ namespace Trickster {
     	
     }
 
+    void Vulkan::SetupDescriptorSetLayout()
+    {
+        VkDescriptorSetLayoutBinding uboLayoutBinding{};
+        uboLayoutBinding.binding = 0;
+        uboLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+    	// It is possible for the shader variable to represent an array of uniform buffer objects,
+    	//and descriptorCount specifies the number of values in the array.
+    	//This could be used to specify a transformation for each of the bones in
+    	//a skeleton for skeletal animation, for example.
+        uboLayoutBinding.descriptorCount = 1;
+        uboLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+        uboLayoutBinding.pImmutableSamplers = nullptr; // Optional
+    	
+        VkDescriptorSetLayoutBinding samplerLayoutBinding{};
+        samplerLayoutBinding.binding = 1;
+        samplerLayoutBinding.descriptorCount = 1;
+        samplerLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+        samplerLayoutBinding.pImmutableSamplers = nullptr;
+        samplerLayoutBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+    	
+        std::array<VkDescriptorSetLayoutBinding, 2> bindings = { uboLayoutBinding, samplerLayoutBinding };
+
+    	VkDescriptorSetLayoutCreateInfo layoutInfo{};
+    	layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+        layoutInfo.bindingCount = static_cast<uint32_t>(bindings.size());
+        layoutInfo.pBindings = bindings.data();
+        VkResult result;
+        result = vkCreateDescriptorSetLayout(m_Device.get, &layoutInfo, nullptr, &m_Descriptor.set_layout);
+    	if(result != VK_SUCCESS)
+    	{
+            LOG_ERROR("[Vulkan] Failed to create Descriptor Set Layout!");
+    	}
+
+    	
+    }
+
+    void Vulkan::SetupDescriptorPool()
+    {
+        std::array<VkDescriptorPoolSize, 2> poolSizes{};
+        poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+        poolSizes[0].descriptorCount = static_cast<uint32_t>(m_SwapChain.images.size());
+        poolSizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+        poolSizes[1].descriptorCount = static_cast<uint32_t>(m_SwapChain.images.size());
+
+        VkDescriptorPoolCreateInfo poolInfo{};
+        poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+        poolInfo.poolSizeCount = static_cast<uint32_t>(poolSizes.size());
+        poolInfo.pPoolSizes = poolSizes.data();
+        poolInfo.maxSets = static_cast<uint32_t>(m_SwapChain.images.size());
+
+
+        VkResult result;
+        result = vkCreateDescriptorPool(m_Device.get, &poolInfo, nullptr, &m_Descriptor.pool);
+    	if(result != VK_SUCCESS)
+    	{
+            LOG_ERROR("[Vulkan] Failed to create Descriptor Pool!");
+    	}
+    	
+    }
+
+    void Vulkan::SetupDescriptorSets()
+    {
+        std::vector<VkDescriptorSetLayout> layouts(m_SwapChain.images.size(), m_Descriptor.set_layout);
+        VkDescriptorSetAllocateInfo allocInfo{};
+        allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+        allocInfo.descriptorPool = m_Descriptor.pool;
+        allocInfo.descriptorSetCount = static_cast<uint32_t>(m_SwapChain.images.size());
+        allocInfo.pSetLayouts = layouts.data();
+
+        m_Descriptor.sets.resize(m_SwapChain.images.size());
+        VkResult result;
+        result = vkAllocateDescriptorSets(m_Device.get, &allocInfo, m_Descriptor.sets.data());
+    	if(result != VK_SUCCESS)
+    	{
+            LOG_ERROR("[Vulkan] Failed to allocate Descriptor Sets!");
+    	}
+        for (size_t i = 0; i < m_SwapChain.images.size(); i++) {
+        	
+            VkDescriptorBufferInfo bufferInfo{};
+            bufferInfo.buffer = m_UniformBuffers[i].get;
+            bufferInfo.offset = 0;
+            bufferInfo.range = sizeof(UniformBufferObject);
+        	
+            VkDescriptorImageInfo imageInfo{};
+            imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+            imageInfo.imageView = m_Image.view;
+            imageInfo.sampler = m_TextureSampler;
+
+
+            std::array<VkWriteDescriptorSet, 2> descriptorWrites{};
+
+            descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+            descriptorWrites[0].dstSet = m_Descriptor.sets[i];
+            descriptorWrites[0].dstBinding = 0;
+            descriptorWrites[0].dstArrayElement = 0;
+            descriptorWrites[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+            descriptorWrites[0].descriptorCount = 1;
+            descriptorWrites[0].pBufferInfo = &bufferInfo;
+
+            descriptorWrites[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+            descriptorWrites[1].dstSet = m_Descriptor.sets[i];
+            descriptorWrites[1].dstBinding = 1;
+            descriptorWrites[1].dstArrayElement = 0;
+            descriptorWrites[1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+            descriptorWrites[1].descriptorCount = 1;
+            descriptorWrites[1].pImageInfo = &imageInfo;
+
+            vkUpdateDescriptorSets(m_Device.get,
+                static_cast<uint32_t>(descriptorWrites.size()), 
+                descriptorWrites.data(), 
+                0, 
+                nullptr);
+        	
+           }
+    }
+
     void Vulkan::SetupSubscriptions()
     {
         EventManager::GetInstance()->WindowEvents.OnWindowResize.AddListener(std::bind(&Trickster::Vulkan::Resize, this, std::placeholders::_1, std::placeholders::_2));
@@ -750,6 +880,81 @@ namespace Trickster {
         CleanBuffer(m_StagingBuffer);
     }
 
+    void Vulkan::SetupUniformBuffers()
+    {
+        VkDeviceSize bufferSize = sizeof(UniformBufferObject);
+        m_UniformBuffers.resize(m_SwapChain.images.size());
+    	for(size_t i = 0; i < m_SwapChain.images.size(); i++)
+    	{
+            SetupBuffer(bufferSize,
+                VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+                VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+                m_UniformBuffers[i].get, m_UniformBuffers[i].memory);
+    	}
+    }
+
+    void Vulkan::UpdateUniformBuffer(uint32_t currentImage)
+    {
+        static auto startTime = std::chrono::high_resolution_clock::now();
+
+        auto currentTime = std::chrono::high_resolution_clock::now();
+        float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
+
+        UniformBufferObject ubo{};
+        auto camera = MeshManager::GetInstance()->GetCamera();
+        ubo.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+        ubo.view = camera->GetView();// glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+        ubo.projection = camera->GetProjection();//glm::perspective(glm::radians(45.0f), m_SwapChain.capabilities.currentExtent.width / (float)m_SwapChain.capabilities.currentExtent.height, 0.1f, 10.0f);
+        ubo.projection[1][1] *= -1;
+        void* data;
+        vkMapMemory(m_Device.get, m_UniformBuffers[currentImage].memory, 0, sizeof(ubo), 0, &data);
+        memcpy(data, &ubo, sizeof(ubo));
+        vkUnmapMemory(m_Device.get, m_UniformBuffers[currentImage].memory);
+    }
+
+    void Vulkan::SetupImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling,
+	    VkImageUsageFlags usage, VkMemoryPropertyFlags properties, TricksterImage& image)
+    {
+        VkImageCreateInfo imageInfo{};
+        imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+        imageInfo.imageType = VK_IMAGE_TYPE_2D;
+        imageInfo.extent.width = width;
+        imageInfo.extent.height = height;
+        imageInfo.extent.depth = 1;
+        imageInfo.mipLevels = 1;
+        imageInfo.arrayLayers = 1;
+        imageInfo.format = format;
+        imageInfo.tiling = tiling;
+        imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+        imageInfo.usage = usage;
+        imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
+        imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+        image.width = width;
+        image.height = height;
+        image.format = format;
+        VkResult result;
+        result = vkCreateImage(m_Device.get, &imageInfo, nullptr, &image.get);
+        if (result != VK_SUCCESS)
+        {
+            LOG_ERROR("[Vulkan] Failed to create Image!");
+        }
+        VkMemoryRequirements memRequirements;
+        vkGetImageMemoryRequirements(m_Device.get, image.get, &memRequirements);
+
+        VkMemoryAllocateInfo allocInfo{};
+        allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+        allocInfo.allocationSize = memRequirements.size;
+        allocInfo.memoryTypeIndex = FindMemoryType(memRequirements.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+
+        result = vkAllocateMemory(m_Device.get, &allocInfo, nullptr, &image.memory);
+        if (result != VK_SUCCESS)
+        {
+            LOG_ERROR("[Vulkan] Failed to allocate Image Memory!");
+        }
+
+        vkBindImageMemory(m_Device.get, image.get, image.memory, 0);
+    }
+
     void Vulkan::SetupBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties,
                              VkBuffer& buffer, VkDeviceMemory& bufferMemory)
     {
@@ -783,37 +988,13 @@ namespace Trickster {
 
     void Vulkan::CopyBuffer(TricksterBuffer& srcBuffer, TricksterBuffer& dstBuffer, VkDeviceSize size)
     {
-        VkCommandBufferAllocateInfo allocInfo{};
-        allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-        allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-        allocInfo.commandPool = m_Command.pool;
-        allocInfo.commandBufferCount = 1;
-
-        VkCommandBuffer commandBuffer;
-        vkAllocateCommandBuffers(m_Device.get, &allocInfo, &commandBuffer);
-        VkCommandBufferBeginInfo beginInfo{};
-        beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-        beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-
-        vkBeginCommandBuffer(commandBuffer, &beginInfo);
-
+       VkCommandBuffer commandBuffer = StartSingleUseCommand();
         VkBufferCopy copyRegion{};
         copyRegion.srcOffset = 0; // Optional
         copyRegion.dstOffset = 0; // Optional
         copyRegion.size = size;
         vkCmdCopyBuffer(commandBuffer, srcBuffer.get, dstBuffer.get, 1, &copyRegion);
-        vkEndCommandBuffer(commandBuffer);
-        VkSubmitInfo submitInfo{};
-        submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-        submitInfo.commandBufferCount = 1;
-        submitInfo.pCommandBuffers = &commandBuffer;
-
-        vkQueueSubmit(m_GraphicsQueue, 1, &submitInfo, VK_NULL_HANDLE);
-    	//TODO:
-    	//A fence would allow you to schedule multiple transfers simultaneously
-    	//and wait for all of them complete, instead of executing one at a time.
-        vkQueueWaitIdle(m_GraphicsQueue);
-        vkFreeCommandBuffers(m_Device.get, m_Command.pool, 1, &commandBuffer);
+        EndSingleUseCommand(commandBuffer);
     }
 
     void Vulkan::RecreateSwapChain()
@@ -824,10 +1005,52 @@ namespace Trickster {
         SetupSwapChain();
         SetupGraphicsPipeline();
         SetupFrameBuffers();
+        SetupUniformBuffers();
+        SetupDescriptorPool();
+        SetupDescriptorSets();
         SetupCommandBuffers();
         SetupSync();
     	
     }
+
+    void Vulkan::SetupTextureImage()
+    {
+        int texWidth, texHeight, texChannels;
+        stbi_uc* pixels = stbi_load("Resources/Textures/texture.png", &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
+        VkDeviceSize imageSize = texWidth * texHeight * 4;
+
+    	if(!pixels)
+    	{
+            LOG_ERROR("[Vulkan] Failed to load Texture Image");
+    	}
+
+    	SetupBuffer(
+            imageSize, 
+            VK_BUFFER_USAGE_TRANSFER_SRC_BIT, 
+            VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, 
+            m_StagingBuffer.get, 
+            m_StagingBuffer.memory);
+
+        void* data;
+        vkMapMemory(m_Device.get, m_StagingBuffer.memory, 0, imageSize, 0, &data);
+        memcpy(data, pixels, static_cast<size_t>(imageSize));
+        vkUnmapMemory(m_Device.get, m_StagingBuffer.memory);
+        stbi_image_free(pixels);
+        m_Image.channels = texChannels;
+        SetupImage(texWidth,
+            texHeight,
+            VK_FORMAT_R8G8B8A8_SRGB,
+            VK_IMAGE_TILING_OPTIMAL,
+            VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+            VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+            m_Image);
+        TransitionImageLayout(m_Image.get, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+        CopyBufferToImage(m_StagingBuffer.get, m_Image.get, static_cast<uint32_t>(texWidth), static_cast<uint32_t>(texHeight));
+        TransitionImageLayout(m_Image.get, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+        CleanBuffer(m_StagingBuffer);
+        SetupImageView(m_Image);
+    }
+
 
     void Vulkan::CleanSwapChain()
     {
@@ -845,7 +1068,10 @@ namespace Trickster {
         for (size_t i = 0; i < m_SwapChain.image_views.size(); i++) {
             vkDestroyImageView(m_Device.get, m_SwapChain.image_views[i], nullptr);
         }
-
+        for (size_t i = 0; i < m_UniformBuffers.size(); i++) {
+            CleanBuffer(m_UniformBuffers[i]);
+        }
+        vkDestroyDescriptorPool(m_Device.get, m_Descriptor.pool, nullptr);
         vkDestroySwapchainKHR(m_Device.get, m_SwapChain.get, nullptr);
     }
 
@@ -1165,5 +1391,177 @@ namespace Trickster {
         return -1;
     }
 
-  
+    VkCommandBuffer Vulkan::StartSingleUseCommand()
+    {
+        VkCommandBufferAllocateInfo allocInfo{};
+        allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+        allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+        allocInfo.commandPool = m_Command.pool;
+        allocInfo.commandBufferCount = 1;
+
+        VkCommandBuffer commandBuffer;
+        vkAllocateCommandBuffers(m_Device.get, &allocInfo, &commandBuffer);
+
+        VkCommandBufferBeginInfo beginInfo{};
+        beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+        beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+
+        vkBeginCommandBuffer(commandBuffer, &beginInfo);
+
+        return commandBuffer;
+    }
+
+    void Vulkan::EndSingleUseCommand(VkCommandBuffer commandBuffer)
+    {
+        vkEndCommandBuffer(commandBuffer);
+
+        VkSubmitInfo submitInfo{};
+        submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+        submitInfo.commandBufferCount = 1;
+        submitInfo.pCommandBuffers = &commandBuffer;
+
+        vkQueueSubmit(m_GraphicsQueue, 1, &submitInfo, VK_NULL_HANDLE);
+        vkQueueWaitIdle(m_GraphicsQueue);
+
+        vkFreeCommandBuffers(m_Device.get, m_Command.pool, 1, &commandBuffer);
+    }
+
+    void Vulkan::TransitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout,
+	    VkImageLayout newLayout)
+    {
+        VkCommandBuffer commandBuffer = StartSingleUseCommand();
+        VkImageMemoryBarrier barrier{};
+        barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+        barrier.oldLayout = oldLayout;
+        barrier.newLayout = newLayout;
+        barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+        barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+        barrier.image = image;
+        barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+        barrier.subresourceRange.baseMipLevel = 0;
+        barrier.subresourceRange.levelCount = 1;
+        barrier.subresourceRange.baseArrayLayer = 0;
+        barrier.subresourceRange.layerCount = 1;
+        VkPipelineStageFlags sourceStage;
+        VkPipelineStageFlags destinationStage;
+
+        if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED && newLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL) {
+            barrier.srcAccessMask = 0;
+            barrier.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+
+            sourceStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
+            destinationStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
+        }
+        else if (oldLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL && newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL) {
+            barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+            barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+
+            sourceStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
+            destinationStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+        }
+        else {
+            LOG_ERROR("[Vulkan] Unsupported Layout Transition!");
+        }
+        vkCmdPipelineBarrier(
+            commandBuffer,
+            sourceStage, destinationStage,
+            0,
+            0, nullptr,
+            0, nullptr,
+            1, &barrier
+            );
+    	
+        EndSingleUseCommand(commandBuffer);
+    }
+
+    void Vulkan::CopyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height)
+    {
+        VkCommandBuffer commandBuffer = StartSingleUseCommand();
+        VkBufferImageCopy region{};
+        region.bufferOffset = 0;
+        region.bufferRowLength = 0;
+        region.bufferImageHeight = 0;
+
+        region.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+        region.imageSubresource.mipLevel = 0;
+        region.imageSubresource.baseArrayLayer = 0;
+        region.imageSubresource.layerCount = 1;
+
+        region.imageOffset = { 0, 0, 0 };
+        region.imageExtent = {
+            width,
+            height,
+            1
+        };
+        vkCmdCopyBufferToImage(
+            commandBuffer,
+            buffer,
+            image,
+            VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+            1,
+            &region
+            );
+    	
+        EndSingleUseCommand(commandBuffer);
+    }
+
+    void Vulkan::CleanImage(TricksterImage& image)
+    {
+        vkDestroyImageView(m_Device.get, image.view, nullptr);
+        vkDestroyImage(m_Device.get, image.get, nullptr);
+        vkFreeMemory(m_Device.get, image.memory, nullptr);
+    }
+
+    void Vulkan::SetupImageView(TricksterImage& image)
+    {
+        VkImageViewCreateInfo viewInfo{};
+        viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+        viewInfo.image = image.get;
+        viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+        viewInfo.format = image.format;
+        viewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+        viewInfo.subresourceRange.baseMipLevel = 0;
+        viewInfo.subresourceRange.levelCount = 1;
+        viewInfo.subresourceRange.baseArrayLayer = 0;
+        viewInfo.subresourceRange.layerCount = 1;
+
+        VkImageView imageView;
+        VkResult result;
+        result = vkCreateImageView(m_Device.get, &viewInfo, nullptr, &imageView);
+    	if(result != VK_SUCCESS)
+    	{
+            LOG_ERROR("[Vulkan] Failed to create Image View!");
+    	}
+        image.view = imageView;
+    }
+
+    void Vulkan::SetupTextureSampler()
+    {
+    	
+        VkSamplerCreateInfo samplerInfo{};
+        samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
+        samplerInfo.magFilter = VK_FILTER_LINEAR;
+        samplerInfo.minFilter = VK_FILTER_LINEAR;
+        samplerInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+        samplerInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+        samplerInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+       // samplerInfo.anisotropyEnable = VK_TRUE;
+        //samplerInfo.maxAnisotropy = m_PhysicalDevice.properties.limits.maxSamplerAnisotropy;
+        samplerInfo.anisotropyEnable = VK_FALSE;
+        samplerInfo.maxAnisotropy = 1.0f;
+        samplerInfo.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK;
+        samplerInfo.unnormalizedCoordinates = VK_FALSE;
+        samplerInfo.compareEnable = VK_FALSE;
+        samplerInfo.compareOp = VK_COMPARE_OP_ALWAYS;
+        samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
+        samplerInfo.mipLodBias = 0.0f;
+        samplerInfo.minLod = 0.0f;
+        samplerInfo.maxLod = 0.0f;
+        VkResult result;
+        result = vkCreateSampler(m_Device.get, &samplerInfo, nullptr, &m_TextureSampler);
+    	if(result != VK_SUCCESS)
+    	{
+            LOG_ERROR("[Vulkan] Failed to create Sampler!");
+    	}
+    }
 }
