@@ -246,7 +246,7 @@ namespace Trickster
 		TRICKSTER_API void SetupIndexBuffer();
 		TRICKSTER_API void SetupUniformBuffers();
 		TRICKSTER_API void UpdateUniformBuffer(uint32_t currentImage);
-		TRICKSTER_API void SetupImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, Trickster::Vulkan::TricksterImage& image);
+		TRICKSTER_API void SetupImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, Trickster::Vulkan::TricksterImage& image, VkSampleCountFlagBits numSamples = VK_SAMPLE_COUNT_1_BIT);
 		TRICKSTER_API void SetupBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
 		TRICKSTER_API void CopyBuffer(Trickster::Vulkan::TricksterBuffer& srcBuffer, Trickster::Vulkan::TricksterBuffer& dstBuffer, VkDeviceSize size);
 		TRICKSTER_API void RecreateSwapChain();
@@ -292,6 +292,8 @@ namespace Trickster
 		TRICKSTER_API VkFormat FindSupportedImageFormat(const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features);
 		TRICKSTER_API bool HasStencilComponent(VkFormat format);
 		TRICKSTER_API VkSampleCountFlagBits GetMaxUsableSampleCount();
+		//Basically for multi sampling color
+		TRICKSTER_API void SetupColorResources();
 
 		
 		/*
@@ -327,6 +329,7 @@ namespace Trickster
 		TricksterDescriptor m_Descriptor;
 		TricksterImage m_Image;
 		TricksterImage m_DepthImage;
+		TricksterImage m_ColorImage;
 		VkSampleCountFlagBits m_MSAASamples;
 		std::vector<TricksterShader> m_Shaders;
 		std::vector<const char*> validationLayers;
