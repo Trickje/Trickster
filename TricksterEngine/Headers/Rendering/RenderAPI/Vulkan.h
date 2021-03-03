@@ -1,6 +1,7 @@
 #pragma once
 #include "RenderAPI.h"
 #define GLM_FORCE_RADIANS
+#define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #define GLM_FORCE_DEFAULT_ALIGNED_GENTYPES
 namespace Trickster
 {
@@ -236,9 +237,9 @@ namespace Trickster
 		TRICKSTER_API void SetupIndexBuffer();
 		TRICKSTER_API void SetupUniformBuffers();
 		TRICKSTER_API void UpdateUniformBuffer(uint32_t currentImage);
-		TRICKSTER_API void SetupImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, TricksterImage& image);
+		TRICKSTER_API void SetupImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, Trickster::Vulkan::TricksterImage& image);
 		TRICKSTER_API void SetupBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
-		TRICKSTER_API void CopyBuffer(TricksterBuffer& srcBuffer, TricksterBuffer& dstBuffer, VkDeviceSize size);
+		TRICKSTER_API void CopyBuffer(Trickster::Vulkan::TricksterBuffer& srcBuffer, Trickster::Vulkan::TricksterBuffer& dstBuffer, VkDeviceSize size);
 		TRICKSTER_API void RecreateSwapChain();
 		TRICKSTER_API void SetupTextureImage();
 		TRICKSTER_API void CleanSwapChain();
@@ -274,10 +275,15 @@ namespace Trickster
 		TRICKSTER_API void EndSingleUseCommand(VkCommandBuffer commandBuffer);
 		TRICKSTER_API void TransitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout);
 		TRICKSTER_API void CopyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height);
-		TRICKSTER_API void CleanImage(TricksterImage& image);
-		TRICKSTER_API void SetupImageView(TricksterImage& image);
+		TRICKSTER_API void CleanImage(Trickster::Vulkan::TricksterImage& image);
+		TRICKSTER_API void SetupImageView(Trickster::Vulkan::TricksterImage& image, VkImageAspectFlags aspectFlags);
 		TRICKSTER_API void SetupTextureSampler();
+		TRICKSTER_API void SetupDepthResources();
+		TRICKSTER_API VkFormat FindDepthFormat();
+		TRICKSTER_API VkFormat FindSupportedImageFormat(const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features);
+		TRICKSTER_API bool HasStencilComponent(VkFormat format);
 
+		
 		/*
 		 *  _______  _______  _______  ______   _______  _______  _______ 
 		 *  (       )(  ____ \(       )(  ___ \ (  ____ \(  ____ )(  ____ \
@@ -292,13 +298,20 @@ namespace Trickster
 
 		const std::vector<TricksterVertex> vertices = {
 
-	{{-0.5f, -0.5f, 0.f}, {1.0f, 0.0f, 0.0f}, {1.0f, 0.0f}},
-	{{0.5f, -0.5f, 0.f}, {0.0f, 1.0f, 0.0f}, {0.0f, 0.0f}},
-	{{0.5f, 0.5f, 0.f}, {0.0f, 0.0f, 1.0f}, {0.0f, 1.0f}},
-	{{-0.5f, 0.5f, 0.f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}}
+
+	{{-0.5f, -0.5f, 0.0f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
+	{{0.5f, -0.5f, 0.0f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f}},
+	{{0.5f, 0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f}},
+	{{-0.5f, 0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}},
+
+	{{-0.5f, -0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
+	{{0.5f, -0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f}},
+	{{0.5f, 0.5f, -0.5f}, {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f}},
+	{{-0.5f, 0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}}
 		};
 		const std::vector<uint16_t> indices = {
-	0, 1, 2, 2, 3, 0
+	0, 1, 2, 2, 3, 0,
+	4, 5, 6, 6, 7, 4
 		};
 		VkInstance m_Instance;
 		VkSurfaceKHR m_Surface;
@@ -318,6 +331,7 @@ namespace Trickster
 		TricksterPipeline m_Pipeline;
 		TricksterDescriptor m_Descriptor;
 		TricksterImage m_Image;
+		TricksterImage m_DepthImage;
 		std::vector<TricksterShader> m_Shaders;
 		std::vector<const char*> validationLayers;
 	};

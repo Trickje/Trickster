@@ -428,4 +428,10 @@
       <Filter>Resource Files</Filter>
     </ResourceCompile>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="NotCompiledShaders\triangle.frag" />
+    <None Include="NotCompiledShaders\triangle.vert" />
+    <None Include="NotCompiledShaders\Vulkan.frag" />
+    <None Include="NotCompiledShaders\Vulkan.vert" />
+  </ItemGroup>
 </Project>
