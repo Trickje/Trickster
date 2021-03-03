@@ -246,7 +246,16 @@ namespace Trickster
 		TRICKSTER_API void SetupIndexBuffer();
 		TRICKSTER_API void SetupUniformBuffers();
 		TRICKSTER_API void UpdateUniformBuffer(uint32_t currentImage);
-		TRICKSTER_API void SetupImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, Trickster::Vulkan::TricksterImage& image, VkSampleCountFlagBits numSamples = VK_SAMPLE_COUNT_1_BIT);
+		TRICKSTER_API void SetupImage(
+			uint32_t width, 
+			uint32_t height, 
+			VkFormat format, 
+			VkImageTiling tiling, 
+			VkImageUsageFlags usage, 
+			VkMemoryPropertyFlags properties,
+			uint32_t mipLevels,
+			Trickster::Vulkan::TricksterImage& image, 
+			VkSampleCountFlagBits numSamples = VK_SAMPLE_COUNT_1_BIT);
 		TRICKSTER_API void SetupBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
 		TRICKSTER_API void CopyBuffer(Trickster::Vulkan::TricksterBuffer& srcBuffer, Trickster::Vulkan::TricksterBuffer& dstBuffer, VkDeviceSize size);
 		TRICKSTER_API void RecreateSwapChain();
@@ -282,10 +291,18 @@ namespace Trickster
 		TRICKSTER_API uint32_t FindMemoryType(uint32_t type_filter, VkMemoryPropertyFlags properties);
 		TRICKSTER_API VkCommandBuffer StartSingleUseCommand();
 		TRICKSTER_API void EndSingleUseCommand(VkCommandBuffer commandBuffer);
-		TRICKSTER_API void TransitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout);
+		TRICKSTER_API void TransitionImageLayout(
+			VkImage image, 
+			VkFormat format, 
+			VkImageLayout oldLayout, 
+			VkImageLayout newLayout,
+			uint32_t mipLevels);
 		TRICKSTER_API void CopyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height);
 		TRICKSTER_API void CleanImage(Trickster::Vulkan::TricksterImage& image);
-		TRICKSTER_API void SetupImageView(Trickster::Vulkan::TricksterImage& image, VkImageAspectFlags aspectFlags);
+		TRICKSTER_API void SetupImageView(
+			Trickster::Vulkan::TricksterImage& image, 
+			VkImageAspectFlags aspectFlags,
+			uint32_t mipLevels);
 		TRICKSTER_API void SetupTextureSampler();
 		TRICKSTER_API void SetupDepthResources();
 		TRICKSTER_API VkFormat FindDepthFormat();
@@ -294,7 +311,9 @@ namespace Trickster
 		TRICKSTER_API VkSampleCountFlagBits GetMaxUsableSampleCount();
 		//Basically for multi sampling color
 		TRICKSTER_API void SetupColorResources();
+		TRICKSTER_API void GenerateMipmaps(TricksterImage& image, uint32_t mipLevels);
 
+		
 		
 		/*
 		 *  _______  _______  _______  ______   _______  _______  _______ 
@@ -331,6 +350,7 @@ namespace Trickster
 		TricksterImage m_DepthImage;
 		TricksterImage m_ColorImage;
 		VkSampleCountFlagBits m_MSAASamples;
+		uint32_t m_MipLevels;
 		std::vector<TricksterShader> m_Shaders;
 		std::vector<const char*> validationLayers;
 	};
