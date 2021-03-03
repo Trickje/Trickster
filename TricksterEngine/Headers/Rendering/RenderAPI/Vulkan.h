@@ -3,6 +3,9 @@
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #define GLM_FORCE_DEFAULT_ALIGNED_GENTYPES
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/hash.hpp>
+
 namespace Trickster
 {
 	//TODO:
@@ -54,8 +57,12 @@ namespace Trickster
 			attributeDescriptions[2].offset = offsetof(TricksterVertex, texCoord);
 			return attributeDescriptions;
 		}
+		TRICKSTER_API bool operator==(const TricksterVertex& other) const {
+			return position == other.position && color == other.color && texCoord == other.texCoord;
+		}
+		
 	};
-
+	
 	struct UniformBufferObject
 	{
 		alignas(16) glm::mat4 model;
@@ -71,6 +78,7 @@ namespace Trickster
 		TRICKSTER_API void Initialize() override;
 		TRICKSTER_API void DrawFrame() override;
 		TRICKSTER_API void Resize(int width, int height) override;
+		TRICKSTER_API void LoadModel(std::string a_ModelPath, std::string a_TexturePath);
 	private:
 
 		
@@ -95,6 +103,7 @@ namespace Trickster
 			VkPhysicalDeviceMemoryProperties memory_properties;
 			uint32_t queue_family_index;
 			static const uint32_t extension_count = 1;
+			VkSampleCountFlagBits max_MSAA;
 			const char* extenstions[extension_count] = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
 		};
 
@@ -241,7 +250,7 @@ namespace Trickster
 		TRICKSTER_API void SetupBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
 		TRICKSTER_API void CopyBuffer(Trickster::Vulkan::TricksterBuffer& srcBuffer, Trickster::Vulkan::TricksterBuffer& dstBuffer, VkDeviceSize size);
 		TRICKSTER_API void RecreateSwapChain();
-		TRICKSTER_API void SetupTextureImage();
+		TRICKSTER_API void SetupTextureImage(std::string a_TexturePath);
 		TRICKSTER_API void CleanSwapChain();
 		TRICKSTER_API void CleanBuffer(TricksterBuffer& buffer);
 		//Combiner function to make code more readable
@@ -282,6 +291,7 @@ namespace Trickster
 		TRICKSTER_API VkFormat FindDepthFormat();
 		TRICKSTER_API VkFormat FindSupportedImageFormat(const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features);
 		TRICKSTER_API bool HasStencilComponent(VkFormat format);
+		TRICKSTER_API VkSampleCountFlagBits GetMaxUsableSampleCount();
 
 		
 		/*
@@ -296,23 +306,8 @@ namespace Trickster
 		 */
 
 
-		const std::vector<TricksterVertex> vertices = {
-
-
-	{{-0.5f, -0.5f, 0.0f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
-	{{0.5f, -0.5f, 0.0f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f}},
-	{{0.5f, 0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f}},
-	{{-0.5f, 0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}},
-
-	{{-0.5f, -0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
-	{{0.5f, -0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f}},
-	{{0.5f, 0.5f, -0.5f}, {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f}},
-	{{-0.5f, 0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}}
-		};
-		const std::vector<uint16_t> indices = {
-	0, 1, 2, 2, 3, 0,
-	4, 5, 6, 6, 7, 4
-		};
+		std::vector<TricksterVertex> vertices;
+		std::vector<uint32_t> indices;
 		VkInstance m_Instance;
 		VkSurfaceKHR m_Surface;
 		VkQueue m_GraphicsQueue;
@@ -332,7 +327,17 @@ namespace Trickster
 		TricksterDescriptor m_Descriptor;
 		TricksterImage m_Image;
 		TricksterImage m_DepthImage;
+		VkSampleCountFlagBits m_MSAASamples;
 		std::vector<TricksterShader> m_Shaders;
 		std::vector<const char*> validationLayers;
+	};
+}
+namespace std {
+	template<> struct hash<Trickster::TricksterVertex> {
+		size_t operator()(Trickster::TricksterVertex const& vertex) const {
+			return ((hash<glm::vec3>()(vertex.position) ^
+				(hash<glm::vec3>()(vertex.color) << 1)) >> 1) ^
+				(hash<glm::vec2>()(vertex.texCoord) << 1);
+		}
 	};
 }

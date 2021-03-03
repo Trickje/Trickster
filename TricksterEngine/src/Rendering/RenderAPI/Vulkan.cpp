@@ -7,8 +7,10 @@
 #include "Events/EventManager.h"
 #include "Rendering/MeshManager.h"
 #include "Rendering/Camera.h"
+#include <unordered_map>
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
+#include "TinyObjLoader.h"
 
 namespace Trickster {
     Trickster::Vulkan::Vulkan()
@@ -72,8 +74,8 @@ namespace Trickster {
         SetupCommandPool();
         SetupDepthResources();
         SetupFrameBuffers();
-        SetupTextureImage();
         SetupTextureSampler();
+        LoadModel("Resources/Models/viking_room.obj", "Resources/Textures/viking_room.png");
         SetupVertexBuffer();
         SetupIndexBuffer();
         SetupUniformBuffers();
@@ -153,6 +155,44 @@ namespace Trickster {
         RecreateSwapChain();
     }
 
+    void Vulkan::LoadModel(std::string a_ModelPath, std::string a_TexturePath)
+    {
+        tinyobj::attrib_t attrib;
+        std::vector<tinyobj::shape_t> shapes;
+        std::vector<tinyobj::material_t> materials;
+        std::string warn, err;
+
+        if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, a_ModelPath.c_str())) {
+            LOG_ERROR(warn + err);
+        }
+        std::unordered_map<TricksterVertex, uint32_t> uniqueVertices{};
+        for (const auto& shape : shapes) {
+            for (const auto& index : shape.mesh.indices) {
+                TricksterVertex vertex{};
+				vertex.position = { 
+				    attrib.vertices[3 * index.vertex_index + 0],
+				    attrib.vertices[3 * index.vertex_index + 1],
+				    attrib.vertices[3 * index.vertex_index + 2]
+                };
+
+                vertex.texCoord = {
+				    attrib.texcoords[2 * index.texcoord_index + 0],
+				    1.0f - attrib.texcoords[2 * index.texcoord_index + 1]
+                };
+
+                vertex.color = { 1.0f, 1.0f, 1.0f };
+                if (uniqueVertices.count(vertex) == 0) {
+                    uniqueVertices[vertex] = static_cast<uint32_t>(vertices.size());
+                    vertices.push_back(vertex);
+                }
+
+                indices.push_back(uniqueVertices[vertex]);
+            }
+        }
+
+        SetupTextureImage(a_TexturePath);
+    }
+
     void Vulkan::SetupPhysicalDevice()
     {
     	//Populate an array of devices
@@ -212,7 +252,7 @@ namespace Trickster {
     			
     		}
     	}
-
+        m_PhysicalDevice.max_MSAA = GetMaxUsableSampleCount();
     	
     }
 
@@ -352,7 +392,7 @@ namespace Trickster {
             VkDeviceSize offsets[] = { 0 };
 
             vkCmdBindVertexBuffers(m_Command.buffers[i], 0, 1, vertexBuffers, offsets);
-            vkCmdBindIndexBuffer(m_Command.buffers[i], m_IndexBuffer.get, 0, VK_INDEX_TYPE_UINT16);
+            vkCmdBindIndexBuffer(m_Command.buffers[i], m_IndexBuffer.get, 0, VK_INDEX_TYPE_UINT32);
             vkCmdBindDescriptorSets(m_Command.buffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, m_Pipeline.layout, 0, 1, &m_Descriptor.sets[i], 0, nullptr);
         	//Very temporary
             vkCmdDrawIndexed(m_Command.buffers[i], static_cast<uint32_t>(indices.size()), 1, 0, 0,0);
@@ -510,7 +550,7 @@ namespace Trickster {
         rasterizer.rasterizerDiscardEnable = VK_FALSE;
         rasterizer.polygonMode = VK_POLYGON_MODE_FILL;
         rasterizer.lineWidth = 1.0f;
-        rasterizer.cullMode = VK_CULL_MODE_BACK_BIT;
+        rasterizer.cullMode = VK_CULL_MODE_NONE;
         rasterizer.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
         rasterizer.depthBiasEnable = VK_FALSE;
         rasterizer.depthBiasConstantFactor = 0.0f; // Optional
@@ -1049,11 +1089,11 @@ namespace Trickster {
     	
     }
 
-    void Vulkan::SetupTextureImage()
+    void Vulkan::SetupTextureImage(std::string a_TexturePath)
     {
         int texWidth, texHeight, texChannels;
         stbi_set_flip_vertically_on_load(true);
-        stbi_uc* pixels = stbi_load("Resources/Textures/texture.jpg", &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
+        stbi_uc* pixels = stbi_load(a_TexturePath.c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
         VkDeviceSize imageSize = texWidth * texHeight * 4;
 
     	if(!pixels)
@@ -1669,5 +1709,21 @@ namespace Trickster {
     bool Vulkan::HasStencilComponent(VkFormat format)
     {
         return format == VK_FORMAT_D32_SFLOAT_S8_UINT || format == VK_FORMAT_D24_UNORM_S8_UINT;
+    }
+
+    VkSampleCountFlagBits Vulkan::GetMaxUsableSampleCount()
+    {
+        VkPhysicalDeviceProperties physicalDeviceProperties;
+        vkGetPhysicalDeviceProperties(m_PhysicalDevice.get, &physicalDeviceProperties);
+
+        VkSampleCountFlags counts = physicalDeviceProperties.limits.framebufferColorSampleCounts & physicalDeviceProperties.limits.framebufferDepthSampleCounts;
+        if (counts & VK_SAMPLE_COUNT_64_BIT) { return VK_SAMPLE_COUNT_64_BIT; }
+        if (counts & VK_SAMPLE_COUNT_32_BIT) { return VK_SAMPLE_COUNT_32_BIT; }
+        if (counts & VK_SAMPLE_COUNT_16_BIT) { return VK_SAMPLE_COUNT_16_BIT; }
+        if (counts & VK_SAMPLE_COUNT_8_BIT) { return VK_SAMPLE_COUNT_8_BIT; }
+        if (counts & VK_SAMPLE_COUNT_4_BIT) { return VK_SAMPLE_COUNT_4_BIT; }
+        if (counts & VK_SAMPLE_COUNT_2_BIT) { return VK_SAMPLE_COUNT_2_BIT; }
+
+        return VK_SAMPLE_COUNT_1_BIT;
     }
 }

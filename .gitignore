@@ -10,7 +10,7 @@
 /LatestVersion
 !Lib/DLL/*
 *.obj
-!Resources/*
+!/Resources/*/*
 /Lib/shaderc_combined.lib
 /Lib/SPIRV-Tools-opt.lib
 *.spv
