@@ -74,7 +74,7 @@ namespace Trickster {
 		//Rotates around the axis of the camera (up forward and right).
 		//Delta in degrees
 		TRICKSTER_API void Rotate(const float a_DeltaYaw = 0.f, const float a_DeltaPitch = 0.f, const float a_DeltaRoll = 0.f);
-		TRICKSTER_API glm::mat4 GetProjection()const;
+		TRICKSTER_API glm::mat4 GetProjection();
 		//Moves a normal camera around based on the x and y delta
 		TRICKSTER_API void MouseMove(float a_X, float a_Y);
 	private:

@@ -433,5 +433,7 @@
     <None Include="NotCompiledShaders\triangle.vert" />
     <None Include="NotCompiledShaders\Vulkan.frag" />
     <None Include="NotCompiledShaders\Vulkan.vert" />
+    <None Include="NotCompiledShaders\3DLight.vert" />
+    <None Include="NotCompiledShaders\3DLight.frag" />
   </ItemGroup>
 </Project>

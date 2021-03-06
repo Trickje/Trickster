@@ -382,7 +382,7 @@ namespace Trickster {
 
             std::array<VkClearValue, 2> clearValues{};
             clearValues[0].color = { 0.0f, 0.0f, 0.0f, 1.0f };
-            clearValues[1].depthStencil = { 1.0f, 0 };
+            clearValues[1].depthStencil = { 1000.f, 0 };
 
             renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
             renderPassInfo.pClearValues = clearValues.data();
@@ -491,7 +491,7 @@ namespace Trickster {
     // https://vulkan-tutorial.com/Drawing_a_triangle/Graphics_pipeline_basics/Introduction 
     void Vulkan::SetupGraphicsPipeline()
     {
-        auto shader = AddShader("Vulkanvert.spv", "Vulkanfrag.spv");
+        auto shader = AddShader("3DLightvert.spv", "3DLightfrag.spv");
         VkPipelineShaderStageCreateInfo vertexShaderStageInfo{};
         vertexShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
         vertexShaderStageInfo.stage = VK_SHADER_STAGE_VERTEX_BIT;
@@ -553,7 +553,7 @@ namespace Trickster {
         rasterizer.rasterizerDiscardEnable = VK_FALSE;
         rasterizer.polygonMode = VK_POLYGON_MODE_FILL;
         rasterizer.lineWidth = 1.0f;
-        rasterizer.cullMode = VK_CULL_MODE_NONE;
+        rasterizer.cullMode = VK_CULL_MODE_BACK_BIT;
         rasterizer.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
         rasterizer.depthBiasEnable = VK_FALSE;
         rasterizer.depthBiasConstantFactor = 0.0f; // Optional
@@ -997,8 +997,9 @@ namespace Trickster {
 
         UniformBufferObject ubo{};
         auto camera = MeshManager::GetInstance()->GetCamera();
-        ubo.model = glm::identity<glm::mat4>();// glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-        ubo.view = camera->GetView();// glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+        ubo.model = glm::rotate(glm::mat4(1.0f), glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+        ubo.model = glm::scale(ubo.model, {10.f,10.f,10.f});
+    	ubo.view = camera->GetView();// glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
         ubo.projection = camera->GetProjection();//glm::perspective(glm::radians(45.0f), m_SwapChain.capabilities.currentExtent.width / (float)m_SwapChain.capabilities.currentExtent.height, 0.1f, 10.0f);
         ubo.projection[1][1] *= -1;
         void* data;

@@ -237,7 +237,6 @@ namespace Trickster
 		//And after the Pipeline has been created (uses render pass)
 		TRICKSTER_API void SetupFrameBuffers();
 		TRICKSTER_API void SetupSync();
-		//working on currently TODO: stuff
 		TRICKSTER_API void SetupDescriptorSetLayout();
 		TRICKSTER_API void SetupDescriptorPool();
 		TRICKSTER_API void SetupDescriptorSets();

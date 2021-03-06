@@ -105,10 +105,7 @@ void Trickster::Game::OnUpdate(float a_DeltaTime)
 	if (Input::GetKeyDown(Keys::SPACE))
 	{
 		m_Camera->Move(glm::vec3(0.f, 1.f, 0.f) * speed * a_DeltaTime);
-		for(auto& p : m_Planets)
-		{
-			LOG("x " + std::to_string(p->GetPosition().x) + "   y: " + std::to_string(p->GetPosition().y) + "    z: " + std::to_string(p->GetPosition().z));
-		}
+		
 	}
 	
 	
