@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "Rendering/RenderAPI/Vulkan.h"
+#include "Rendering/RenderAPI/Vulkan/Vulkan.h"
 
 
 #include "Core/Application.h"
@@ -8,9 +8,6 @@
 #include "Rendering/MeshManager.h"
 #include "Rendering/Camera.h"
 #include <unordered_map>
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
-#include "TinyObjLoader.h"
 
 namespace Trickster {
     Trickster::Vulkan::Vulkan()
@@ -33,9 +30,9 @@ namespace Trickster {
             vkDestroySemaphore(m_Device.get, m_SwapChain.semaphores[i].image_available, nullptr);
             vkDestroyFence(m_Device.get, m_SwapChain.fences[i], nullptr);
     	}
-        CleanBuffer(m_VertexBuffer);
-        CleanBuffer(m_IndexBuffer);
-        CleanImage(m_Image);
+        //CleanBuffer(m_VertexBuffer);
+        //CleanBuffer(m_IndexBuffer);
+        //CleanImage(m_Image);
         vkDestroySampler(m_Device.get, m_TextureSampler, nullptr);
         vkDestroyCommandPool(m_Device.get, m_Command.pool, nullptr);
         vkDestroySurfaceKHR(m_Instance, m_Surface, nullptr);
@@ -61,6 +58,7 @@ namespace Trickster {
     	{
             LOG_ERROR("[Vulkan] Window is not made yet. You have to initialize Window before Vulkan.");
     	}
+        TricksterModel::owner = this;
         SetupApp("Trickster Engine");
         //Getting the physical device
         SetupPhysicalDevice();
@@ -75,17 +73,24 @@ namespace Trickster {
         SetupDepthResources();
         SetupColorResources();
         SetupFrameBuffers();
-        LoadModel("Resources/Models/viking_room.obj", "Resources/Textures/viking_room.png");
+        LoadModel(testModel, "Resources/Textures/viking_room.png");
+        glm::mat4* temp = new glm::mat4(glm::rotate(glm::mat4(1.0f), glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f)));
+        *temp = glm::scale(*temp, { 10.f,10.f,10.f });
+        m_Models.at("Resources/Models/viking_room.obj")->AddInstance(temp);
+        glm::mat4* second = new glm::mat4(glm::rotate(glm::mat4(1.0f), glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f)));
+        //*second = glm::translate(*second, { 10.f, 0.f,50.f });
+        *second = glm::scale(*second, { 100.f,100.f,100.f });
+        m_Models.at("Resources/Models/viking_room.obj")->AddInstance(second);
         SetupTextureSampler();
-        SetupVertexBuffer();
-        SetupIndexBuffer();
         SetupUniformBuffers();
     	SetupDescriptorPool();
         SetupDescriptorSets();
         SetupCommandBuffers();
         SetupSync();
         SetupSubscriptions();
-        LOG("[Vulkan] Using " + std::to_string(m_MSAASamples) + " samples for multisampled rendering.")
+        LOG("[Vulkan] Using " + std::to_string(m_MSAASamples) + " samples for multisampled rendering.");
+        
+
     }
 
 	/*****************************************
@@ -111,7 +116,7 @@ namespace Trickster {
         m_SwapChain.imagesInFlight[imageIndex] = m_SwapChain.fences[m_SwapChain.currentFrame];
 
         UpdateUniformBuffer(imageIndex);
-    	
+       
         VkSubmitInfo submitInfo{};
         submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 
@@ -158,40 +163,17 @@ namespace Trickster {
 
     void Vulkan::LoadModel(std::string a_ModelPath, std::string a_TexturePath)
     {
-        tinyobj::attrib_t attrib;
-        std::vector<tinyobj::shape_t> shapes;
-        std::vector<tinyobj::material_t> materials;
-        std::string warn, err;
-
-        if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, a_ModelPath.c_str())) {
-            LOG_ERROR(warn + err);
-        }
-        std::unordered_map<TricksterVertex, uint32_t> uniqueVertices{};
-        for (const auto& shape : shapes) {
-            for (const auto& index : shape.mesh.indices) {
-                TricksterVertex vertex{};
-				vertex.position = { 
-				    attrib.vertices[3 * index.vertex_index + 0],
-				    attrib.vertices[3 * index.vertex_index + 1],
-				    attrib.vertices[3 * index.vertex_index + 2]
-                };
-
-                vertex.texCoord = {
-				    attrib.texcoords[2 * index.texcoord_index + 0],
-				    1.0f - attrib.texcoords[2 * index.texcoord_index + 1]
-                };
-
-                vertex.color = { 1.0f, 1.0f, 1.0f };
-                if (uniqueVertices.count(vertex) == 0) {
-                    uniqueVertices[vertex] = static_cast<uint32_t>(vertices.size());
-                    vertices.push_back(vertex);
-                }
-
-                indices.push_back(uniqueVertices[vertex]);
-            }
-        }
-
-        SetupTextureImage(a_TexturePath);
+    	if(m_Models.count(a_ModelPath) == 0)
+    	{
+            m_Models.insert({ a_ModelPath, std::make_unique<TricksterModel>() });
+            auto& model = m_Models[a_ModelPath];
+            model->Load(a_ModelPath, a_TexturePath);
+            LOG("[Vulkan] Loaded model " + a_ModelPath);
+    	}else
+    	{
+    		//Already loaded
+            LOG_USELESS("[Vulkan] Already loaded this model: " + a_ModelPath);
+    	}
     }
 
     void Vulkan::SetupPhysicalDevice()
@@ -360,7 +342,7 @@ namespace Trickster {
     	{
             LOG_ERROR("[Vulkan] Failed to allocate CommandBuffers");
     	}
-
+        m_RenderPassInfo.resize(m_Command.buffers.size());
 
         for (size_t i = 0; i < m_Command.buffers.size(); i++) {
             VkCommandBufferBeginInfo beginInfo{};
@@ -373,34 +355,31 @@ namespace Trickster {
             }
 
 
-            VkRenderPassBeginInfo renderPassInfo{};
-            renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-            renderPassInfo.renderPass = m_Pipeline.render_pass;
-            renderPassInfo.framebuffer = m_SwapChain.frame_buffers[i];
-            renderPassInfo.renderArea.offset = { 0, 0 };
-            renderPassInfo.renderArea.extent = m_SwapChain.capabilities.currentExtent;
+            
+            m_RenderPassInfo[i].sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+            m_RenderPassInfo[i].renderPass = m_Pipeline.render_pass;
+            m_RenderPassInfo[i].framebuffer = m_SwapChain.frame_buffers[i];
+            m_RenderPassInfo[i].renderArea.offset = { 0, 0 };
+            m_RenderPassInfo[i].renderArea.extent = m_SwapChain.capabilities.currentExtent;
 
             std::array<VkClearValue, 2> clearValues{};
             clearValues[0].color = { 0.0f, 0.0f, 0.0f, 1.0f };
             clearValues[1].depthStencil = { 1000.f, 0 };
 
-            renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
-            renderPassInfo.pClearValues = clearValues.data();
+            m_RenderPassInfo[i].clearValueCount = static_cast<uint32_t>(clearValues.size());
+            m_RenderPassInfo[i].pClearValues = clearValues.data();
 
-            vkCmdBeginRenderPass(m_Command.buffers[i], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+            vkCmdBeginRenderPass(m_Command.buffers[i], &m_RenderPassInfo[i], VK_SUBPASS_CONTENTS_INLINE);
 
+        	
             vkCmdBindPipeline(m_Command.buffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, m_Pipeline.get);
 
-            VkBuffer vertexBuffers[] = { m_VertexBuffer.get };
-            VkDeviceSize offsets[] = { 0 };
-
-            vkCmdBindVertexBuffers(m_Command.buffers[i], 0, 1, vertexBuffers, offsets);
-            vkCmdBindIndexBuffer(m_Command.buffers[i], m_IndexBuffer.get, 0, VK_INDEX_TYPE_UINT32);
-            vkCmdBindDescriptorSets(m_Command.buffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, m_Pipeline.layout, 0, 1, &m_Descriptor.sets[i], 0, nullptr);
-        	//Very temporary
-            vkCmdDrawIndexed(m_Command.buffers[i], static_cast<uint32_t>(indices.size()), 1, 0, 0,0);
-
-
+        	//Drawing the models
+            for(auto& it : m_Models)
+            {
+                auto& model = it.second;
+                model->Draw(m_Command.buffers[i], m_Descriptor.sets[i]);
+            }
         	
             vkCmdEndRenderPass(m_Command.buffers[i]);
 
@@ -508,14 +487,14 @@ namespace Trickster {
         shader.fragment_info = fragmentShaderStageInfo;
     	 VkPipelineShaderStageCreateInfo shaderStages[] = { vertexShaderStageInfo, fragmentShaderStageInfo };
 
-    	
-        auto bindingDescription = TricksterVertex::GetBindingDescription();
-        auto attributeDescriptions = TricksterVertex::GetAttributeDescriptions();
-        VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
+         
+        VkVertexInputBindingDescription bindingDescription[1] = { TricksterVertex::GetBindingDescription()};
+        std::vector<VkVertexInputAttributeDescription> attributeDescriptions = TricksterVertex::GetAttributeDescriptions();
+    	 VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
         vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
         vertexInputInfo.vertexBindingDescriptionCount = 1;
         vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
-        vertexInputInfo.pVertexBindingDescriptions = &bindingDescription; // Optional
+        vertexInputInfo.pVertexBindingDescriptions = &bindingDescription[0]; // Optional
         vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions.data(); // Optional
         //Input assembly
         VkPipelineInputAssemblyStateCreateInfo inputAssembly{};
@@ -817,8 +796,16 @@ namespace Trickster {
         samplerLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
         samplerLayoutBinding.pImmutableSamplers = nullptr;
         samplerLayoutBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+
+		VkDescriptorSetLayoutBinding instanceLayoutBinding{};
+        instanceLayoutBinding.binding = 2;
+        instanceLayoutBinding.descriptorCount = 1000;
+        instanceLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+        instanceLayoutBinding.pImmutableSamplers = nullptr;
+        instanceLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
     	
-        std::array<VkDescriptorSetLayoutBinding, 2> bindings = { uboLayoutBinding, samplerLayoutBinding };
+    	
+        std::array<VkDescriptorSetLayoutBinding, 3> bindings = { uboLayoutBinding, samplerLayoutBinding , instanceLayoutBinding};
 
     	VkDescriptorSetLayoutCreateInfo layoutInfo{};
     	layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
@@ -836,11 +823,13 @@ namespace Trickster {
 
     void Vulkan::SetupDescriptorPool()
     {
-        std::array<VkDescriptorPoolSize, 2> poolSizes{};
+        std::array<VkDescriptorPoolSize, 3> poolSizes{};
         poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
         poolSizes[0].descriptorCount = static_cast<uint32_t>(m_SwapChain.images.size());
         poolSizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
         poolSizes[1].descriptorCount = static_cast<uint32_t>(m_SwapChain.images.size());
+        poolSizes[2].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+        poolSizes[2].descriptorCount = m_Models[testModel]->instanceCount * static_cast<uint32_t>(m_SwapChain.images.size());
 
         VkDescriptorPoolCreateInfo poolInfo{};
         poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
@@ -883,12 +872,18 @@ namespace Trickster {
         	
             VkDescriptorImageInfo imageInfo{};
             imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-            imageInfo.imageView = m_Image.view;
+        	//Model image view
+            int modelcount = 0;
+        	for(auto& it : m_Models)
+        	{
+                imageInfo.imageView = it.second->texture.view;
+                modelcount++;
+        	}
             imageInfo.sampler = m_TextureSampler;
 
 
-            std::array<VkWriteDescriptorSet, 2> descriptorWrites{};
-
+            std::vector<VkWriteDescriptorSet> descriptorWrites{};
+            descriptorWrites.push_back({});
             descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
             descriptorWrites[0].dstSet = m_Descriptor.sets[i];
             descriptorWrites[0].dstBinding = 0;
@@ -897,6 +892,7 @@ namespace Trickster {
             descriptorWrites[0].descriptorCount = 1;
             descriptorWrites[0].pBufferInfo = &bufferInfo;
 
+            descriptorWrites.push_back({});
             descriptorWrites[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
             descriptorWrites[1].dstSet = m_Descriptor.sets[i];
             descriptorWrites[1].dstBinding = 1;
@@ -905,6 +901,25 @@ namespace Trickster {
             descriptorWrites[1].descriptorCount = 1;
             descriptorWrites[1].pImageInfo = &imageInfo;
 
+        	m_Models[testModel]->PrepareInstances();
+
+            VkDescriptorBufferInfo* instanceBufferInfo;
+            uint32_t instanceCount = m_Models[testModel]->instanceCount;
+            for (int j = 0; j < instanceCount; j++) {
+                descriptorWrites.push_back({});
+                instanceBufferInfo = new VkDescriptorBufferInfo();
+                instanceBufferInfo->buffer = m_Models[testModel]->instances->buffer.get;
+                instanceBufferInfo->offset = j * sizeof(glm::mat4);
+                instanceBufferInfo->range = sizeof(glm::mat4);
+
+                descriptorWrites[2 + j].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+                descriptorWrites[2 + j].dstSet = m_Descriptor.sets[i];
+                descriptorWrites[2 + j].dstBinding = 2;
+                descriptorWrites[2 + j].dstArrayElement = j;
+                descriptorWrites[2 + j].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+                descriptorWrites[2 + j].descriptorCount = 1;
+                descriptorWrites[2 + j].pBufferInfo = instanceBufferInfo;
+            }
             vkUpdateDescriptorSets(m_Device.get,
                 static_cast<uint32_t>(descriptorWrites.size()), 
                 descriptorWrites.data(), 
@@ -919,61 +934,9 @@ namespace Trickster {
         EventManager::GetInstance()->WindowEvents.OnWindowResize.AddListener(std::bind(&Trickster::Vulkan::Resize, this, std::placeholders::_1, std::placeholders::_2));
     }
 
-    void Vulkan::SetupVertexBuffer()
-    {
-        VkDeviceSize bufferSize = sizeof(vertices[0]) * vertices.size();
-        m_StagingBuffer = {};
-        m_VertexBuffer = {};
+    
 
-    	
-        SetupBuffer(
-            bufferSize, 
-            VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-            VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, 
-            m_StagingBuffer.get, 
-            m_StagingBuffer.memory);
-
-        void* data;
-        vkMapMemory(m_Device.get, m_StagingBuffer.memory, 0, bufferSize, 0, &data);
-        memcpy(data, vertices.data(), (size_t)bufferSize);
-        vkUnmapMemory(m_Device.get, m_StagingBuffer.memory);
-
-        SetupBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
-            VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-            m_VertexBuffer.get,
-            m_VertexBuffer.memory);
-
-        CopyBuffer(m_StagingBuffer, m_VertexBuffer, bufferSize);
-        CleanBuffer(m_StagingBuffer);
-    }
-
-	//https://vulkan-tutorial.com/Vertex_buffers/Index_buffer 
-    void Vulkan::SetupIndexBuffer()
-    {
-        VkDeviceSize bufferSize = sizeof(indices[0]) * indices.size();
-
-        
-        SetupBuffer(bufferSize, 
-            VK_BUFFER_USAGE_TRANSFER_SRC_BIT, 
-            VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, 
-            m_StagingBuffer.get, 
-            m_StagingBuffer.memory);
-
-        void* data;
-        vkMapMemory(m_Device.get, m_StagingBuffer.memory, 0, bufferSize, 0, &data);
-        memcpy(data, indices.data(), (size_t)bufferSize);
-        vkUnmapMemory(m_Device.get, m_StagingBuffer.memory);
-
-        SetupBuffer(bufferSize, 
-            VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT, 
-            VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, 
-            m_IndexBuffer.get,
-            m_IndexBuffer.memory);
-
-        CopyBuffer(m_StagingBuffer, m_IndexBuffer, bufferSize);
-
-        CleanBuffer(m_StagingBuffer);
-    }
+  
 
     void Vulkan::SetupUniformBuffers()
     {
@@ -997,20 +960,25 @@ namespace Trickster {
 
         UniformBufferObject ubo{};
         auto camera = MeshManager::GetInstance()->GetCamera();
-        ubo.model = glm::rotate(glm::mat4(1.0f), glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-        ubo.model = glm::scale(ubo.model, {10.f,10.f,10.f});
-    	ubo.view = camera->GetView();// glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+        ubo.model = glm::identity<glm::mat4>();
+       ubo.view = camera->GetView();// glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
         ubo.projection = camera->GetProjection();//glm::perspective(glm::radians(45.0f), m_SwapChain.capabilities.currentExtent.width / (float)m_SwapChain.capabilities.currentExtent.height, 0.1f, 10.0f);
         ubo.projection[1][1] *= -1;
         void* data;
         vkMapMemory(m_Device.get, m_UniformBuffers[currentImage].memory, 0, sizeof(ubo), 0, &data);
         memcpy(data, &ubo, sizeof(ubo));
         vkUnmapMemory(m_Device.get, m_UniformBuffers[currentImage].memory);
+
+        uint32_t instanceCount = m_Models[testModel]->instanceCount;
+        void* otherData;
+            vkMapMemory(m_Device.get, m_Models[testModel]->instances->buffer.memory, 0, instanceCount* sizeof(glm::mat4), 0, &otherData);
+            memcpy(otherData, m_Models[testModel]->instanceData.data(), instanceCount * sizeof(glm::mat4));
+            vkUnmapMemory(m_Device.get, m_Models[testModel]->instances->buffer.memory);
     }
 
     void Vulkan::SetupImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling,
 	    VkImageUsageFlags usage, VkMemoryPropertyFlags properties,
-        uint32_t mipLevels, Trickster::Vulkan::TricksterImage& image, VkSampleCountFlagBits numSamples)
+        uint32_t mipLevels, Trickster::TricksterImage& image, VkSampleCountFlagBits numSamples)
     {
         VkImageCreateInfo imageInfo{};
         imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
@@ -1113,48 +1081,9 @@ namespace Trickster {
     	
     }
 
-    void Vulkan::SetupTextureImage(std::string a_TexturePath)
-    {
-        int texWidth, texHeight, texChannels;
-        stbi_set_flip_vertically_on_load(true);
-        stbi_uc* pixels = stbi_load(a_TexturePath.c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
-        VkDeviceSize imageSize = texWidth * texHeight * 4;
+   
 
-        m_MipLevels = static_cast<uint32_t>(std::floor(std::log2(std::max(texWidth, texHeight)))) + 1;
-    	if(!pixels)
-    	{
-            LOG_ERROR("[Vulkan] Failed to load Texture Image");
-    	}
-
-    	SetupBuffer(
-            imageSize, 
-            VK_BUFFER_USAGE_TRANSFER_SRC_BIT, 
-            VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, 
-            m_StagingBuffer.get, 
-            m_StagingBuffer.memory);
-
-        void* data;
-        vkMapMemory(m_Device.get, m_StagingBuffer.memory, 0, imageSize, 0, &data);
-        memcpy(data, pixels, static_cast<size_t>(imageSize));
-        vkUnmapMemory(m_Device.get, m_StagingBuffer.memory);
-        stbi_image_free(pixels);
-        m_Image.channels = texChannels;
-        SetupImage(texWidth,
-            texHeight,
-            VK_FORMAT_R8G8B8A8_SRGB, 
-            VK_IMAGE_TILING_OPTIMAL, 
-            VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, 
-            VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-            m_MipLevels,
-            m_Image);
-        TransitionImageLayout(m_Image.get, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, m_MipLevels);
-        CopyBufferToImage(m_StagingBuffer.get, m_Image.get, static_cast<uint32_t>(texWidth), static_cast<uint32_t>(texHeight));
-       // TransitionImageLayout(m_Image.get, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,m_MipLevels);
-        CleanBuffer(m_StagingBuffer);
-        SetupImageView(m_Image, VK_IMAGE_ASPECT_COLOR_BIT, m_MipLevels);
-
-        GenerateMipmaps(m_Image, m_MipLevels);
-    }
+   
 
 
     void Vulkan::CleanSwapChain()
@@ -1184,14 +1113,14 @@ namespace Trickster {
         vkDestroySwapchainKHR(m_Device.get, m_SwapChain.get, nullptr);
     }
 
-    void Trickster::Vulkan::CleanBuffer(Trickster::Vulkan::TricksterBuffer& buffer)
+    void Trickster::Vulkan::CleanBuffer(Trickster::TricksterBuffer& buffer)
     {
         vkDestroyBuffer(m_Device.get, buffer.get, nullptr);
         vkFreeMemory(m_Device.get, buffer.memory, nullptr);
     }
 
     //The filenames are already in the shader directory of Application:: ShaderPath
-    Trickster::Vulkan::TricksterShader& Vulkan::AddShader(const std::string& filenameVertexShader, const std::string& filenameFragmentShader)
+    Trickster::TricksterShader& Vulkan::AddShader(const std::string& filenameVertexShader, const std::string& filenameFragmentShader)
     {
         m_Shaders.push_back(
             {
@@ -1239,7 +1168,7 @@ namespace Trickster {
         return shader_module;
     }
 
-    Trickster::Vulkan::TricksterSwapChain Vulkan::QuerySwapChainInfo()
+    Trickster::TricksterSwapChain Vulkan::QuerySwapChainInfo()
     {
         TricksterSwapChain info;
         std::vector<VkSurfaceFormatKHR> formats;
@@ -1628,14 +1557,14 @@ namespace Trickster {
         EndSingleUseCommand(commandBuffer);
     }
 
-    void Vulkan::CleanImage(Trickster::Vulkan::TricksterImage& image)
+    void Vulkan::CleanImage(Trickster::TricksterImage& image)
     {
         vkDestroyImageView(m_Device.get, image.view, nullptr);
         vkDestroyImage(m_Device.get, image.get, nullptr);
         vkFreeMemory(m_Device.get, image.memory, nullptr);
     }
 
-    void Vulkan::SetupImageView(Trickster::Vulkan::TricksterImage& image, VkImageAspectFlags aspectFlags, uint32_t mipLevels)
+    void Vulkan::SetupImageView(Trickster::TricksterImage& image, VkImageAspectFlags aspectFlags, uint32_t mipLevels)
     {
         VkImageViewCreateInfo viewInfo{};
         viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;

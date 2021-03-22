@@ -1,13 +1,13 @@
 #pragma once
-#include "RenderAPI.h"
+#include "../RenderAPI.h"
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #define GLM_FORCE_DEFAULT_ALIGNED_GENTYPES
 #define GLM_ENABLE_EXPERIMENTAL
-#include <glm/gtx/hash.hpp>
-
+#include "Helpers.h"
 namespace Trickster
 {
+	struct TricksterModel;
 	//TODO:
 	//CREATE A DESCRIPTOR LAYOUT / SET MANAGING SYSTEM THAT ALLOWS FOR ONE BIND CALL.
 	//ADD A SWAPCHAIN SYSTEM -> should be more dynamic, where I can choose as a end-user what kind of swapchain I want.
@@ -22,46 +22,11 @@ namespace Trickster
 	//recommend that you also store multiple buffers,
 	//like the vertex and index buffer, into a single VkBuffer
 	//and use offsets in commands like vkCmdBindVertexBuffers. 
-
 	
 	//The vertex that will be used in all of my programs
-	struct TricksterVertex
-	{
-		glm::vec3 position;
-		glm::vec3 color; //Temp
-		glm::vec2 texCoord;
-		TRICKSTER_API static VkVertexInputBindingDescription  GetBindingDescription()
-		{
-			VkVertexInputBindingDescription bindingDescription{};
-			bindingDescription.binding = 0; //this might change with multiple arrays
-			bindingDescription.stride = sizeof(TricksterVertex);
-			bindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX; //This will change for instanced rendering
-			return bindingDescription;
-		}
-		TRICKSTER_API static std::array<VkVertexInputAttributeDescription, 3> GetAttributeDescriptions() {
-			std::array<VkVertexInputAttributeDescription, 3> attributeDescriptions{};
-			//Do this for every element in the vertex
-			attributeDescriptions[0].binding = 0;
-			attributeDescriptions[0].location = 0;
-			attributeDescriptions[0].format = VK_FORMAT_R32G32B32_SFLOAT;
-			attributeDescriptions[0].offset = offsetof(TricksterVertex, position);
-			
-			attributeDescriptions[1].binding = 0;
-			attributeDescriptions[1].location = 1;
-			attributeDescriptions[1].format = VK_FORMAT_R32G32B32_SFLOAT;
-			attributeDescriptions[1].offset = offsetof(TricksterVertex, color);
-			
-			attributeDescriptions[2].binding = 0;
-			attributeDescriptions[2].location = 2;
-			attributeDescriptions[2].format = VK_FORMAT_R32G32_SFLOAT;
-			attributeDescriptions[2].offset = offsetof(TricksterVertex, texCoord);
-			return attributeDescriptions;
-		}
-		TRICKSTER_API bool operator==(const TricksterVertex& other) const {
-			return position == other.position && color == other.color && texCoord == other.texCoord;
-		}
-		
-	};
+
+	//TODO: clean the mess up with the descriptors
+	// and then pass the instances using a vertex buffer
 	
 	struct UniformBufferObject
 	{
@@ -72,6 +37,7 @@ namespace Trickster
 	
 	class Vulkan : public RenderAPI
 	{
+		friend struct TricksterModel;
 	public:
 		TRICKSTER_API Vulkan();
 		TRICKSTER_API ~Vulkan();
@@ -94,117 +60,7 @@ namespace Trickster
          *
 		 */
 		
-		//Contains information about the users hardware
-		struct TricksterPhysicalDevice
-		{
-			VkPhysicalDevice get;
-			VkPhysicalDeviceProperties properties;
-			VkPhysicalDeviceFeatures features;
-			VkPhysicalDeviceMemoryProperties memory_properties;
-			uint32_t queue_family_index;
-			static const uint32_t extension_count = 1;
-			VkSampleCountFlagBits max_MSAA;
-			const char* extenstions[extension_count] = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
-		};
-
-		struct TricksterDevice
-		{
-			VkDevice get;
-		};
-
-		struct TricksterCommand
-		{
-			VkCommandPool pool;
-			std::vector<VkCommandBuffer> buffers;
-		};
-
-		//Somewhere there should be a buffer pool
-		//I'm too tired to find out where or what though
-		struct TricksterBuffer
-		{
-			VkBuffer get;
-			VkDeviceMemory memory;
-		};
-
-		struct TricksterWindow
-		{
-			std::shared_ptr<Window> get;
-			GLFWwindow* glfw = nullptr;
-		};
-		struct TricksterSemaphores
-		{
-			VkSemaphore image_available;
-			VkSemaphore render_finished;
-		};
-		//TODO: maybe a way of changing present mode on runtime
-		struct TricksterSwapChain
-		{
-			VkSwapchainKHR get;
-			std::vector<VkImage> images;
-			std::vector<VkImageView> image_views;
-			std::vector<TricksterSemaphores> semaphores;
-			std::vector<VkFence> fences;
-			std::vector<VkFence> imagesInFlight;
-			VkSurfaceCapabilitiesKHR capabilities;
-			VkSurfaceFormatKHR format;
-		//The presentation mode will either be vertical sync
-		//VK_PRESENT_MODE_FIFO_KHR
-		//`
-		//or triple buffering, aka mailbox (when the queue is full, instead of blocking it will replace the queued images with newer ones)
-		//so no tearing and less latency than the standard vertical sync
-		//VK_PRESENT_MODE_MAILBOX_KHR
-		//`
-		//VK_PRESENT_MODE_IMMEDIATE_KHR to disable vertical sync
-		//Will result in tearing though
-			VkPresentModeKHR present_mode;
-			std::vector<VkFramebuffer> frame_buffers;
-			//How many frames should be processed concurrently
-			int MAX_FRAMES_IN_FLIGHT = 2;
-			size_t currentFrame = 0;
-			bool vertical_sync = true;
-			
-		};
-
-		struct TricksterShader
-		{
-			VkShaderModule vertex;
-			VkShaderModule fragment;
-
-			//Maybe temporary, who knows
-			VkPipelineShaderStageCreateInfo vertex_info;
-			VkPipelineShaderStageCreateInfo fragment_info;
-		};
-
-		struct TricksterPipeline
-		{
-			VkPipeline get;
-			VkRenderPass render_pass;
-			VkPipelineLayout layout;
-		};
-
-		//This will tell the shader how our vertex buffer will look
-		struct TricksterVertexLayout
-		{
-			VkVertexInputBindingDescription binding_description;
-		};
-
-		struct TricksterDescriptor
-		{
-			VkDescriptorSetLayout set_layout;
-			VkDescriptorPool pool;
-			std::vector<VkDescriptorSet> sets;
-			//more stuff to be added here
-		};
-		struct TricksterImage
-		{
-			VkImage get;
-			VkDeviceMemory memory;
-			VkImageView view;
-			VkFormat format;
-			int width;
-			int height;
-			int channels;
-		};
+		
 
 		
 		
@@ -241,8 +97,6 @@ namespace Trickster
 		TRICKSTER_API void SetupDescriptorPool();
 		TRICKSTER_API void SetupDescriptorSets();
 		TRICKSTER_API void SetupSubscriptions();
-		TRICKSTER_API void SetupVertexBuffer();
-		TRICKSTER_API void SetupIndexBuffer();
 		TRICKSTER_API void SetupUniformBuffers();
 		TRICKSTER_API void UpdateUniformBuffer(uint32_t currentImage);
 		TRICKSTER_API void SetupImage(
@@ -253,20 +107,19 @@ namespace Trickster
 			VkImageUsageFlags usage, 
 			VkMemoryPropertyFlags properties,
 			uint32_t mipLevels,
-			Trickster::Vulkan::TricksterImage& image, 
+			Trickster::TricksterImage& image, 
 			VkSampleCountFlagBits numSamples = VK_SAMPLE_COUNT_1_BIT);
 		TRICKSTER_API void SetupBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
-		TRICKSTER_API void CopyBuffer(Trickster::Vulkan::TricksterBuffer& srcBuffer, Trickster::Vulkan::TricksterBuffer& dstBuffer, VkDeviceSize size);
+		TRICKSTER_API void CopyBuffer(Trickster::TricksterBuffer& srcBuffer, Trickster::TricksterBuffer& dstBuffer, VkDeviceSize size);
 		TRICKSTER_API void RecreateSwapChain();
-		TRICKSTER_API void SetupTextureImage(std::string a_TexturePath);
 		TRICKSTER_API void CleanSwapChain();
 		TRICKSTER_API void CleanBuffer(TricksterBuffer& buffer);
 		//Combiner function to make code more readable
 		//Returns the shader so that you can change things to it
-		TRICKSTER_API Trickster::Vulkan::TricksterShader& AddShader(const std::string& filenameVertexShader, const std::string& filenameFragmentShader);
+		TRICKSTER_API Trickster::TricksterShader& AddShader(const std::string& filenameVertexShader, const std::string& filenameFragmentShader);
 		TRICKSTER_API std::vector<char> ReadShaderFile(const std::string& filename);
 		TRICKSTER_API VkShaderModule CreateShaderModule(const std::vector<char>& code);
-		TRICKSTER_API Trickster::Vulkan::TricksterSwapChain QuerySwapChainInfo();
+		TRICKSTER_API Trickster::TricksterSwapChain QuerySwapChainInfo();
 		/*
 		 @Args
 		 a_Data: the std::vector.data() that you want to flush
@@ -297,9 +150,9 @@ namespace Trickster
 			VkImageLayout newLayout,
 			uint32_t mipLevels);
 		TRICKSTER_API void CopyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height);
-		TRICKSTER_API void CleanImage(Trickster::Vulkan::TricksterImage& image);
+		TRICKSTER_API void CleanImage(Trickster::TricksterImage& image);
 		TRICKSTER_API void SetupImageView(
-			Trickster::Vulkan::TricksterImage& image, 
+			Trickster::TricksterImage& image, 
 			VkImageAspectFlags aspectFlags,
 			uint32_t mipLevels);
 		TRICKSTER_API void SetupTextureSampler();
@@ -326,16 +179,11 @@ namespace Trickster
 		 */
 
 
-		std::vector<TricksterVertex> vertices;
-		std::vector<uint32_t> indices;
 		VkInstance m_Instance;
 		VkSurfaceKHR m_Surface;
 		VkQueue m_GraphicsQueue;
 		VkQueue m_PresentQueue;
 		VkSampler m_TextureSampler;
-		TricksterBuffer m_VertexBuffer;
-		TricksterBuffer m_StagingBuffer;
-		TricksterBuffer m_IndexBuffer;
 		std::vector<TricksterBuffer> m_UniformBuffers;
 		//Information about the GPU and has a handle to the vulkan physical device
 		TricksterPhysicalDevice m_PhysicalDevice;
@@ -345,21 +193,14 @@ namespace Trickster
 		TricksterSwapChain m_SwapChain;
 		TricksterPipeline m_Pipeline;
 		TricksterDescriptor m_Descriptor;
-		TricksterImage m_Image;
 		TricksterImage m_DepthImage;
 		TricksterImage m_ColorImage;
 		VkSampleCountFlagBits m_MSAASamples;
 		uint32_t m_MipLevels;
+		std::vector<VkRenderPassBeginInfo> m_RenderPassInfo;
 		std::vector<TricksterShader> m_Shaders;
+		std::string testModel = "Resources/Models/viking_room.obj";
 		std::vector<const char*> validationLayers;
-	};
-}
-namespace std {
-	template<> struct hash<Trickster::TricksterVertex> {
-		size_t operator()(Trickster::TricksterVertex const& vertex) const {
-			return ((hash<glm::vec3>()(vertex.position) ^
-				(hash<glm::vec3>()(vertex.color) << 1)) >> 1) ^
-				(hash<glm::vec2>()(vertex.texCoord) << 1);
-		}
+		std::map<std::string, std::unique_ptr<TricksterModel>> m_Models;
 	};
 }

@@ -384,7 +384,7 @@ Xcopy /E /I /Y "$(ProjectDir)Headers" "$(SolutionDir)LatestVersion\TricksterEngi
     </PostBuildEvent>
     <PreBuildEvent>
       <Command>powershell.exe -ExecutionPolicy Bypass -NoProfile -NonInteractive -File update_version.ps1 "./Headers/Core/Version.h" &gt;nul
-$(SolutionDir)Tools\compileshader.bat</Command>
+"$(SolutionDir)Tools\compileshader.bat"</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Static_Debug|x64'">
@@ -667,7 +667,8 @@ Xcopy /E /I /Y "$(ProjectDir)Headers" "$(SolutionDir)LatestVersion\TricksterEngi
     </ClCompile>
     <ClCompile Include="src\Rendering\RenderAPI\OpenGL.cpp" />
     <ClCompile Include="src\Rendering\RenderAPI\RenderAPI.cpp" />
-    <ClCompile Include="src\Rendering\RenderAPI\Vulkan.cpp" />
+    <ClCompile Include="src\Rendering\RenderAPI\Vulkan\Helpers.cpp" />
+    <ClCompile Include="src\Rendering\RenderAPI\Vulkan\Vulkan.cpp" />
     <ClCompile Include="src\Rendering\Text\Internal\Font.cpp" />
     <ClCompile Include="src\Rendering\Text\Internal\Label.cpp" />
     <ClCompile Include="src\Rendering\Text\TextRenderer.cpp" />
@@ -756,7 +757,8 @@ Xcopy /E /I /Y "$(ProjectDir)Headers" "$(SolutionDir)LatestVersion\TricksterEngi
     <ClInclude Include="Headers\Rendering\MeshManager.h" />
     <ClInclude Include="Headers\Rendering\RenderAPI\OpenGL.h" />
     <ClInclude Include="Headers\Rendering\RenderAPI\RenderAPI.h" />
-    <ClInclude Include="Headers\Rendering\RenderAPI\Vulkan.h" />
+    <ClInclude Include="Headers\Rendering\RenderAPI\Vulkan\Helpers.h" />
+    <ClInclude Include="Headers\Rendering\RenderAPI\Vulkan\Vulkan.h" />
     <ClInclude Include="Headers\Rendering\Renderer.h" />
     <ClInclude Include="Headers\Rendering\Shader.h" />
     <ClInclude Include="Headers\Rendering\ShaderManager.h" />
