@@ -18,3 +18,4 @@ echo Compiled %%~ni.vert to %%~nivert.spv
 set /A "count=count+1")
 echo:
 echo Compiled %count% shaders!
+exit
