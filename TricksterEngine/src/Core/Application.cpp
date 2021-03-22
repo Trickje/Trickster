@@ -74,7 +74,7 @@ Application* Application::Get()
 
 void Application::Start()
 {
-	//I wonder
+	//I wonder if
 	m_RenderAPI->Initialize();
 	if (!m_Engine->Initialize())
 	{
