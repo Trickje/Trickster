@@ -10,10 +10,10 @@ echo The output directory is %OutputDir%
 echo The Vulkan SDK directory is %VULKAN_SDK%
 echo:
 echo:
-for /r %FetchDir% %%i in (*.frag) do (%VULKAN_SDK%\Bin\glslangValidator.exe -V %%i -o %OutputDir%%%~nifrag.spv
+for /r %FetchDir% %%i in (*.frag) do (%VULKAN_SDK%\Bin\glslangValidator.exe -V -o %OutputDir%%%~nifrag.spv %%i 
 echo Compiled %%~ni.frag to %%~nifrag.spv
 set /A "count=count+1") 
-for /r %FetchDir% %%i in (*.vert) do (%VULKAN_SDK%\Bin\glslangValidator.exe -V %%i -o %OutputDir%%%~nivert.spv
+for /r %FetchDir% %%i in (*.vert) do (%VULKAN_SDK%\Bin\glslangValidator.exe -V -o %OutputDir%%%~nivert.spv %%i 
 echo Compiled %%~ni.vert to %%~nivert.spv
 set /A "count=count+1")
 echo:
