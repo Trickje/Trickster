@@ -1,6 +1,7 @@
 #version 450
 #extension GL_ARB_separate_shader_objects : enable
 
+/*
 layout(binding = 1) uniform sampler2D texSampler;
 
 layout(location = 0) in vec3 fragColor;
@@ -14,4 +15,4 @@ vec3 lightColor(1.0,1.0,1.0);
     vec3 ambient = ambientStrength * lightColor;
     vec3 result = ambient * texture(texSampler, fragTexCoord).xyz;
     outColor = vec4(result,1.0);
-}
+}*/
