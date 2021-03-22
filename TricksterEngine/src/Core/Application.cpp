@@ -74,6 +74,7 @@ Application* Application::Get()
 
 void Application::Start()
 {
+	//This comment should trigger a build
 	m_RenderAPI->Initialize();
 	if (!m_Engine->Initialize())
 	{
