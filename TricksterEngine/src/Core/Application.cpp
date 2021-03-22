@@ -58,7 +58,7 @@ Application::Application()
 
 
 Application::~Application()
-{
+{ 
 //m_Engine implicitly deleted
 	delete TextRenderer::Get();
 }
