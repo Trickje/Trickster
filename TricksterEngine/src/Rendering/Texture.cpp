@@ -16,7 +16,9 @@
 =================================================================================
  */
 #include "pch.h"
-//#define STB_IMAGE_IMPLEMENTATION
+#ifndef TRICKSTER_VULKAN
+#define STB_IMAGE_IMPLEMENTATION
+#endif
 #include "Rendering/Texture.h"
 #include "Core/Application.h"
 #include "Rendering/Window.h"

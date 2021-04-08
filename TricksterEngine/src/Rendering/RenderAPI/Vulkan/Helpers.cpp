@@ -4,10 +4,13 @@
 #include "Rendering/RenderAPI/Vulkan/Vulkan.h"
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
+#define TINYOBJLOADER_IMPLEMENTATION
 #include "TinyObjLoader.h"
+#include "Core/FilePaths.h"
+
 namespace Trickster {
     Vulkan* TricksterModel::owner = 0;
-    void Trickster::TricksterModel::Load(std::string a_ModelPath, std::string a_TexturePath)
+    void Trickster::TricksterModel::Load(std::string a_ModelPath)
     {
 
         tinyobj::attrib_t attrib;
@@ -15,7 +18,7 @@ namespace Trickster {
         std::vector<tinyobj::material_t> materials;
         std::string warn, err;
 
-        if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, a_ModelPath.c_str())) {
+        if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, (ModelPath + a_ModelPath).c_str(), ModelPath.c_str())) {
             LOG_ERROR(warn + err);
         }
         std::unordered_map<TricksterVertex, uint32_t> uniqueVertices{};
@@ -48,10 +51,13 @@ namespace Trickster {
                 indices.push_back(uniqueVertices[vertex]);
             }
         }
+    	for(auto material: materials)
+    	{
+
+            SetupTextureImage(material.diffuse_texname);
+    	}
         SetupVertexBuffer();
         SetupIndexBuffer();
-        SetupTextureImage(a_TexturePath);
-        instances = new InstanceBuffer();
     }
     void TricksterModel::SetupVertexBuffer()
     {
@@ -115,7 +121,7 @@ namespace Trickster {
     {
         int texWidth, texHeight, texChannels;
         stbi_set_flip_vertically_on_load(true);
-        stbi_uc* pixels = stbi_load(a_TexturePath.c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
+        stbi_uc* pixels = stbi_load((TexturePath +a_TexturePath).c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
         VkDeviceSize imageSize = texWidth * texHeight * 4;
         texturePath = a_TexturePath;
         owner->m_MipLevels = static_cast<uint32_t>(std::floor(std::log2(std::max(texWidth, texHeight)))) + 1;
@@ -158,7 +164,6 @@ namespace Trickster {
     void TricksterModel::Draw(const VkCommandBuffer& CommandBuffer, const VkDescriptorSet& DescriptorSet)
     {
     	
-        PrepareInstances();
         //This is the draw function for a model
         VkBuffer vertexBuffers[] = { VertexBuffer.get };
         VkDeviceSize offsets[] = { 0 };
@@ -173,39 +178,10 @@ namespace Trickster {
         vkCmdBindIndexBuffer(CommandBuffer, IndexBuffer.get, 0, VK_INDEX_TYPE_UINT32);
         vkCmdBindDescriptorSets(CommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, owner->m_Pipeline.layout, 0, 1, &DescriptorSet, 0, nullptr);
         //Very temporary
-        vkCmdDrawIndexed(CommandBuffer, static_cast<uint32_t>(indices.size()), instanceCount, 0, 0, 0);
+        vkCmdDrawIndexed(CommandBuffer, static_cast<uint32_t>(indices.size()), 1, 0, 0, 0);
         
     	//LOG_USELESS("[Vulkan] Drawn model");
         //end draw function of a model
     }
 
-    void TricksterModel::AddInstance(glm::mat4* ModelMatrix)
-    {
-        pMatrices.push_back(ModelMatrix);
-        instanceCount++;
-    }
-
-    void TricksterModel::PrepareInstances()
-    {
-        instanceData.clear();
-        instanceData.resize(instanceCount);
-        instances->buffer.get = VkBuffer();
-    	for(int i = 0; i < instanceCount; i++)
-    	{
-            instanceData[i] = *pMatrices[i];
-    	}
-        //instanceData is now filled in
-        instances->size = instanceData.size() * sizeof(glm::mat4);
-        owner->SetupBuffer(instances->size,
-            VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
-            VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-            instances->buffer.get,
-            instances->buffer.memory
-            );
-
-        instances->descriptor.range = instances->size;
-        instances->descriptor.buffer = instances->buffer.get;
-        instances->descriptor.offset = 0;
-    	
-    }
 }

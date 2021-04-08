@@ -2,6 +2,7 @@
 # www.blender.org
 mtllib viking_room.mtl
 o mesh_all1_Texture1_0
+usemtl viking_room.png
 v -0.573651 0.001530 0.713748
 v -0.573651 0.151382 -0.000154
 v -0.573651 0.164474 0.619081

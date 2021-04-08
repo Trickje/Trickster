@@ -20,7 +20,6 @@
  */
 
 namespace Trickster {
-	class Engine;
 	class Window;
 	class AudioPlayer;
 	class RenderAPI;
@@ -37,18 +36,12 @@ namespace Trickster {
 		TRICKSTER_API virtual void OnPause(bool isPaused) = 0;
 		TRICKSTER_API void Draw();
 		TRICKSTER_API bool Update();
-		TRICKSTER_API std::shared_ptr<Engine> GetEngine() const;
 		TRICKSTER_API std::shared_ptr<Window> GetWindow() const;
 		TRICKSTER_API std::shared_ptr<JobSystem> GetJobSystem() const;
 		TRICKSTER_API virtual bool IsTickBased() = 0;
 		TRICKSTER_API bool Paused() const;
-		const std::string TexturePath = "Resources/Textures/";
-		const std::string ModelPath = "Resources/Models/";
-		const std::string SoundPath = "Resources/Sounds/";
-		const std::string ShaderPath = "Resources/Shaders/";
 	private:
 		static Application* m_Application;
-		std::shared_ptr<Engine> m_Engine;
 		std::shared_ptr<RenderAPI> m_RenderAPI;
 		float m_FrameCount;
 		float m_TimePassedSinceLastFPSCount;

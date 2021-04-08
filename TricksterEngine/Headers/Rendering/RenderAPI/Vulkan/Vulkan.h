@@ -44,7 +44,8 @@ namespace Trickster
 		TRICKSTER_API void Initialize() override;
 		TRICKSTER_API void DrawFrame() override;
 		TRICKSTER_API void Resize(int width, int height) override;
-		TRICKSTER_API void LoadModel(std::string a_ModelPath, std::string a_TexturePath);
+		TRICKSTER_API void LoadModel(const std::string& a_ModelName) override;
+		TRICKSTER_API void DrawModel(const std::string& a_ModelName, const glm::mat4& a_ModelMatrix) override;
 	private:
 
 		
@@ -178,7 +179,7 @@ namespace Trickster
 		 *  |/     \|(_______/|/     \||/ \___/ (_______/|/   \__/\_______)
 		 */
 
-
+		uint32_t m_CurrentFrame;
 		VkInstance m_Instance;
 		VkSurfaceKHR m_Surface;
 		VkQueue m_GraphicsQueue;
@@ -199,7 +200,7 @@ namespace Trickster
 		uint32_t m_MipLevels;
 		std::vector<VkRenderPassBeginInfo> m_RenderPassInfo;
 		std::vector<TricksterShader> m_Shaders;
-		std::string testModel = "Resources/Models/viking_room.obj";
+		std::string testModel = "viking_room.obj";
 		std::vector<const char*> validationLayers;
 		std::map<std::string, std::unique_ptr<TricksterModel>> m_Models;
 	};

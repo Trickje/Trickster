@@ -9,6 +9,8 @@
 #include "Rendering/Camera.h"
 #include <unordered_map>
 
+#include "Core/FilePaths.h"
+
 namespace Trickster {
     Trickster::Vulkan::Vulkan()
         : m_Pipeline()
@@ -73,14 +75,7 @@ namespace Trickster {
         SetupDepthResources();
         SetupColorResources();
         SetupFrameBuffers();
-        LoadModel(testModel, "Resources/Textures/viking_room.png");
-        glm::mat4* temp = new glm::mat4(glm::rotate(glm::mat4(1.0f), glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f)));
-        *temp = glm::scale(*temp, { 10.f,10.f,10.f });
-        m_Models.at("Resources/Models/viking_room.obj")->AddInstance(temp);
-        glm::mat4* second = new glm::mat4(glm::rotate(glm::mat4(1.0f), glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f)));
-        //*second = glm::translate(*second, { 10.f, 0.f,50.f });
-        *second = glm::scale(*second, { 100.f,100.f,100.f });
-        m_Models.at("Resources/Models/viking_room.obj")->AddInstance(second);
+        LoadModel(testModel);
         SetupTextureSampler();
         SetupUniformBuffers();
     	SetupDescriptorPool();
@@ -105,18 +100,17 @@ namespace Trickster {
     	//This is for the v-sync
         vkWaitForFences(m_Device.get, 1, &m_SwapChain.fences[m_SwapChain.currentFrame], VK_TRUE, UINT64_MAX);
     	
-        uint32_t imageIndex;
-        vkAcquireNextImageKHR(m_Device.get, m_SwapChain.get, UINT64_MAX, m_SwapChain.semaphores[m_SwapChain.currentFrame].image_available, VK_NULL_HANDLE, &imageIndex);
+        vkAcquireNextImageKHR(m_Device.get, m_SwapChain.get, UINT64_MAX, m_SwapChain.semaphores[m_SwapChain.currentFrame].image_available, VK_NULL_HANDLE, &m_CurrentFrame);
 
     	// Check if a previous frame is using this image (i.e. there is its fence to wait on)
-        if (m_SwapChain.imagesInFlight[imageIndex] != VK_NULL_HANDLE) {
-            vkWaitForFences(m_Device.get, 1, &m_SwapChain.imagesInFlight[imageIndex], VK_TRUE, UINT64_MAX);
+        if (m_SwapChain.imagesInFlight[m_CurrentFrame] != VK_NULL_HANDLE) {
+            vkWaitForFences(m_Device.get, 1, &m_SwapChain.imagesInFlight[m_CurrentFrame], VK_TRUE, UINT64_MAX);
         }
         // Mark the image as now being in use by this frame
-        m_SwapChain.imagesInFlight[imageIndex] = m_SwapChain.fences[m_SwapChain.currentFrame];
+        m_SwapChain.imagesInFlight[m_CurrentFrame] = m_SwapChain.fences[m_SwapChain.currentFrame];
 
-        UpdateUniformBuffer(imageIndex);
-       
+        UpdateUniformBuffer(m_CurrentFrame);
+
         VkSubmitInfo submitInfo{};
         submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 
@@ -126,7 +120,7 @@ namespace Trickster {
         submitInfo.pWaitSemaphores = waitSemaphores;
         submitInfo.pWaitDstStageMask = waitStages;
         submitInfo.commandBufferCount = 1;
-        submitInfo.pCommandBuffers = &m_Command.buffers[imageIndex];
+        submitInfo.pCommandBuffers = &m_Command.buffers[m_CurrentFrame];
 
         VkSemaphore signalSemaphores[] = { m_SwapChain.semaphores[m_SwapChain.currentFrame].render_finished };
         submitInfo.signalSemaphoreCount = 1;
@@ -145,7 +139,7 @@ namespace Trickster {
         VkSwapchainKHR swapChains[] = { m_SwapChain.get };
         presentInfo.swapchainCount = 1;
         presentInfo.pSwapchains = swapChains;
-        presentInfo.pImageIndices = &imageIndex;
+        presentInfo.pImageIndices = &m_CurrentFrame;
         presentInfo.pResults = nullptr; // Optional
         VkResult result = vkQueuePresentKHR(m_PresentQueue, &presentInfo);
         vkQueueWaitIdle(m_PresentQueue);
@@ -161,19 +155,57 @@ namespace Trickster {
         RecreateSwapChain();
     }
 
-    void Vulkan::LoadModel(std::string a_ModelPath, std::string a_TexturePath)
+    void Vulkan::LoadModel(const std::string& a_ModelPath)
     {
     	if(m_Models.count(a_ModelPath) == 0)
     	{
             m_Models.insert({ a_ModelPath, std::make_unique<TricksterModel>() });
             auto& model = m_Models[a_ModelPath];
-            model->Load(a_ModelPath, a_TexturePath);
+            model->Load(a_ModelPath);
             LOG("[Vulkan] Loaded model " + a_ModelPath);
     	}else
     	{
     		//Already loaded
             LOG_USELESS("[Vulkan] Already loaded this model: " + a_ModelPath);
     	}
+    }
+
+    void Vulkan::DrawModel(const std::string& a_ModelName, const glm::mat4& a_ModelMatrix)
+    {
+    	//TODO: implement
+    	if(m_Models.count(a_ModelName) == 0)
+    	{
+            LoadModel(a_ModelName);
+    	}
+        auto& model = m_Models[a_ModelName];
+
+    	
+        //This is the draw function for a model
+        VkBuffer vertexBuffers[] = { model->VertexBuffer.get };
+        VkDeviceSize offsets[] = { 0 };
+        UniformBufferObject ubo{};
+
+        auto camera = MeshManager::GetInstance()->GetCamera();
+        ubo.model = a_ModelMatrix;
+        ubo.view = camera->GetView();// glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+        ubo.projection = camera->GetProjection();//glm::perspective(glm::radians(45.0f), m_SwapChain.capabilities.currentExtent.width / (float)m_SwapChain.capabilities.currentExtent.height, 0.1f, 10.0f);
+
+
+    	
+        void* data;
+        vkMapMemory(m_Device.get, m_UniformBuffers[m_CurrentFrame].memory, 0, sizeof(ubo), 0, &data);
+        memcpy(data, &ubo, sizeof(ubo));
+        vkUnmapMemory(m_Device.get, m_UniformBuffers[m_CurrentFrame].memory);
+        // Binding point 0: Mesh vertex buffer
+        vkCmdBindVertexBuffers(m_Command.buffers[m_CurrentFrame], 0, 1, vertexBuffers, offsets);
+     
+        
+
+        vkCmdBindIndexBuffer(m_Command.buffers[m_CurrentFrame], model->IndexBuffer.get, 0, VK_INDEX_TYPE_UINT32);
+        vkCmdBindDescriptorSets(m_Command.buffers[m_CurrentFrame], VK_PIPELINE_BIND_POINT_GRAPHICS, m_Pipeline.layout, 0, 1, &m_Descriptor.sets[m_CurrentFrame], 0, nullptr);
+        //Very temporary
+        vkCmdDrawIndexed(m_Command.buffers[m_CurrentFrame], static_cast<uint32_t>(model->indices.size()), 0, 0, 0, 0);
+
     }
 
     void Vulkan::SetupPhysicalDevice()
@@ -377,6 +409,8 @@ namespace Trickster {
         	//Drawing the models
             for(auto& it : m_Models)
             {
+
+              //  DrawModel(testModel, glm::identity<glm::mat4>());
                 auto& model = it.second;
                 model->Draw(m_Command.buffers[i], m_Descriptor.sets[i]);
             }
@@ -532,7 +566,7 @@ namespace Trickster {
         rasterizer.rasterizerDiscardEnable = VK_FALSE;
         rasterizer.polygonMode = VK_POLYGON_MODE_FILL;
         rasterizer.lineWidth = 1.0f;
-        rasterizer.cullMode = VK_CULL_MODE_BACK_BIT;
+        rasterizer.cullMode = VK_CULL_MODE_NONE;
         rasterizer.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
         rasterizer.depthBiasEnable = VK_FALSE;
         rasterizer.depthBiasConstantFactor = 0.0f; // Optional
@@ -823,13 +857,11 @@ namespace Trickster {
 
     void Vulkan::SetupDescriptorPool()
     {
-        std::array<VkDescriptorPoolSize, 3> poolSizes{};
+        std::array<VkDescriptorPoolSize, 2> poolSizes{};
         poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
         poolSizes[0].descriptorCount = static_cast<uint32_t>(m_SwapChain.images.size());
         poolSizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
         poolSizes[1].descriptorCount = static_cast<uint32_t>(m_SwapChain.images.size());
-        poolSizes[2].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-        poolSizes[2].descriptorCount = m_Models[testModel]->instanceCount * static_cast<uint32_t>(m_SwapChain.images.size());
 
         VkDescriptorPoolCreateInfo poolInfo{};
         poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
@@ -901,25 +933,8 @@ namespace Trickster {
             descriptorWrites[1].descriptorCount = 1;
             descriptorWrites[1].pImageInfo = &imageInfo;
 
-        	m_Models[testModel]->PrepareInstances();
-
-            VkDescriptorBufferInfo* instanceBufferInfo;
-            uint32_t instanceCount = m_Models[testModel]->instanceCount;
-            for (int j = 0; j < instanceCount; j++) {
-                descriptorWrites.push_back({});
-                instanceBufferInfo = new VkDescriptorBufferInfo();
-                instanceBufferInfo->buffer = m_Models[testModel]->instances->buffer.get;
-                instanceBufferInfo->offset = j * sizeof(glm::mat4);
-                instanceBufferInfo->range = sizeof(glm::mat4);
-
-                descriptorWrites[2 + j].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-                descriptorWrites[2 + j].dstSet = m_Descriptor.sets[i];
-                descriptorWrites[2 + j].dstBinding = 2;
-                descriptorWrites[2 + j].dstArrayElement = j;
-                descriptorWrites[2 + j].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-                descriptorWrites[2 + j].descriptorCount = 1;
-                descriptorWrites[2 + j].pBufferInfo = instanceBufferInfo;
-            }
+        
+          
             vkUpdateDescriptorSets(m_Device.get,
                 static_cast<uint32_t>(descriptorWrites.size()), 
                 descriptorWrites.data(), 
@@ -969,12 +984,7 @@ namespace Trickster {
         memcpy(data, &ubo, sizeof(ubo));
         vkUnmapMemory(m_Device.get, m_UniformBuffers[currentImage].memory);
 
-        uint32_t instanceCount = m_Models[testModel]->instanceCount;
-        void* otherData;
-            vkMapMemory(m_Device.get, m_Models[testModel]->instances->buffer.memory, 0, instanceCount* sizeof(glm::mat4), 0, &otherData);
-            memcpy(otherData, m_Models[testModel]->instanceData.data(), instanceCount * sizeof(glm::mat4));
-            vkUnmapMemory(m_Device.get, m_Models[testModel]->instances->buffer.memory);
-    }
+        }
 
     void Vulkan::SetupImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling,
 	    VkImageUsageFlags usage, VkMemoryPropertyFlags properties,
@@ -1126,11 +1136,11 @@ namespace Trickster {
             {
             CreateShaderModule(
                 ReadShaderFile(
-                    Application::Get()->ShaderPath + filenameVertexShader))
+                    ShaderPath + filenameVertexShader))
             ,
             CreateShaderModule(
                 ReadShaderFile(
-                    Application::Get()->ShaderPath + filenameFragmentShader))
+                    ShaderPath + filenameFragmentShader))
             });
         return m_Shaders[m_Shaders.size() - 1];
     }

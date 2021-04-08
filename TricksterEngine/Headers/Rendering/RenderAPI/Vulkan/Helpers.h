@@ -179,19 +179,12 @@ namespace Trickster {
 		std::string texturePath;
 		TricksterImage texture;
 
-		//Instancing
-		std::vector<glm::mat4*> pMatrices;
-		alignas(16)std::vector<glm::mat4> instanceData;
-		uint32_t instanceCount;
-		InstanceBuffer* instances;
 
-		TRICKSTER_API void Load(std::string a_ModelPath, std::string a_TexturePath);
+		TRICKSTER_API void Load(std::string a_ModelPath);
 		TRICKSTER_API void SetupVertexBuffer();
 		TRICKSTER_API void SetupIndexBuffer();
 		TRICKSTER_API void SetupTextureImage(std::string a_TexturePath);
 		TRICKSTER_API void Draw(const VkCommandBuffer& CommandBuffer, const VkDescriptorSet& DescriptorSet);
-		TRICKSTER_API void AddInstance(glm::mat4* ModelMatrix); //Saves a pointer to the model matrix
-		TRICKSTER_API void PrepareInstances();
 		
 		static Vulkan* owner;
 	};

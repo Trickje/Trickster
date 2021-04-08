@@ -17,21 +17,22 @@
  */
 #include "pch.h"
 #include "Core/Application.h"
-
-
-#include "Core/AudioPlayer.h"
-#include "Core/Engine.h"
-#include "Events/EventManager.h"
-#include "Core/Input.h"
-#include "Rendering/Window.h"
-#include "Rendering/ShaderManager.h"
+#ifndef TRICKSTER_VULKAN
+//useless OpenGL files
 
 #include <curl/curl.h>
 #include <curl/mprintf.h>
+#include "Rendering/Text/TextRenderer.h"
+#include "Rendering/ShaderManager.h"
+#endif
+#include "Core/AudioPlayer.h"
+#include "Events/EventManager.h"
+#include "Core/Input.h"
+#include "Rendering/Window.h"
+
 #include "Rendering/RenderAPI/RenderAPI.h"
 
 #include "Core/Version.h"
-#include "Rendering/Text/TextRenderer.h"
 using namespace Trickster;
 
 Application* Application::m_Application = nullptr;
@@ -39,7 +40,6 @@ Application::Application()
 {
 	LOG("Trickster Engine is running on version " + std::to_string(TRICKSTER_VERSION_MAJOR) + "." + std::to_string(TRICKSTER_VERSION_MINOR) + "." + std::to_string(TRICKSTER_VERSION_PATCH) + "." + std::to_string(TRICKSTER_VERSION_BUILD));
 	m_Timer.Start();
-	m_Engine = std::make_shared<Engine>();
 	m_Window = std::unique_ptr<Window>(Window::Create());
 	m_RenderAPI = std::shared_ptr<RenderAPI>(RenderAPI::Create());
 	m_JobSystem = std::make_shared<JobSystem>();
@@ -48,7 +48,7 @@ Application::Application()
 	EventManager::GetInstance()->GameLoopEvents.OnRender.AddListener(std::bind(&Application::OnRender, this));
 	EventManager::GetInstance()->GameLoopEvents.OnUpdate.AddListener(std::bind(&Window::OnUpdate, m_Window.get()));
 	EventManager::GetInstance()->GameLoopEvents.OnUpdate.AddListener(std::bind(&Application::OnUpdate, this, std::placeholders::_1));
-	EventManager::GetInstance()->GameLoopEvents.OnStart.AddListener(std::bind(&ShaderManager::Initialize, ShaderManager::GetInstance()));
+//	EventManager::GetInstance()->GameLoopEvents.OnStart.AddListener(std::bind(&ShaderManager::Initialize, ShaderManager::GetInstance()));
 	m_Application = this;
 	m_Paused = false;
 	m_Window->CaptureMouse(true);
@@ -60,7 +60,7 @@ Application::Application()
 Application::~Application()
 { 
 //m_Engine implicitly deleted
-	delete TextRenderer::Get();
+	//delete TextRenderer::Get();
 }
 
 Application* Application::Get()
@@ -75,17 +75,11 @@ Application* Application::Get()
 void Application::Start()
 {
 	m_RenderAPI->Initialize();
-	if (!m_Engine->Initialize())
-	{
-		LOG_ERROR("Failed to initialize the engine!");
-	}
 	if(!m_AudioPlayer->Initialize())
 	{
 		LOG_ERROR("Failed to initialize the Audio Player!");
 	}
-	CURL* hnd = curl_easy_init();
-	delete hnd;
-	hnd = NULL;
+
 	std::srand(static_cast<unsigned int>(time(0)));
 	EventManager::GetInstance()->GameLoopEvents.OnStart.Execute();
 	float time_passed = m_Timer.GetSeconds();
@@ -161,10 +155,6 @@ bool Trickster::Application::Update()
 	return !m_Window->ShouldClose();
 }
 
-std::shared_ptr<Engine> Application::GetEngine() const
-{
-	return m_Engine;
-}
 
 std::shared_ptr<Window> Application::GetWindow() const
 {
