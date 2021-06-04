@@ -38,6 +38,8 @@
 using namespace Trickster;
 Trickster::Game::Game()
 {
+	m_Camera = std::make_shared<Camera>();
+	MeshManager::GetInstance()->Initialize(m_Camera);
 //	m_IronMan = nullptr;
 //	bar = nullptr;
 }
@@ -53,14 +55,13 @@ void Trickster::Game::OnStart()
 //	m_IronMan = new IronMan("planet_Terrestrial1.obj");
 //	m_PauseMenu = new UIClickable("PauseMenu.png", {0.f,0.f}, static_cast<float>(m_Window->GetWidth()), static_cast<float>(m_Window->GetHeight()));
 //	m_PauseMenu->SetVisible(false);
-	m_Camera = std::make_shared<Camera>();
 	m_MainMusic = m_AudioPlayer->Play("Music/MainMenu/minecraft.mp3");
 	m_AudioPlayer->SetVolume(m_MainMusic, 0.5f);
 #ifndef TRICKSTER_VULKAN
 	MeshManager::GetInstance()->Initialize(m_Camera);
 #endif
-	MeshManager::GetInstance()->Initialize(m_Camera);
 	m_Camera->SetPosition({ 0.f, 0.f, 10.f });
+	m_Camera->LookAt({ 0.f,0.f,0.f });
 //	m_Camera->LookAt(m_IronMan->GetPosition());
 	//Network network;
 	//network.ReadAndPrintPage("https://rickpijpers.com", "/index.php");

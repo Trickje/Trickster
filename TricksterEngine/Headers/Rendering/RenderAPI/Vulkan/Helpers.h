@@ -146,7 +146,9 @@ namespace Trickster {
 		VkDescriptorSetLayout set_layout;
 		VkDescriptorPool pool;
 		std::vector<VkDescriptorSet> sets;
+		void Initialize(VkDevice a_Device, VkBuffer a_UniformBuffer);
 		//more stuff to be added here
+		
 	};
 	struct TricksterImage
 	{
@@ -178,7 +180,7 @@ namespace Trickster {
 		TricksterBuffer IndexBuffer;
 		std::string texturePath;
 		TricksterImage texture;
-
+		TricksterDescriptor descriptor;
 
 		TRICKSTER_API void Load(std::string a_ModelPath);
 		TRICKSTER_API void SetupVertexBuffer();

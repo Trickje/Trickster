@@ -11,22 +11,17 @@ namespace Trickster
 	//TODO:
 	//CREATE A DESCRIPTOR LAYOUT / SET MANAGING SYSTEM THAT ALLOWS FOR ONE BIND CALL.
 	//ADD A SWAPCHAIN SYSTEM -> should be more dynamic, where I can choose as a end-user what kind of swapchain I want.
-	//CREATE A DRAW QUEUE -> is the command queue that we have (instructions that we send to the GPU)
-	//MANAGE THE COMMAND QUEUE yeah idk what I imagined here, but lets manage it
-	//DRAW THE BUFFERS THAT YOU GET PASSED IN
 
-	//TODO:
-	//The previous chapter already mentioned that you should allocate multiple
-	//resources like buffers from a single memory allocation,
-	//but in fact you should go a step further. Driver developers
-	//recommend that you also store multiple buffers,
-	//like the vertex and index buffer, into a single VkBuffer
-	//and use offsets in commands like vkCmdBindVertexBuffers. 
 	
 	//The vertex that will be used in all of my programs
 
 	//TODO: clean the mess up with the descriptors
 	// and then pass the instances using a vertex buffer
+
+
+	//Forget instances...
+	//Just make descriptor sets per model, uniform buffers for each model
+	//Maybe command buffer for each model? probably not
 	
 	struct UniformBufferObject
 	{
@@ -76,7 +71,8 @@ namespace Trickster
 		 *  |/       (_______)|/    )_)(_______/   )_(   \_______/(_______)|/    )_)\_______)
          *
 		 */
-
+		TRICKSTER_API void DrawObjects(VkCommandBuffer cmd);
+		TRICKSTER_API void UpdateRenderPass(int a_Frame);
 		
 		TRICKSTER_API void SetupPhysicalDevice();
 		TRICKSTER_API void SetupApp(const char* a_ApplicationName);
@@ -194,14 +190,17 @@ namespace Trickster
 		TricksterSwapChain m_SwapChain;
 		TricksterPipeline m_Pipeline;
 		TricksterDescriptor m_Descriptor;
+		//TODO: implement the CameraDescriptor
+		TricksterDescriptor m_CameraDescriptor;
 		TricksterImage m_DepthImage;
 		TricksterImage m_ColorImage;
 		VkSampleCountFlagBits m_MSAASamples;
 		uint32_t m_MipLevels;
 		std::vector<VkRenderPassBeginInfo> m_RenderPassInfo;
 		std::vector<TricksterShader> m_Shaders;
-		std::string testModel = "viking_room.obj";
+		std::string testModel = "planet_Terrestrial1.obj";
 		std::vector<const char*> validationLayers;
 		std::map<std::string, std::unique_ptr<TricksterModel>> m_Models;
+		std::vector<std::pair<TricksterModel*, glm::mat4>> m_Matrices;
 	};
 }

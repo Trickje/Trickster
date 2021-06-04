@@ -242,5 +242,6 @@ glm::mat4  Trickster::Camera::CalculateProjection()
 	m_Projection[3][3] = 0;
 	*/
 	m_Projection = glm::perspective(m_FOV, static_cast<float>(Trickster::Application::Get()->GetWindow()->GetWidth()) / static_cast<float>(Trickster::Application::Get()->GetWindow()->GetHeight()), m_Near, m_Far);
+	m_Projection[1] *= -1;
 	return m_Projection;
 }

@@ -10,6 +10,115 @@
 
 namespace Trickster {
     Vulkan* TricksterModel::owner = 0;
+
+    void TricksterDescriptor::Initialize(VkDevice a_Device, VkBuffer a_UniformBuffer)
+    {
+        //ALLOCATE DESCRIPTOR SETS
+        VkBuffer localBuffer;
+        VkBufferCreateInfo bufferInfo{};
+        bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+        bufferInfo.size = sizeof(glm::mat4);
+        bufferInfo.usage = VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
+        bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+
+        VkResult result;
+        result = vkCreateBuffer(a_Device, &bufferInfo, nullptr, &localBuffer);
+        if (result != VK_SUCCESS)
+        {
+            LOG_ERROR("[Vulkan] Failed to create Buffer!");
+        }
+        VkMemoryRequirements memRequirements{};
+        vkGetBufferMemoryRequirements(a_Device, localBuffer, &memRequirements);
+
+        VkMemoryAllocateInfo allocInfo{};
+        allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+        allocInfo.allocationSize = memRequirements.size;
+    	
+    	//TODO: left off here, this will be a single matrix descriptor set.
+      /*  allocInfo.memoryTypeIndex = FindMemoryType(memRequirements.memoryTypeBits, properties);
+
+        result = vkAllocateMemory(m_Device.get, &allocInfo, nullptr, &bufferMemory);
+        if (result != VK_SUCCESS)
+        {
+            LOG_ERROR("[Vulkan] Failed to allocate Buffer Memory!");
+        }
+        vkBindBufferMemory(m_Device.get, buffer, bufferMemory, 0);
+
+    	*/
+        VkDescriptorPoolSize poolSize{};
+        poolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+        poolSize.descriptorCount = 1;
+
+        VkDescriptorPoolCreateInfo poolInfo{};
+        poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+        poolInfo.poolSizeCount = 1;
+        poolInfo.pPoolSizes = &poolSize;
+        poolInfo.maxSets = 10;
+        
+        if (vkCreateDescriptorPool(a_Device, &poolInfo, nullptr, &pool) != VK_SUCCESS) {
+            throw std::runtime_error("failed to create descriptor pool!");
+        }
+
+        VkDescriptorSetLayoutBinding layoutBinding{};
+        layoutBinding.binding = 2;
+        layoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+        layoutBinding.descriptorCount = 1;
+
+        VkDescriptorSetLayoutCreateInfo layoutInfo{};
+        layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+        layoutInfo.bindingCount = 1;
+        layoutInfo.pBindings = &layoutBinding;
+
+        if (vkCreateDescriptorSetLayout(a_Device, &layoutInfo, nullptr, &set_layout) != VK_SUCCESS) {
+            throw std::runtime_error("failed to create descriptor set layout!");
+        }
+    	
+        //What I'll need: pool and setlayouts
+    	
+       // VkDescriptorSetAllocateInfo allocInfo{};
+        /*allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+        allocInfo.descriptorPool = pool;
+        allocInfo.descriptorSetCount = 1;
+        allocInfo.pSetLayouts = &set_layout;
+
+        sets.resize(1);
+        VkResult result;
+        result = vkAllocateDescriptorSets(a_Device, &allocInfo, sets.data());
+        if (result != VK_SUCCESS)
+        {
+            LOG_ERROR("[Vulkan] Failed to allocate Descriptor Sets!");
+        }
+        */
+        for (size_t i = 0; i < 1; i++) {
+
+            VkDescriptorBufferInfo bufferInfo{};
+            bufferInfo.buffer = a_UniformBuffer;
+            bufferInfo.offset = 0;
+            bufferInfo.range = sizeof(glm::mat4);
+            
+
+            std::vector<VkWriteDescriptorSet> descriptorWrites{};
+            descriptorWrites.push_back({});
+            descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+            descriptorWrites[0].dstSet = sets[0];
+            descriptorWrites[0].dstBinding = 0;
+            descriptorWrites[0].dstArrayElement = 0;
+            descriptorWrites[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+            descriptorWrites[0].descriptorCount = 1;
+            descriptorWrites[0].pBufferInfo = &bufferInfo;
+            
+
+
+
+            vkUpdateDescriptorSets(a_Device,
+                static_cast<uint32_t>(descriptorWrites.size()),
+                descriptorWrites.data(),
+                0,
+                nullptr);
+
+        }
+    }
+
     void Trickster::TricksterModel::Load(std::string a_ModelPath)
     {
 

@@ -109,9 +109,9 @@ namespace Trickster {
         // Mark the image as now being in use by this frame
         m_SwapChain.imagesInFlight[m_CurrentFrame] = m_SwapChain.fences[m_SwapChain.currentFrame];
 
-        UpdateUniformBuffer(m_CurrentFrame);
-
-        VkSubmitInfo submitInfo{};
+       // UpdateUniformBuffer(m_CurrentFrame);
+        UpdateRenderPass(m_CurrentFrame);
+    	 VkSubmitInfo submitInfo{};
         submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 
         VkSemaphore waitSemaphores[] = { m_SwapChain.semaphores[m_SwapChain.currentFrame].image_available };
@@ -125,7 +125,6 @@ namespace Trickster {
         VkSemaphore signalSemaphores[] = { m_SwapChain.semaphores[m_SwapChain.currentFrame].render_finished };
         submitInfo.signalSemaphoreCount = 1;
         submitInfo.pSignalSemaphores = signalSemaphores;
-
         vkResetFences(m_Device.get, 1, &m_SwapChain.fences[m_SwapChain.currentFrame]);
         if (vkQueueSubmit(m_GraphicsQueue, 1, &submitInfo, m_SwapChain.fences[m_SwapChain.currentFrame]) != VK_SUCCESS) {
             throw std::runtime_error("failed to submit draw command buffer!");
@@ -178,7 +177,7 @@ namespace Trickster {
             LoadModel(a_ModelName);
     	}
         auto& model = m_Models[a_ModelName];
-
+       
     	
         //This is the draw function for a model
         VkBuffer vertexBuffers[] = { model->VertexBuffer.get };
@@ -189,23 +188,71 @@ namespace Trickster {
         ubo.model = a_ModelMatrix;
         ubo.view = camera->GetView();// glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
         ubo.projection = camera->GetProjection();//glm::perspective(glm::radians(45.0f), m_SwapChain.capabilities.currentExtent.width / (float)m_SwapChain.capabilities.currentExtent.height, 0.1f, 10.0f);
-
-
+        
+        vkCmdPushConstants(m_Command.buffers[m_CurrentFrame],
+            m_Pipeline.layout,
+            VK_SHADER_STAGE_VERTEX_BIT,
+            0,
+            sizeof(UniformBufferObject),
+            &ubo);
     	
-        void* data;
-        vkMapMemory(m_Device.get, m_UniformBuffers[m_CurrentFrame].memory, 0, sizeof(ubo), 0, &data);
-        memcpy(data, &ubo, sizeof(ubo));
-        vkUnmapMemory(m_Device.get, m_UniformBuffers[m_CurrentFrame].memory);
         // Binding point 0: Mesh vertex buffer
         vkCmdBindVertexBuffers(m_Command.buffers[m_CurrentFrame], 0, 1, vertexBuffers, offsets);
      
         
 
         vkCmdBindIndexBuffer(m_Command.buffers[m_CurrentFrame], model->IndexBuffer.get, 0, VK_INDEX_TYPE_UINT32);
-        vkCmdBindDescriptorSets(m_Command.buffers[m_CurrentFrame], VK_PIPELINE_BIND_POINT_GRAPHICS, m_Pipeline.layout, 0, 1, &m_Descriptor.sets[m_CurrentFrame], 0, nullptr);
+		vkCmdBindDescriptorSets(m_Command.buffers[m_CurrentFrame], VK_PIPELINE_BIND_POINT_GRAPHICS, m_Pipeline.layout, 0, 1, &m_Descriptor.sets[m_CurrentFrame], 0, nullptr);
         //Very temporary
-        vkCmdDrawIndexed(m_Command.buffers[m_CurrentFrame], static_cast<uint32_t>(model->indices.size()), 0, 0, 0, 0);
+        vkCmdDrawIndexed(m_Command.buffers[m_CurrentFrame], static_cast<uint32_t>(model->indices.size()), 1, 0, 0, 0);
+        
+    }
 
+    void Vulkan::UpdateRenderPass(int a_Frame)
+    {
+        
+            m_RenderPassInfo[a_Frame].sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+            m_RenderPassInfo[a_Frame].renderPass = m_Pipeline.render_pass;
+            m_RenderPassInfo[a_Frame].framebuffer = m_SwapChain.frame_buffers[a_Frame];
+            m_RenderPassInfo[a_Frame].renderArea.offset = { 0, 0 };
+            m_RenderPassInfo[a_Frame].renderArea.extent = m_SwapChain.capabilities.currentExtent;
+
+            std::array<VkClearValue, 2> clearValues{};
+            clearValues[0].color = { 0.0f, 0.0f, 0.0f, 1.0f };
+            clearValues[1].depthStencil = { 1000.f, 0 };
+
+            m_RenderPassInfo[a_Frame].clearValueCount = static_cast<uint32_t>(clearValues.size());
+            m_RenderPassInfo[a_Frame].pClearValues = clearValues.data();
+            
+        vkResetCommandBuffer(m_Command.buffers[a_Frame], 0);
+        VkCommandBufferBeginInfo beginInfo{};
+        beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+        beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT; // Optional
+        beginInfo.pInheritanceInfo = nullptr; // Optional
+        if (vkBeginCommandBuffer(m_Command.buffers[a_Frame], &beginInfo) != VK_SUCCESS) {
+            LOG_ERROR("[Vulkan] Failed to begin recording CommandBuffer");
+        }
+    	
+        vkCmdBeginRenderPass(m_Command.buffers[a_Frame], &m_RenderPassInfo[a_Frame], VK_SUBPASS_CONTENTS_INLINE);
+
+
+        vkCmdBindPipeline(m_Command.buffers[a_Frame], VK_PIPELINE_BIND_POINT_GRAPHICS, m_Pipeline.get);
+
+        //Drawing the models
+        for (auto& it : m_Models)
+        {
+            m_CurrentFrame = a_Frame;
+            DrawModel(testModel, glm::translate(glm::identity<glm::mat4>(), { 0.f, 0.5f, -5.f }));
+            DrawModel(testModel, glm::translate(glm::identity<glm::mat4>(), {0.f, 0.f, -5.f}));
+            // auto& model = it.second;
+            // model->Draw(m_Command.buffers[a_Frame], m_Descriptor.sets[a_Frame]);
+           //  EventManager::GetInstance()->GameLoopEvents.OnRender.ExecuteAndClear();
+        }
+        vkCmdEndRenderPass(m_Command.buffers[a_Frame]);
+
+        if (vkEndCommandBuffer(m_Command.buffers[a_Frame]) != VK_SUCCESS) {
+            throw std::runtime_error("failed to record command buffer!");
+        }
     }
 
     void Vulkan::SetupPhysicalDevice()
@@ -376,51 +423,7 @@ namespace Trickster {
     	}
         m_RenderPassInfo.resize(m_Command.buffers.size());
 
-        for (size_t i = 0; i < m_Command.buffers.size(); i++) {
-            VkCommandBufferBeginInfo beginInfo{};
-            beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-            beginInfo.flags = 0; // Optional
-            beginInfo.pInheritanceInfo = nullptr; // Optional
-
-            if (vkBeginCommandBuffer(m_Command.buffers[i], &beginInfo) != VK_SUCCESS) {
-                LOG_ERROR("[Vulkan] Failed to begin recording CommandBuffer");
-            }
-
-
-            
-            m_RenderPassInfo[i].sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-            m_RenderPassInfo[i].renderPass = m_Pipeline.render_pass;
-            m_RenderPassInfo[i].framebuffer = m_SwapChain.frame_buffers[i];
-            m_RenderPassInfo[i].renderArea.offset = { 0, 0 };
-            m_RenderPassInfo[i].renderArea.extent = m_SwapChain.capabilities.currentExtent;
-
-            std::array<VkClearValue, 2> clearValues{};
-            clearValues[0].color = { 0.0f, 0.0f, 0.0f, 1.0f };
-            clearValues[1].depthStencil = { 1000.f, 0 };
-
-            m_RenderPassInfo[i].clearValueCount = static_cast<uint32_t>(clearValues.size());
-            m_RenderPassInfo[i].pClearValues = clearValues.data();
-
-            vkCmdBeginRenderPass(m_Command.buffers[i], &m_RenderPassInfo[i], VK_SUBPASS_CONTENTS_INLINE);
-
-        	
-            vkCmdBindPipeline(m_Command.buffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, m_Pipeline.get);
-
-        	//Drawing the models
-            for(auto& it : m_Models)
-            {
-
-              //  DrawModel(testModel, glm::identity<glm::mat4>());
-                auto& model = it.second;
-                model->Draw(m_Command.buffers[i], m_Descriptor.sets[i]);
-            }
-        	
-            vkCmdEndRenderPass(m_Command.buffers[i]);
-
-            if (vkEndCommandBuffer(m_Command.buffers[i]) != VK_SUCCESS) {
-                throw std::runtime_error("failed to record command buffer!");
-            }
-        }
+        
 
     	
     }
@@ -631,12 +634,17 @@ namespace Trickster {
         dynamicState.dynamicStateCount = 2;
         dynamicState.pDynamicStates = dynamicStates;
 
+        VkPushConstantRange push_constant;
+        push_constant.offset = 0;
+        push_constant.size = sizeof(UniformBufferObject);
+        push_constant.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+    	
         VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
         pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
         pipelineLayoutInfo.setLayoutCount = 1; // Optional
         pipelineLayoutInfo.pSetLayouts = &m_Descriptor.set_layout; // Optional
-        pipelineLayoutInfo.pushConstantRangeCount = 0; // Optional
-        pipelineLayoutInfo.pPushConstantRanges = nullptr; // Optional
+        pipelineLayoutInfo.pushConstantRangeCount = 1; // Optional
+        pipelineLayoutInfo.pPushConstantRanges = &push_constant; // Optional
 
         VkResult ec = vkCreatePipelineLayout(m_Device.get, &pipelineLayoutInfo, nullptr, &m_Pipeline.layout);
         if (ec != VK_SUCCESS) {
@@ -831,15 +839,10 @@ namespace Trickster {
         samplerLayoutBinding.pImmutableSamplers = nullptr;
         samplerLayoutBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
 
-		VkDescriptorSetLayoutBinding instanceLayoutBinding{};
-        instanceLayoutBinding.binding = 2;
-        instanceLayoutBinding.descriptorCount = 1000;
-        instanceLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-        instanceLayoutBinding.pImmutableSamplers = nullptr;
-        instanceLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+		
     	
     	
-        std::array<VkDescriptorSetLayoutBinding, 3> bindings = { uboLayoutBinding, samplerLayoutBinding , instanceLayoutBinding};
+        std::array<VkDescriptorSetLayoutBinding, 2> bindings = { uboLayoutBinding, samplerLayoutBinding };
 
     	VkDescriptorSetLayoutCreateInfo layoutInfo{};
     	layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
@@ -973,15 +976,16 @@ namespace Trickster {
         auto currentTime = std::chrono::high_resolution_clock::now();
         float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
 
-        UniformBufferObject ubo{};
+       // UniformBufferObject ubo{};
         auto camera = MeshManager::GetInstance()->GetCamera();
-        ubo.model = glm::identity<glm::mat4>();
-       ubo.view = camera->GetView();// glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-        ubo.projection = camera->GetProjection();//glm::perspective(glm::radians(45.0f), m_SwapChain.capabilities.currentExtent.width / (float)m_SwapChain.capabilities.currentExtent.height, 0.1f, 10.0f);
-        ubo.projection[1][1] *= -1;
+        glm::mat4 matrices[2];
+       // ubo.model = glm::rotate(glm::translate(glm::identity<glm::mat4>(),{0.f,0.f,-4.f}), -1.57079633f, {1.f,0.f,0.f});
+       matrices[0]=  camera->GetView();// glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+        matrices[1]= camera->GetProjection();//glm::perspective(glm::radians(45.0f), m_SwapChain.capabilities.currentExtent.width / (float)m_SwapChain.capabilities.currentExtent.height, 0.1f, 10.0f);
+        matrices[1][1] *= -1;
         void* data;
-        vkMapMemory(m_Device.get, m_UniformBuffers[currentImage].memory, 0, sizeof(ubo), 0, &data);
-        memcpy(data, &ubo, sizeof(ubo));
+        vkMapMemory(m_Device.get, m_UniformBuffers[currentImage].memory, sizeof(glm::mat4), sizeof(glm::mat4) * 2, 0, &data);
+        memcpy(data, &matrices, sizeof(matrices));
         vkUnmapMemory(m_Device.get, m_UniformBuffers[currentImage].memory);
 
         }
@@ -1639,8 +1643,7 @@ namespace Trickster {
             m_DepthImage, m_MSAASamples
             );
         SetupImageView(m_DepthImage, VK_IMAGE_ASPECT_DEPTH_BIT,1);
-        TransitionImageLayout(m_DepthImage.get, m_DepthImage.format, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, 1);
-    	
+       
     }
 
     VkFormat Vulkan::FindDepthFormat()
