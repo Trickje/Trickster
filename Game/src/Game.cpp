@@ -34,6 +34,7 @@
 //#include <Network/Package.h>
 //#include <Network/Network.h>
 
+#include "Rendering/RenderAPI/RenderAPI.h"
 #include "Rendering/Text/TextRenderer.h"
 using namespace Trickster;
 Trickster::Game::Game()
@@ -73,6 +74,13 @@ void Trickster::Game::OnStart()
 		m_Planets[m_Planets.size() - 1]->Move({5 * i, 0, 0});
 	}*/
 //	m_IronMan->Rotate(0.f, 20.f, 0.f);
+	
+	 
+	m_Objects.push_back(new Drawable3D{ "planet_Terrestrial1.obj", {0.5f, 0.f, -5.f} });
+	m_Objects.push_back(new Drawable3D{ "planet_Terrestrial1.obj", {0.f,0.f, -5.f} });
+	m_Objects.push_back(new Drawable3D{ "planet_Terrestrial1.obj", {0.f,0.5f, -5.f} });
+	m_Objects.push_back(new Drawable3D{ "viking_room.obj", {0.f,-0.5f, -5.f} });
+	
 	EventManager::GetInstance()->InputEvents.OnMouseMoved.AddListener(std::bind(&Camera::MouseMove, m_Camera.get(), std::placeholders::_1,std::placeholders::_2));
 
 }

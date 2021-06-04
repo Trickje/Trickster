@@ -29,6 +29,11 @@ namespace Trickster
 		alignas(16) glm::mat4 view;
 		alignas(16) glm::mat4 projection;
 	};
+	struct _DrawInfo
+	{
+		std::string modelName;
+		glm::mat4 modelMatrix;
+	};
 	
 	class Vulkan : public RenderAPI
 	{
@@ -71,8 +76,8 @@ namespace Trickster
 		 *  |/       (_______)|/    )_)(_______/   )_(   \_______/(_______)|/    )_)\_______)
          *
 		 */
-		TRICKSTER_API void DrawObjects(VkCommandBuffer cmd);
-		TRICKSTER_API void UpdateRenderPass(int a_Frame);
+		TRICKSTER_API void DrawModelImp(const std::string& a_ModelName, const glm::mat4& a_ModelMatrix);
+
 		
 		TRICKSTER_API void SetupPhysicalDevice();
 		TRICKSTER_API void SetupApp(const char* a_ApplicationName);
@@ -198,9 +203,8 @@ namespace Trickster
 		uint32_t m_MipLevels;
 		std::vector<VkRenderPassBeginInfo> m_RenderPassInfo;
 		std::vector<TricksterShader> m_Shaders;
-		std::string testModel = "planet_Terrestrial1.obj";
 		std::vector<const char*> validationLayers;
 		std::map<std::string, std::unique_ptr<TricksterModel>> m_Models;
-		std::vector<std::pair<TricksterModel*, glm::mat4>> m_Matrices;
+		std::vector<_DrawInfo> m_Matrices;
 	};
 }

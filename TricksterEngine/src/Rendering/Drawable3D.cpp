@@ -16,34 +16,24 @@
 =================================================================================
  */
 #include "pch.h"
-#define TINYOBJLOADER_IMPLEMENTATION
 #include "Rendering/Drawable3D.h"
-#include "Rendering/Camera.h"
 #include "Core/Application.h"
-#include "Rendering/MeshManager.h"
-#include "Rendering/ShaderManager.h"
-#include "Rendering/Shader.h"
-#include "Rendering/Texture.h"
-#include "Rendering/TextureManager.h"
-#include "Rendering/VertexArray.h"
-#include "Rendering/VertexBuffer.h"
-#include "Rendering/VertexBufferLayout.h"
-#include "TinyObjLoader.h"
+#include "Core/FilePaths.h"
+#include "Events/EventManager.h"
+#include "Rendering/RenderAPI/RenderAPI.h"
+
 namespace Trickster {
 	//Don't use this constructor!!
 	Drawable3D::Drawable3D()
 		: m_ModelMatrix(glm::mat4(1.0)), m_RotationMatrix(glm::mat4(1.0f)), m_TranslationMatrix(glm::mat4(1.0f))
 	{
-		m_DrawData = std::make_shared<DrawData>();
 		m_ShaderPath = "";
-		m_IsLoaded = false;
 	}
 	
 	Drawable3D::Drawable3D(const std::string& a_ModelFileName, const glm::vec3& a_Position, const glm::vec3& a_Scale,
 		const std::string& a_ShaderFileName)
-		: m_ModelMatrix(glm::mat4(1.0)), m_RotationMatrix(glm::mat4(1.0f)), m_TranslationMatrix(glm::mat4(1.0f))
+		: m_ModelMatrix(glm::mat4(1.0)), m_RotationMatrix(glm::mat4(1.0f)), m_TranslationMatrix(glm::mat4(1.0f)), m_ScaleMatrix(glm::mat4(1.0f))
 	{
-		m_IsLoaded = false;
 		Initialize(a_ModelFileName, a_Position, a_Scale, a_ShaderFileName);
 		
 	}
@@ -51,28 +41,22 @@ namespace Trickster {
 
 	Drawable3D::~Drawable3D()
 	{
-		delete m_DrawData.get();
 	}
 
 	void Drawable3D::Initialize(const std::string & a_ModelFileName, const glm::vec3 & a_Position, const glm::vec3 & a_Scale, const std::string & a_ShaderFileName)
 	{
 		//Initializes data
-		m_DrawData = std::make_shared<DrawData>();
 		m_ModelMatrix = glm::mat4(1.0f);
 		m_RotationMatrix = glm::mat4(1.0f);
-		m_TranslationMatrix = glm::mat4(1.0f);
+		m_TranslationMatrix = glm::translate(glm::identity<glm::mat4>(), a_Position);
+		m_ScaleMatrix = glm::scale(glm::identity<glm::mat4>(), a_Scale);
+		m_Position = a_Position;
 		m_Yaw = 0.f;
 		m_Pitch = 0.f;
 		m_Roll = 0.f;
-		//Subscribes to be managed by the MeshManager
-		MeshManager::GetInstance()->m_Drawable3Ds.push_back(std::shared_ptr<Drawable3D>(this));
 		//Fills in data
-		m_TextureBase = Application::Get()->ModelPath;
-		//Make this multithreaded
-		Application::Get()->GetJobSystem()->Enqueue(&Drawable3D::LoadMesh, this, a_ModelFileName);
-		SetPosition(a_Position);
-		SetShaderPath(a_ShaderFileName);
-		SetScale(a_Scale);
+		m_ModelName = a_ModelFileName;
+		EventManager::GetInstance()->GameLoopEvents.OnRender.AddListener(std::bind(&Drawable3D::Draw, this));
 	}
 
 	void Drawable3D::SetShaderPath(const std::string & a_FilePath)
@@ -82,8 +66,9 @@ namespace Trickster {
 
 
 	//This is handled by the engine. Don't manually draw it
-	void Drawable3D::Draw(std::shared_ptr<Camera> a_Camera)
+	void Drawable3D::Draw()
 	{
+		Application::Get()->m_RenderAPI->DrawModel(m_ModelName, m_TranslationMatrix * m_RotationMatrix * m_ScaleMatrix);
 #ifdef TRICKSTER_OPENGL
 		if(!HasBuffers)
 		{
@@ -107,13 +92,14 @@ namespace Trickster {
 #endif
 	}
 
-	void Drawable3D::LoadMesh(const std::string& a_FileName)
-	{
+	//void Drawable3D::LoadMesh(const std::string& a_FileName)
+	//{
+#ifdef TRICKSTER_OPENGL
 		tinyobj::attrib_t attrib;
 		std::vector<tinyobj::shape_t> shapes;
 		std::vector<tinyobj::material_t> materials;
 
-		std::string basedir = Application::Get()->ModelPath;
+		std::string basedir = ModelPath;
 		std::string FilePath = basedir + a_FileName;
 
 		
@@ -195,7 +181,8 @@ namespace Trickster {
 			m_TextureFile = materials[i].diffuse_texname;
 		}
 		m_IsLoaded = true;
-	}
+#endif
+	//}
 
 	void Drawable3D::SetPosition(const glm::vec3& a_Position)
 	{
@@ -283,8 +270,8 @@ namespace Trickster {
 		m_TranslationMatrix[3][2] = m_Position.z;
 	}
 
-	void Drawable3D::MakeBuffers()
-	{
+	//void Drawable3D::MakeBuffers()
+//	{
 #ifdef TRICKSTER_OPENGL
 		m_DrawData->vb =new VertexBuffer(&m_Vertices[0], (unsigned int)m_Vertices.size() * 8 * sizeof(float));
 		m_DrawData->layout = new VertexBufferLayout();
@@ -294,5 +281,5 @@ namespace Trickster {
 		m_DrawData->va = new VertexArray();
 		m_DrawData->va->AddBuffer(*m_DrawData->vb, *m_DrawData->layout);
 #endif
-	}
+//	}
 }

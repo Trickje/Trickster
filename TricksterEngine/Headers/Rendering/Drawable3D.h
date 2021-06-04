@@ -17,20 +17,7 @@
 =================================================================================
  */
 namespace Trickster {
-	class VertexArray;
-	class VertexBuffer;
-	class VertexBufferLayout;
-	class Camera;
-	struct Vertex
-	{
-			float x, y, z, nx, ny, nz, u, v;
-	};
-	struct DrawData 
-	{
-		VertexBuffer* vb;
-		VertexBufferLayout* layout;
-		VertexArray* va;
-	};
+	
 	class Drawable3D
 	{
 	public:
@@ -42,9 +29,9 @@ namespace Trickster {
 		//Sets the shader path
 		TRICKSTER_API void SetShaderPath(const std::string& a_FilePath);
 		//Draws the model to a camera
-		TRICKSTER_API void Draw(std::shared_ptr<Camera> a_Camera);
+		TRICKSTER_API void Draw();
 		//Loads the mesh with the given file path
-		TRICKSTER_API void LoadMesh(const std::string& a_FileName);
+		//TRICKSTER_API void LoadMesh(const std::string& a_FileName);
 		//Sets the position in world space
 		TRICKSTER_API void SetPosition(const glm::vec3& a_Position);
 		//Gets the position
@@ -71,7 +58,8 @@ namespace Trickster {
 		std::string m_TextureBase;
 		std::string m_TextureFile;
 		std::string m_ShaderPath;
-		TRICKSTER_API void MakeBuffers();//Call this after you have data in m_Vertices
+		std::string m_ModelName;
+		//TRICKSTER_API void MakeBuffers();//Call this after you have data in m_Vertices
 
 
 		/*
@@ -88,13 +76,12 @@ Scale	|   x    |   y   |       z        |  1.f  |
 		 */
 		glm::mat4 m_ModelMatrix;
 		glm::mat4 m_RotationMatrix;
+		glm::mat4 m_ScaleMatrix;
 		float m_Yaw, m_Pitch, m_Roll;
 		glm::vec3 m_Position;
 		glm::mat4 m_TranslationMatrix;
-		std::shared_ptr<DrawData> m_DrawData;
-		std::vector<Vertex> m_Vertices;	//Mesh
-		bool m_IsLoaded;
-		bool HasBuffers = false;
+		//std::shared_ptr<DrawData> m_DrawData;
+		//std::vector<Vertex> m_Vertices;	//Mesh
 		
 	};
 

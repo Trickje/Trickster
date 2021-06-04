@@ -53,6 +53,7 @@ namespace Trickster {
 		int m_MainMusic;
 		float volumex = 0.f;
 		FMOD::ChannelGroup* m_MainGroup;
+		std::vector<Drawable3D*> m_Objects;
 	};
 
 	//This Creates the application in the entry point

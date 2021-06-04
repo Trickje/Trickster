@@ -29,7 +29,7 @@
 #include "Events/EventManager.h"
 #include "Core/Input.h"
 #include "Rendering/Window.h"
-
+#include "Rendering/Drawable3D.h"
 #include "Rendering/RenderAPI/RenderAPI.h"
 
 #include "Core/Version.h"
@@ -100,6 +100,8 @@ void Application::Start()
 
 void Application::Draw()
 {
+	
+	EventManager::GetInstance()->GameLoopEvents.OnRender.Execute();
 	m_Window->Draw();
 	m_RenderAPI->DrawFrame();
 }

@@ -1,6 +1,7 @@
 #pragma once
 #include "JobSystem.h"
 #include "Timer.h"
+#include "Rendering/Drawable3D.h"
 /*
 ================================================================================
 		Copyright 2020 Rick Pijpers
@@ -18,13 +19,13 @@
 		limitations under the License.
 =================================================================================
  */
-
 namespace Trickster {
 	class Window;
 	class AudioPlayer;
 	class RenderAPI;
 	class Application
 	{
+		friend class Drawable3D;
 	public:
 		TRICKSTER_API Application();
 		TRICKSTER_API virtual ~Application();

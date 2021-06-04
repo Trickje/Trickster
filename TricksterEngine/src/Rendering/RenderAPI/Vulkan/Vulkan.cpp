@@ -75,7 +75,6 @@ namespace Trickster {
         SetupDepthResources();
         SetupColorResources();
         SetupFrameBuffers();
-        LoadModel(testModel);
         SetupTextureSampler();
         SetupUniformBuffers();
     	SetupDescriptorPool();
@@ -109,8 +108,45 @@ namespace Trickster {
         // Mark the image as now being in use by this frame
         m_SwapChain.imagesInFlight[m_CurrentFrame] = m_SwapChain.fences[m_SwapChain.currentFrame];
 
-       // UpdateUniformBuffer(m_CurrentFrame);
-        UpdateRenderPass(m_CurrentFrame);
+
+        m_RenderPassInfo[m_CurrentFrame].sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+        m_RenderPassInfo[m_CurrentFrame].renderPass = m_Pipeline.render_pass;
+        m_RenderPassInfo[m_CurrentFrame].framebuffer = m_SwapChain.frame_buffers[m_CurrentFrame];
+        m_RenderPassInfo[m_CurrentFrame].renderArea.offset = { 0, 0 };
+        m_RenderPassInfo[m_CurrentFrame].renderArea.extent = m_SwapChain.capabilities.currentExtent;
+
+        std::array<VkClearValue, 2> clearValues{};
+        clearValues[0].color = { 0.0f, 0.0f, 0.0f, 1.0f };
+        clearValues[1].depthStencil = { 1000.f, 0 };
+
+        m_RenderPassInfo[m_CurrentFrame].clearValueCount = static_cast<uint32_t>(clearValues.size());
+        m_RenderPassInfo[m_CurrentFrame].pClearValues = clearValues.data();
+
+        vkResetCommandBuffer(m_Command.buffers[m_CurrentFrame], 0);
+        VkCommandBufferBeginInfo beginInfo{};
+        beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+        beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT; // Optional
+        beginInfo.pInheritanceInfo = nullptr; // Optional
+        if (vkBeginCommandBuffer(m_Command.buffers[m_CurrentFrame], &beginInfo) != VK_SUCCESS) {
+            LOG_ERROR("[Vulkan] Failed to begin recording CommandBuffer");
+        }
+
+        vkCmdBeginRenderPass(m_Command.buffers[m_CurrentFrame], &m_RenderPassInfo[m_CurrentFrame], VK_SUBPASS_CONTENTS_INLINE);
+
+
+        vkCmdBindPipeline(m_Command.buffers[m_CurrentFrame], VK_PIPELINE_BIND_POINT_GRAPHICS, m_Pipeline.get);
+
+        //Drawing the models
+        for (auto& it : m_Matrices)
+        {
+            DrawModelImp(it.modelName, it.modelMatrix);
+        }
+        vkCmdEndRenderPass(m_Command.buffers[m_CurrentFrame]);
+
+        if (vkEndCommandBuffer(m_Command.buffers[m_CurrentFrame]) != VK_SUCCESS) {
+            throw std::runtime_error("failed to record command buffer!");
+        }
+        m_Matrices.clear();
     	 VkSubmitInfo submitInfo{};
         submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 
@@ -171,7 +207,11 @@ namespace Trickster {
 
     void Vulkan::DrawModel(const std::string& a_ModelName, const glm::mat4& a_ModelMatrix)
     {
-    	//TODO: implement
+        m_Matrices.push_back({ a_ModelName, a_ModelMatrix });
+    }
+
+    void Vulkan::DrawModelImp(const std::string& a_ModelName, const glm::mat4& a_ModelMatrix)
+    {
     	if(m_Models.count(a_ModelName) == 0)
     	{
             LoadModel(a_ModelName);
@@ -202,58 +242,12 @@ namespace Trickster {
         
 
         vkCmdBindIndexBuffer(m_Command.buffers[m_CurrentFrame], model->IndexBuffer.get, 0, VK_INDEX_TYPE_UINT32);
-		vkCmdBindDescriptorSets(m_Command.buffers[m_CurrentFrame], VK_PIPELINE_BIND_POINT_GRAPHICS, m_Pipeline.layout, 0, 1, &m_Descriptor.sets[m_CurrentFrame], 0, nullptr);
-        //Very temporary
+		vkCmdBindDescriptorSets(m_Command.buffers[m_CurrentFrame], VK_PIPELINE_BIND_POINT_GRAPHICS, m_Pipeline.layout, 0, 1, &model->descriptor.sets[0], 0, nullptr);
         vkCmdDrawIndexed(m_Command.buffers[m_CurrentFrame], static_cast<uint32_t>(model->indices.size()), 1, 0, 0, 0);
         
     }
 
-    void Vulkan::UpdateRenderPass(int a_Frame)
-    {
-        
-            m_RenderPassInfo[a_Frame].sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-            m_RenderPassInfo[a_Frame].renderPass = m_Pipeline.render_pass;
-            m_RenderPassInfo[a_Frame].framebuffer = m_SwapChain.frame_buffers[a_Frame];
-            m_RenderPassInfo[a_Frame].renderArea.offset = { 0, 0 };
-            m_RenderPassInfo[a_Frame].renderArea.extent = m_SwapChain.capabilities.currentExtent;
-
-            std::array<VkClearValue, 2> clearValues{};
-            clearValues[0].color = { 0.0f, 0.0f, 0.0f, 1.0f };
-            clearValues[1].depthStencil = { 1000.f, 0 };
-
-            m_RenderPassInfo[a_Frame].clearValueCount = static_cast<uint32_t>(clearValues.size());
-            m_RenderPassInfo[a_Frame].pClearValues = clearValues.data();
-            
-        vkResetCommandBuffer(m_Command.buffers[a_Frame], 0);
-        VkCommandBufferBeginInfo beginInfo{};
-        beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-        beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT; // Optional
-        beginInfo.pInheritanceInfo = nullptr; // Optional
-        if (vkBeginCommandBuffer(m_Command.buffers[a_Frame], &beginInfo) != VK_SUCCESS) {
-            LOG_ERROR("[Vulkan] Failed to begin recording CommandBuffer");
-        }
-    	
-        vkCmdBeginRenderPass(m_Command.buffers[a_Frame], &m_RenderPassInfo[a_Frame], VK_SUBPASS_CONTENTS_INLINE);
-
-
-        vkCmdBindPipeline(m_Command.buffers[a_Frame], VK_PIPELINE_BIND_POINT_GRAPHICS, m_Pipeline.get);
-
-        //Drawing the models
-        for (auto& it : m_Models)
-        {
-            m_CurrentFrame = a_Frame;
-            DrawModel(testModel, glm::translate(glm::identity<glm::mat4>(), { 0.f, 0.5f, -5.f }));
-            DrawModel(testModel, glm::translate(glm::identity<glm::mat4>(), {0.f, 0.f, -5.f}));
-            // auto& model = it.second;
-            // model->Draw(m_Command.buffers[a_Frame], m_Descriptor.sets[a_Frame]);
-           //  EventManager::GetInstance()->GameLoopEvents.OnRender.ExecuteAndClear();
-        }
-        vkCmdEndRenderPass(m_Command.buffers[a_Frame]);
-
-        if (vkEndCommandBuffer(m_Command.buffers[a_Frame]) != VK_SUCCESS) {
-            throw std::runtime_error("failed to record command buffer!");
-        }
-    }
+   
 
     void Vulkan::SetupPhysicalDevice()
     {

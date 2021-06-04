@@ -268,6 +268,92 @@ namespace Trickster {
         owner->SetupImageView(texture, VK_IMAGE_ASPECT_COLOR_BIT, owner->m_MipLevels);
 
         owner->GenerateMipmaps(texture, owner->m_MipLevels);
+    	//Create descriptors
+
+
+
+        VkDescriptorSetLayoutBinding samplerLayoutBinding{};
+        samplerLayoutBinding.binding = 1;
+        samplerLayoutBinding.descriptorCount = 1;
+        samplerLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+        samplerLayoutBinding.pImmutableSamplers = nullptr;
+        samplerLayoutBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+
+
+
+
+        std::array<VkDescriptorSetLayoutBinding, 1> bindings = { samplerLayoutBinding };
+
+        VkDescriptorSetLayoutCreateInfo layoutInfo{};
+        layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+        layoutInfo.bindingCount = static_cast<uint32_t>(bindings.size());
+        layoutInfo.pBindings = bindings.data();
+        VkResult result;
+        result = vkCreateDescriptorSetLayout(owner->m_Device.get, &layoutInfo, nullptr, &descriptor.set_layout);
+        if (result != VK_SUCCESS)
+        {
+            LOG_ERROR("[Vulkan] Failed to create Descriptor Set Layout!");
+        }
+        std::array<VkDescriptorPoolSize, 1> poolSizes{};
+        poolSizes[0].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+        poolSizes[0].descriptorCount = 1;
+
+        VkDescriptorPoolCreateInfo poolInfo{};
+        poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+        poolInfo.poolSizeCount = static_cast<uint32_t>(poolSizes.size());
+        poolInfo.pPoolSizes = poolSizes.data();
+        poolInfo.maxSets = 1;
+
+        
+        result = vkCreateDescriptorPool(owner->m_Device.get, &poolInfo, nullptr, &descriptor.pool);
+        if (result != VK_SUCCESS)
+        {
+            LOG_ERROR("[Vulkan] Failed to create Descriptor Pool!");
+        }
+
+        std::vector<VkDescriptorSetLayout> layouts(1, descriptor.set_layout);
+        VkDescriptorSetAllocateInfo allocInfo{};
+        allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+        allocInfo.descriptorPool = descriptor.pool;
+        allocInfo.descriptorSetCount = 1;
+        allocInfo.pSetLayouts = layouts.data();
+
+        descriptor.sets.resize(1);
+        result = vkAllocateDescriptorSets(owner->m_Device.get, &allocInfo, descriptor.sets.data());
+        if (result != VK_SUCCESS)
+        {
+            LOG_ERROR("[Vulkan] Failed to allocate Descriptor Sets!");
+        }
+       
+        
+            VkDescriptorImageInfo imageInfo{};
+            imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+            //Model image view
+            
+            imageInfo.imageView = texture.view;
+            
+            imageInfo.sampler = owner->m_TextureSampler;
+
+
+            std::vector<VkWriteDescriptorSet> descriptorWrites{};
+     
+            descriptorWrites.push_back({});
+            descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+            descriptorWrites[0].dstSet = descriptor.sets[0];
+            descriptorWrites[0].dstBinding = 1;
+            descriptorWrites[0].dstArrayElement = 0;
+            descriptorWrites[0].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+            descriptorWrites[0].descriptorCount = 1;
+            descriptorWrites[0].pImageInfo = &imageInfo;
+
+
+            
+            vkUpdateDescriptorSets(owner->m_Device.get,
+                static_cast<uint32_t>(descriptorWrites.size()),
+                descriptorWrites.data(),
+                0,
+                nullptr);
+            
     }
 
     void TricksterModel::Draw(const VkCommandBuffer& CommandBuffer, const VkDescriptorSet& DescriptorSet)
