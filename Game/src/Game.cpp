@@ -53,9 +53,6 @@ Trickster::Game::~Game()
 void Trickster::Game::OnStart()
 {
 	m_Window->SetTitle({ "Trickster Engine v" + TRICKSTER_VERSION_STRING });
-//	m_IronMan = new IronMan("planet_Terrestrial1.obj");
-//	m_PauseMenu = new UIClickable("PauseMenu.png", {0.f,0.f}, static_cast<float>(m_Window->GetWidth()), static_cast<float>(m_Window->GetHeight()));
-//	m_PauseMenu->SetVisible(false);
 	m_MainMusic = m_AudioPlayer->Play("Music/MainMenu/minecraft.mp3");
 	m_AudioPlayer->SetVolume(m_MainMusic, 0.5f);
 #ifndef TRICKSTER_VULKAN
@@ -63,24 +60,14 @@ void Trickster::Game::OnStart()
 #endif
 	m_Camera->SetPosition({ 0.f, 0.f, 10.f });
 	m_Camera->LookAt({ 0.f,0.f,0.f });
-//	m_Camera->LookAt(m_IronMan->GetPosition());
-	//Network network;
-	//network.ReadAndPrintPage("https://rickpijpers.com", "/index.php");
-	/*
-	for(int i = 0; i < 10; i++)
-	{
-		m_Planets.push_back(new IronMan("planet_Terrestrial1.obj"));
-		m_Planets[m_Planets.size() - 1]->Rotate(0.f, 20.f, 0.f);
-		m_Planets[m_Planets.size() - 1]->Move({5 * i, 0, 0});
-	}*/
-//	m_IronMan->Rotate(0.f, 20.f, 0.f);
 	
 	 
 	m_Objects.push_back(new Drawable3D{ "planet_Terrestrial1.obj", {0.5f, 0.f, -5.f} });
 	m_Objects.push_back(new Drawable3D{ "planet_Terrestrial1.obj", {0.f,0.f, -5.f} });
 	m_Objects.push_back(new Drawable3D{ "planet_Terrestrial1.obj", {0.f,0.5f, -5.f} });
 	m_Objects.push_back(new Drawable3D{ "viking_room.obj", {0.f,-0.5f, -5.f} });
-	
+	m_Sprites.push_back(new Drawable2D("PauseMenu.png", {0.f,0.f}, {0.f,0.f}));
+	m_Sprites[0]->SetVisible(false);
 	EventManager::GetInstance()->InputEvents.OnMouseMoved.AddListener(std::bind(&Camera::MouseMove, m_Camera.get(), std::placeholders::_1,std::placeholders::_2));
 
 }
@@ -142,7 +129,7 @@ void Game::OnRender()
 
 void Trickster::Game::OnPause(bool isPaused)
 {
-//	m_PauseMenu->SetVisible(isPaused);
+	m_Sprites[0]->SetVisible(isPaused);
 }
 
 bool Game::IsTickBased()

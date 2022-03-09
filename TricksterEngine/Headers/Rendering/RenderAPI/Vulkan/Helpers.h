@@ -159,6 +159,10 @@ namespace Trickster {
 		int width;
 		int height;
 		int channels;
+
+		TRICKSTER_API VkResult Load(const std::string a_ImagePath, Vulkan* a_Vulkan);
+		TricksterDescriptor descriptor;
+		std::string path;
 	};
 
 	// Contains the instanced data
@@ -180,7 +184,6 @@ namespace Trickster {
 		TricksterBuffer IndexBuffer;
 		std::string texturePath;
 		TricksterImage texture;
-		TricksterDescriptor descriptor;
 
 		TRICKSTER_API void Load(std::string a_ModelPath);
 		TRICKSTER_API void SetupVertexBuffer();
@@ -190,13 +193,19 @@ namespace Trickster {
 		
 		static Vulkan* owner;
 	};
-}
-namespace std {
-	template<> struct hash<Trickster::TricksterVertex> {
-		size_t operator()(Trickster::TricksterVertex const& vertex) const {
-			return ((hash<glm::vec3>()(vertex.position) ^
-				(hash<glm::vec3>()(vertex.color) << 1)) >> 1) ^
-				(hash<glm::vec2>()(vertex.texCoord) << 1);
-		}
+
+	struct TricksterSprite
+	{
+		friend class Vulkan;
+		static Vulkan* owner;
+
+		TricksterImage texture;
+		TricksterBuffer VertexBuffer;
+		TricksterBuffer IndexBuffer;
+		TRICKSTER_API void Setup(const std::string a_TexturePath);
+		TRICKSTER_API void LoadTexture(const std::string a_TexturePath);
+		TRICKSTER_API void SetupVertexBuffer();
+		TRICKSTER_API void SetupIndexBuffer();
+		TRICKSTER_API void Draw(const VkCommandBuffer& CommandBuffer, const VkDescriptorSet& DescriptorSet);
 	};
 }

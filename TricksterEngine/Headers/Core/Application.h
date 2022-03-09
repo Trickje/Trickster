@@ -2,6 +2,8 @@
 #include "JobSystem.h"
 #include "Timer.h"
 #include "Rendering/Drawable3D.h"
+#include "Rendering/Drawable2D.h"
+#include "Rendering/RenderAPI/RenderAPI.h"
 /*
 ================================================================================
 		Copyright 2020 Rick Pijpers
@@ -22,10 +24,10 @@
 namespace Trickster {
 	class Window;
 	class AudioPlayer;
-	class RenderAPI;
 	class Application
 	{
 		friend class Drawable3D;
+		friend class Drawable2D;
 	public:
 		TRICKSTER_API Application();
 		TRICKSTER_API virtual ~Application();

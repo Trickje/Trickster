@@ -30,6 +30,8 @@ Draws the queue that the Render API has stored
 		TRICKSTER_API virtual void Resize(int width, int height) =0;
 		TRICKSTER_API virtual void LoadModel(const std::string& a_ModelName) = 0;
 		TRICKSTER_API virtual void DrawModel(const std::string& a_ModelName, const glm::mat4& a_ModelMatrix) = 0;
+		TRICKSTER_API virtual void LoadSprite(const std::string& a_SpriteName) = 0;
+		TRICKSTER_API virtual void DrawSprite(const std::string& a_SpriteName, const glm::mat4& a_ModelMatrix, const bool a_IsScreenSpace) = 0;
 		/*
 		TRICKSTER_API virtual bool Draw();
 		TRICKSTER_API virtual void SetUniform2f();

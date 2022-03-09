@@ -54,6 +54,7 @@ namespace Trickster {
 		float volumex = 0.f;
 		FMOD::ChannelGroup* m_MainGroup;
 		std::vector<Drawable3D*> m_Objects;
+		std::vector<Drawable2D*> m_Sprites;
 	};
 
 	//This Creates the application in the entry point

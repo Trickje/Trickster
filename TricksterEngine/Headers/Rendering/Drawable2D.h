@@ -17,56 +17,46 @@
 =================================================================================
  */
 namespace Trickster {
-	class VertexBufferLayout;
-	class VertexArray;
-	class VertexBuffer;
-	class Drawable;
-	struct DrawData2D
-	{
-		DrawData2D(void* data, int size);
-		VertexBuffer* vb;
-		VertexArray* va;
-		VertexBufferLayout* layout;
-	};
-
+	
 	class Drawable2D 
 	{
 	public:
-		Drawable2D(const std::string& a_FilePath, const glm::vec2 a_Position = { 0.f,0.f }, const glm::vec2 a_Scale = { 1.f, 1.f });
-		virtual ~Drawable2D();
-		virtual void Draw();
-		void SetScale(const float a_Width, const float a_Height);
-		void SetTexture(const std::string& a_FilePath);
-		glm::vec2 GetSize() const;
-		void SetPosition(const float a_X, const float a_Y);
-		glm::vec2 GetPosition() const;
-		glm::vec2 ToScreenPos();
-		void SetVisible(bool isVisible = true);
-		bool IsVisible();
-		glm::vec2 m_Position;
-		glm::vec2 m_Size;
-		//Texture file path
-		std::string m_FilePath;
-		DrawData2D* m_DrawData;
+		TRICKSTER_API Drawable2D(const std::string& a_FilePath, const glm::vec2 a_Position, const glm::vec2 a_Scale);
+		TRICKSTER_API virtual ~Drawable2D();
+		TRICKSTER_API void Draw();
 
-		glm::vec2 m_Scale;
-		//Location of the ScreenPos uniform in the shader
-		GLint m_UniformLoc;
-		//Location of the Scale uniform in the shader
-		GLint m_ScaleUniformLoc;
-		bool m_Transparent;
+		TRICKSTER_API void SetScale(const float a_Width, const float a_Height);
+
+		TRICKSTER_API void SetTexture(const std::string& a_FilePath);
+
+		TRICKSTER_API glm::vec2 GetSize() const;
 		
+		TRICKSTER_API void SetPosition(float a_X, float a_Y);
+
+		TRICKSTER_API glm::vec2 GetPosition() const;
+
+		TRICKSTER_API glm::vec2 ToScreenPos();
+		
+		TRICKSTER_API void SetVisible(bool isVisible);
+		
+		TRICKSTER_API bool IsVisible();
 	private:
-		float m_Vertices[12] =
-		{
-			0.f, 0.f,	//Bottom left
-			0.f, 1.f,	//Top left
-			1.f, 1.f,	//Top right
-			1.f, 1.f,	//Top right
-			1.f, 0.f,	//Bottom right
-			0.f, 0.f	//Bottom left
-		};
+		glm::vec2 m_Scale;
+		glm::vec2 m_Size;
+		std::string m_Name;
+
 		bool m_Visible;
+		bool m_Transparent;
+		bool m_Static;
+
+		glm::mat4 m_ModelMatrix = {};
+		glm::mat4 m_RotationMatrix = {};
+		glm::mat4 m_ScaleMatrix = {};
+		float m_Yaw = 0.f;
+		float m_Pitch = 0.f;
+		float m_Roll = 0.f;
+		glm::vec3 m_Position = {};
+		glm::mat4 m_TranslationMatrix = {};
 	};
 
 

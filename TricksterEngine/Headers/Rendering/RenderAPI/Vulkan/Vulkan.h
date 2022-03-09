@@ -33,11 +33,14 @@ namespace Trickster
 	{
 		std::string modelName;
 		glm::mat4 modelMatrix;
+		bool isScreenSpace = false;
 	};
 	
 	class Vulkan : public RenderAPI
 	{
 		friend struct TricksterModel;
+		friend struct TricksterImage;
+		friend struct TricksterSprite;
 	public:
 		TRICKSTER_API Vulkan();
 		TRICKSTER_API ~Vulkan();
@@ -46,6 +49,8 @@ namespace Trickster
 		TRICKSTER_API void Resize(int width, int height) override;
 		TRICKSTER_API void LoadModel(const std::string& a_ModelName) override;
 		TRICKSTER_API void DrawModel(const std::string& a_ModelName, const glm::mat4& a_ModelMatrix) override;
+		TRICKSTER_API void LoadSprite(const std::string& a_SpriteName) override;
+		TRICKSTER_API void DrawSprite(const std::string& a_SpriteName, const glm::mat4& a_ModelMatrix, const bool a_IsScreenSpace) override;
 	private:
 
 		
@@ -76,7 +81,8 @@ namespace Trickster
 		 *  |/       (_______)|/    )_)(_______/   )_(   \_______/(_______)|/    )_)\_______)
          *
 		 */
-		TRICKSTER_API void DrawModelImp(const std::string& a_ModelName, const glm::mat4& a_ModelMatrix);
+		TRICKSTER_API void DrawModelImp(const _DrawInfo& a_DrawInfo);
+		TRICKSTER_API void DrawSpriteImp(const _DrawInfo& a_DrawInfo);
 
 		
 		TRICKSTER_API void SetupPhysicalDevice();
@@ -205,6 +211,8 @@ namespace Trickster
 		std::vector<TricksterShader> m_Shaders;
 		std::vector<const char*> validationLayers;
 		std::map<std::string, std::unique_ptr<TricksterModel>> m_Models;
-		std::vector<_DrawInfo> m_Matrices;
+		std::map<std::string, std::unique_ptr<TricksterSprite>> m_Sprites;
+		std::vector<_DrawInfo> m_ModelMatrices;
+		std::vector<_DrawInfo> m_SpriteMatrices;
 	};
 }

@@ -59,29 +59,14 @@ namespace Trickster {
 		std::string m_TextureFile;
 		std::string m_ShaderPath;
 		std::string m_ModelName;
-		//TRICKSTER_API void MakeBuffers();//Call this after you have data in m_Vertices
 
 
-		/*
-	Right |  Up |  Forward  |   Position
-	-------------------------------
-	|   x    |   x   |       x        |   x   |
-	-------------------------------
-	|   y    |   y   |       y        |   y   |
-	-------------------------------
-	|   z    |   z   |       z        |   z   |
-	-------------------------------
-Scale	|   x    |   y   |       z        |  1.f  |
-	-------------------------------
-		 */
 		glm::mat4 m_ModelMatrix;
 		glm::mat4 m_RotationMatrix;
 		glm::mat4 m_ScaleMatrix;
 		float m_Yaw, m_Pitch, m_Roll;
 		glm::vec3 m_Position;
 		glm::mat4 m_TranslationMatrix;
-		//std::shared_ptr<DrawData> m_DrawData;
-		//std::vector<Vertex> m_Vertices;	//Mesh
 		
 	};
 
