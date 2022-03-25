@@ -30,7 +30,7 @@
 #include "Events/EventManager.h"
 #include "Rendering/Text/TextRenderer.h"
 
-namespace Trickster {
+namespace TE {
 #define TRIANGLEBASEDUI
 	Renderer::Renderer()
 	{

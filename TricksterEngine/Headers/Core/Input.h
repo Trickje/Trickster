@@ -16,7 +16,7 @@
 		limitations under the License.
 =================================================================================
  */
-namespace Trickster {
+namespace TE {
 	enum Keys
 	{
 		Q, W, E, R, T, Y, U, I, O, P, A, S, D, F, G, H, J, K, L, Z, X, C, V, B, N, M, TAB, CAPSLOCK, SHIFT, CTRL, ALT, ENTER, LESS_THAN, GREATER_THAN, ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, ZERO, MINUS, EQUALS, BACKSPACE, SLASH, SPACE, ESC, UP, RIGHT, LEFT, DOWN

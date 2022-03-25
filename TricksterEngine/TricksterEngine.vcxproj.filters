@@ -132,6 +132,12 @@
     <ClCompile Include="src\Core\FilePaths.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\UI\Providers.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Rendering\RenderAPI\Vulkan\NoesisVulkan.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Rendering\Drawable2D.h">
@@ -426,6 +432,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Headers\Core\FilePaths.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\UI\Providers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Rendering\RenderAPI\Vulkan\NoesisVulkan.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

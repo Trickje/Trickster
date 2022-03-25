@@ -17,7 +17,7 @@
 =================================================================================
  */
 #include "Event.h"
-namespace Trickster {
+namespace TE {
 	struct InputEvents
 	{
 

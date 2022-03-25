@@ -20,7 +20,7 @@
 #include "Rendering/Shader.h"
 
 
-namespace Trickster {
+namespace TE {
 	ShaderManager* ShaderManager::instance = nullptr;
 
 

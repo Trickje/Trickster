@@ -22,7 +22,7 @@
 #include "Core/Application.h"
 #include "Events/EventManager.h"
 
-using namespace Trickster;
+using namespace TE;
 	
 	
 Drawable2D::Drawable2D(const std::string& a_FilePath, const glm::vec2 a_Position, const glm::vec2 a_Scale)

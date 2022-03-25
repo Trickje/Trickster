@@ -20,7 +20,7 @@
 
 
 
-using namespace Trickster;
+using namespace TE;
 Timer::Timer()
 {
 	Start();
@@ -37,7 +37,7 @@ float Timer::GetSeconds()
 	return m_Time;
 }
 
-float Trickster::Timer::GetMilliSeconds()
+float Timer::GetMilliSeconds()
 {
 	m_Time = static_cast<float>(glfwGetTime()) - m_StartTime;
 	return m_Time * 1000.f;
@@ -63,7 +63,7 @@ float Timer::Reset()
 	return m_Time;
 }
 
-void Trickster::Timer::Pause(bool a_Pause)
+void Timer::Pause(bool a_Pause)
 {
 	if(m_Paused && !a_Pause)
 	{

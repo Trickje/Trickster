@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Trickster
+namespace TE
 {
 	
 	class Label

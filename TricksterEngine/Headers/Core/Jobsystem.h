@@ -37,7 +37,7 @@
 
 
 //TODO Categorization of this, separate Render jobs and so on.
-namespace Trickster {
+namespace TE {
 	//Class for Multithreading
 	class JobSystem
 	{

@@ -8,7 +8,7 @@
 #include "TinyObjLoader.h"
 #include "Core/FilePaths.h"
 
-using namespace Trickster;
+using namespace TE;
     Vulkan* TricksterModel::owner = 0;
     Vulkan* TricksterSprite::owner = 0;
 
@@ -250,7 +250,7 @@ VkResult TricksterImage::Load(const std::string a_ImagePath, Vulkan* a_Vulkan)
     return result;
 }
 
-void Trickster::TricksterModel::Load(std::string a_ModelPath)
+void TricksterModel::Load(std::string a_ModelPath)
 {
 
     tinyobj::attrib_t attrib;

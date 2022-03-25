@@ -17,7 +17,7 @@
  */
 #include "pch.h"
 #include "Rendering/SpriteManager.h"
-namespace Trickster {
+namespace TE {
 	SpriteManager* SpriteManager::instance = nullptr;
 	SpriteManager * SpriteManager::GetInstance()
 	{

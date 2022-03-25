@@ -17,7 +17,7 @@
 =================================================================================
  */
 
-namespace Trickster {
+namespace TE {
 	struct ShaderProgramSource
 	{
 		std::string VertexSource;

@@ -23,7 +23,7 @@
 #include "Core/Application.h"
 #include "Rendering/Window.h"
 #include "stb_image.h"
-namespace Trickster {
+namespace TE {
 	Texture::Texture(const std::string& a_FileName)
 		: m_FileName(a_FileName), m_LocalBuffer(nullptr),
 		m_Width(0), m_Height(0), m_BPP(0)

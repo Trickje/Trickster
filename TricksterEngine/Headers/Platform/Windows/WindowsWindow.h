@@ -20,7 +20,7 @@
 
 //#include <GLFW/glfw3.h>
 
-namespace Trickster {
+namespace TE {
 	
 	class WindowsWindow :
 		public Window

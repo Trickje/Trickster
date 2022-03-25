@@ -23,7 +23,7 @@
 #include "WindowEvents.h"
 
 
-namespace Trickster {
+namespace TE {
 	class EventManager
 	{
 	public:

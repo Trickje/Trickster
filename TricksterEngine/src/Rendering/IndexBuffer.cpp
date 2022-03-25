@@ -19,7 +19,7 @@
 #include "Rendering/IndexBuffer.h"
 
 #ifdef TRICKSTER_OPENGL
-namespace Trickster {
+namespace TE {
 	IndexBuffer::IndexBuffer(const unsigned int* data, unsigned int count)
 	{
 		GLCall(glGenBuffers(1, &m_RendererID));

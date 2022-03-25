@@ -21,17 +21,13 @@
 #include "Core/Logger.h"
 #include "Core/Application.h"
 #include "Rendering/Window.h"
-#ifdef _DEBUG
+
+using namespace TE;
+
 int main()
-#else
-int WinMain(HINSTANCE hInstance,
-	HINSTANCE hPrevInstance,
-	LPTSTR    lpCmdLine,
-	int       nCmdShow)
-#endif
 {
 	
-	Trickster::Application* app = Trickster::CreateApplication();
+	Application* app = CreateApplication();
 	app->Start();
 	while(app->Update())
 	{

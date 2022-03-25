@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Rendering/RenderAPI/OpenGL.h"
-namespace Trickster {
-	void Trickster::OpenGL::Initialize()
+namespace TE {
+	void OpenGL::Initialize()
 	{
 #ifdef TRICKSTER_OPENGL
 		LOG("Rendering API: OpenGL");

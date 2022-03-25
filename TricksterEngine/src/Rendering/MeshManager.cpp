@@ -19,7 +19,7 @@
 #include "Rendering/MeshManager.h"
 #include "Rendering/Drawable3D.h"
 #include "Rendering/Camera.h"
-namespace Trickster {
+namespace TE {
 	MeshManager* MeshManager::instance = nullptr;
 	MeshManager * MeshManager::GetInstance()
 	{

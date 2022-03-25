@@ -1,20 +1,3 @@
-/*
-================================================================================
-		Copyright 2020 Rick Pijpers
-
-		Licensed under the Apache License, Version 2.0 (the "License");
-		you may not use this file except in compliance with the License.
-		You may obtain a copy of the License at
-
-			http://www.apache.org/licenses/LICENSE-2.0
-
-		Unless required by applicable law or agreed to in writing, software
-		distributed under the License is distributed on an "AS IS" BASIS,
-		WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-		See the License for the specific language governing permissions and
-		limitations under the License.
-=================================================================================
- */
 #include "pch.h"
 #include "UI/ProgressBar.h"
 #include "Rendering/ShaderManager.h"
@@ -28,7 +11,7 @@
 #include "Rendering/VertexBufferLayout.h"
 #include "Rendering/Window.h"
 
-using namespace Trickster;
+using namespace TE;
 
 ProgressBar::ProgressBar() : m_Position(), m_ColorFront(), m_ColorBack(), m_Size(),  m_Percentage(), m_Scale()
 {
@@ -63,7 +46,7 @@ void ProgressBar::SetPercentage(float a_Percentage)
 	FillVertices();
 }
 
-float Trickster::ProgressBar::GetPercentage()
+float ProgressBar::GetPercentage()
 {
 	return m_Percentage;
 }
@@ -86,54 +69,54 @@ void ProgressBar::Draw()
 	GLCall(glDrawArrays(GL_TRIANGLES, 0, 12));
 #endif
 }
-void Trickster::ProgressBar::SetPosition(const glm::vec2& a_Position)
+void ProgressBar::SetPosition(const glm::vec2& a_Position)
 {
 	m_Position = a_Position;
 	FillVertices();
 }
-const glm::vec2& Trickster::ProgressBar::GetPosition()
+const glm::vec2& ProgressBar::GetPosition()
 {
 	return m_Position;
 }
-void Trickster::ProgressBar::SetSize(const glm::vec2& a_Size)
+void ProgressBar::SetSize(const glm::vec2& a_Size)
 {
 	m_Size = a_Size;
 	FillVertices();
 }
-const glm::vec2& Trickster::ProgressBar::GetSize()
+const glm::vec2& ProgressBar::GetSize()
 {
 	return m_Size;
 }
-void Trickster::ProgressBar::SetScale(const glm::vec2& a_Scale)
+void ProgressBar::SetScale(const glm::vec2& a_Scale)
 {
 	m_Scale = a_Scale;
 	FillVertices();
 }
-const glm::vec2& Trickster::ProgressBar::GetScale()
+const glm::vec2& ProgressBar::GetScale()
 {
 	return m_Scale;
 }
-void Trickster::ProgressBar::SetColorFront(const glm::vec3& a_Color)
+void ProgressBar::SetColorFront(const glm::vec3& a_Color)
 {
 	m_ColorFront = a_Color;
 	FillVertices();
 	
 }
-const glm::vec3& Trickster::ProgressBar::GetColorFront()
+const glm::vec3& ProgressBar::GetColorFront()
 {
 	return m_ColorFront;
 }
-void Trickster::ProgressBar::SetColorBack(const glm::vec3& a_Color)
+void ProgressBar::SetColorBack(const glm::vec3& a_Color)
 {
 	m_ColorBack = a_Color;
 	FillVertices();
 	
 }
-const glm::vec3& Trickster::ProgressBar::GetColorBack()
+const glm::vec3& ProgressBar::GetColorBack()
 {
 	return m_ColorBack;
 }
-void Trickster::ProgressBar::FillVertices()
+void ProgressBar::FillVertices()
 {
 	m_Vertices[0] = (2.f * m_Position.x / 100.f);
 	m_Vertices[1] = (2.f * m_Position.y / 100.f);

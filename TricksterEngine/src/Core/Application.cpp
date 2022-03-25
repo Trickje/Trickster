@@ -31,9 +31,9 @@
 #include "Rendering/Window.h"
 #include "Rendering/Drawable3D.h"
 #include "Rendering/RenderAPI/RenderAPI.h"
-
+#include <Noesis/NoesisPCH.h>
 #include "Core/Version.h"
-using namespace Trickster;
+using namespace TE;
 
 Application* Application::m_Application = nullptr;
 Application::Application()
@@ -80,6 +80,38 @@ void Application::Start()
 		LOG_ERROR("Failed to initialize the Audio Player!");
 	}
 
+	Noesis::SetLogHandler([](const char*, uint32_t, uint32_t level, const char*, const char* msg)
+		{
+			std::string str = "[NOESIS] ";
+			if (level == 1)
+			{
+				LOG(str + msg);
+			}
+			else if (level == 2)
+			{
+				LOG_USELESS(str + msg);
+			}
+			else if (level == 3)
+			{
+				LOG_WARNING(str + msg);
+			}
+			else if (level == 4)
+			{
+				LOG_ERROR(str + msg);
+			}
+			else 
+			{
+				LOG_USELESS(std::string("[NOESIS TRACE] ") + msg);
+			} //TODO: left off at creating providers
+		});
+
+	// https://www.noesisengine.com/docs/Gui.Core.Licensing.html
+	Noesis::GUI::SetLicense(NS_LICENSE_NAME, NS_LICENSE_KEY);
+
+	// Noesis initialization. This must be the first step before using any NoesisGUI functionality
+	Noesis::GUI::Init();
+
+
 	std::srand(static_cast<unsigned int>(time(0)));
 	EventManager::GetInstance()->GameLoopEvents.OnStart.Execute();
 	float time_passed = m_Timer.GetSeconds();
@@ -106,7 +138,7 @@ void Application::Draw()
 	m_RenderAPI->DrawFrame();
 }
 
-bool Trickster::Application::Update()
+bool Application::Update()
 {
 	if(m_Paused)
 	{
@@ -163,12 +195,12 @@ std::shared_ptr<Window> Application::GetWindow() const
 	return m_Window;
 }
 
-std::shared_ptr<JobSystem> Trickster::Application::GetJobSystem() const
+std::shared_ptr<JobSystem> Application::GetJobSystem() const
 {
 	return m_JobSystem;
 }
 
-bool Trickster::Application::Paused() const
+bool Application::Paused() const
 {
 	return m_Paused;
 }

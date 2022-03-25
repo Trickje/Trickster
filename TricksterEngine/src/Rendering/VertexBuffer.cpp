@@ -18,7 +18,7 @@
 #include "pch.h"
 #include "Rendering/VertexBuffer.h"
 #ifdef TRICKSTER_OPENGL
-namespace Trickster {
+namespace TE {
 	VertexBuffer::VertexBuffer(const void* data, unsigned int size)
 	{
 

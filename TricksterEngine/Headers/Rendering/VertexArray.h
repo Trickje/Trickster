@@ -17,7 +17,7 @@
 =================================================================================
  */
 #ifdef TRICKSTER_OPENGL
-namespace Trickster {
+namespace TE {
 	class VertexBufferLayout;
 	class VertexBuffer;
 

@@ -225,9 +225,7 @@
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
     </Link>
     <PostBuildEvent>
-      <Command>
-Xcopy /E /I /Y "$(SolutionDir)Lib\DLL\$(Configuration)" "$(OutDir)"
-Xcopy /E /I /Y "$(SolutionDir)Resources" "$(OutDir)Resources"</Command>
+      <Command>Xcopy /E /I /Y "$(SolutionDir)Lib\DLL\$(Configuration)" "$(OutDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='VulkanDebug|x64'">
@@ -254,8 +252,7 @@ Xcopy /E /I /Y "$(SolutionDir)Resources" "$(OutDir)Resources"</Command>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
     </Link>
     <PostBuildEvent>
-      <Command>Xcopy /E /I /Y "$(SolutionDir)Lib\DLL\$(Configuration)" "$(OutDir)" &gt; nul
-Xcopy /E /I /Y "$(SolutionDir)Resources" "$(OutDir)Resources" &gt; nul</Command>
+      <Command>Xcopy /E /I /Y "$(SolutionDir)Lib\DLL\$(Configuration)" "$(OutDir)" &gt; nul</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Static_Debug|x64'">
@@ -274,7 +271,7 @@ Xcopy /E /I /Y "$(SolutionDir)Resources" "$(OutDir)Resources" &gt; nul</Command>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(OutDir);$(SolutionDir)Lib;$(SolutionDir)TricksterEngine;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>TricksterEngine-d.lib;glew32.lib;glfw3dll.lib;fmod_vc.lib;opengl32.lib;libcurl-d_imp.lib;freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>TricksterEngine-d.lib;glew32.lib;glfw3dll.lib;fmod_vc.lib;opengl32.lib;libcurl-d_imp.lib;freetype.lib;Noesis.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
       <SubSystem>
@@ -282,9 +279,7 @@ Xcopy /E /I /Y "$(SolutionDir)Resources" "$(OutDir)Resources" &gt; nul</Command>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
     </Link>
     <PostBuildEvent>
-      <Command>
-Xcopy /E /I /Y "$(SolutionDir)Lib\DLL\$(Configuration)" "$(OutDir)"
-Xcopy /E /I /Y "$(SolutionDir)Resources" "$(OutDir)Resources"</Command>
+      <Command>Xcopy /E /I /Y "$(SolutionDir)Lib\DLL\$(Configuration)" "$(OutDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -409,17 +404,7 @@ Xcopy /E /I /Y "$(SolutionDir)Resources" "$(OutDir)Resources"</Command>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
     </Link>
     <PostBuildEvent>
-      <Command>
-Xcopy /E /I /Y "$(SolutionDir)Lib\DLL\$(Configuration)" "$(OutDir)"
-Xcopy /E /I /Y "$(SolutionDir)Resources" "$(OutDir)Resources"
-
-Xcopy /E /I /Y "$(SolutionDir)Lib\DLL\$(Configuration)" "$(SolutionDir)LatestVersion\$(ProjectName)"
-
-Xcopy /I /Y "$(SolutionDir)LatestVersion\TricksterEngine\TricksterEngine.dll" "$(SolutionDir)LatestVersion\$(ProjectName)"
-
-Xcopy /E /I /Y "$(OutDir)$(TargetFileName)" "$(SolutionDir)LatestVersion\$(ProjectName)"
-Xcopy /E /I /Y "$(SolutionDir)Resources" "$(SolutionDir)LatestVersion\$(ProjectName)\Resources"
-Xcopy /E /I /Y "$(SolutionDir)Mods" "$(SolutionDir)LatestVersion\$(ProjectName)\Mods"</Command>
+      <Command>Xcopy /E /I /Y "$(SolutionDir)Lib\DLL\$(Configuration)" "$(OutDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='VulkanRelease|x64'">
@@ -448,17 +433,7 @@ Xcopy /E /I /Y "$(SolutionDir)Mods" "$(SolutionDir)LatestVersion\$(ProjectName)\
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
     </Link>
     <PostBuildEvent>
-      <Command>
-Xcopy /E /I /Y "$(SolutionDir)Lib\DLL\$(Configuration)" "$(OutDir)"
-Xcopy /E /I /Y "$(SolutionDir)Resources" "$(OutDir)Resources"
-
-Xcopy /E /I /Y "$(SolutionDir)Lib\DLL\$(Configuration)" "$(SolutionDir)LatestVersion\$(ProjectName)"
-
-Xcopy /I /Y "$(SolutionDir)LatestVersion\TricksterEngine\TricksterEngine.dll" "$(SolutionDir)LatestVersion\$(ProjectName)"
-
-Xcopy /E /I /Y "$(OutDir)$(TargetFileName)" "$(SolutionDir)LatestVersion\$(ProjectName)"
-Xcopy /E /I /Y "$(SolutionDir)Resources" "$(SolutionDir)LatestVersion\$(ProjectName)\Resources"
-Xcopy /E /I /Y "$(SolutionDir)Mods" "$(SolutionDir)LatestVersion\$(ProjectName)\Mods"</Command>
+      <Command>Xcopy /E /I /Y "$(SolutionDir)Lib\DLL\$(Configuration)" "$(OutDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Static_Release|x64'">
@@ -480,23 +455,14 @@ Xcopy /E /I /Y "$(SolutionDir)Mods" "$(SolutionDir)LatestVersion\$(ProjectName)\
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(OutDir);$(SolutionDir)Lib;$(SolutionDir)TricksterEngine;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>TricksterEngine.lib;glew32.lib;glfw3dll.lib;fmod_vc.lib;opengl32.lib;libcurl_imp.lib;freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>TricksterEngine.lib;glew32.lib;glfw3dll.lib;fmod_vc.lib;opengl32.lib;libcurl_imp.lib;freetype.lib;Noesis.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
       <SubSystem>NotSet</SubSystem>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
     </Link>
     <PostBuildEvent>
-      <Command>
-Xcopy /E /I /Y "$(SolutionDir)Lib\DLL\$(Configuration)" "$(OutDir)"
-Xcopy /E /I /Y "$(SolutionDir)Resources" "$(OutDir)Resources"
-
-Xcopy /E /I /Y "$(SolutionDir)Lib\DLL\$(Configuration)" "$(SolutionDir)LatestVersion\$(ProjectName)"
-
-
-Xcopy /E /I /Y "$(OutDir)$(TargetFileName)" "$(SolutionDir)LatestVersion\$(ProjectName)"
-Xcopy /E /I /Y "$(SolutionDir)Resources" "$(SolutionDir)LatestVersion\$(ProjectName)\Resources"
-Xcopy /E /I /Y "$(SolutionDir)Mods" "$(SolutionDir)LatestVersion\$(ProjectName)\Mods"</Command>
+      <Command>Xcopy /E /I /Y "$(SolutionDir)Lib\DLL\$(Configuration)" "$(OutDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

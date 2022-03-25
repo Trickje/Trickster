@@ -17,7 +17,7 @@
 =================================================================================
  */
 #include "ClickableBox.h"
-namespace Trickster {
+namespace TE {
 	class Drawable2D;
 	class UIClickable : public ClickableBox
 	{
@@ -33,6 +33,6 @@ namespace Trickster {
 		TRICKSTER_API virtual void SetPosition(const glm::vec2& a_Position);
 		TRICKSTER_API void SetVisible(bool isVisible);
 	private:
-		std::unique_ptr<Trickster::Drawable2D> m_Drawable;
+		std::unique_ptr<Drawable2D> m_Drawable;
 	};
 }

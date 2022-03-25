@@ -1,7 +1,7 @@
 #pragma once
 #include "RenderAPI.h"
 
-namespace Trickster
+namespace TE
 {
 	class OpenGL : public RenderAPI
 	{

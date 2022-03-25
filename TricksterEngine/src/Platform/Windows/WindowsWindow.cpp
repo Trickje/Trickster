@@ -23,7 +23,7 @@
 #include "Events/EventManager.h"
 #include "stb_image.h"
 
-using namespace Trickster;
+using namespace TE;
 static bool s_GLFWInitialized = false;
 
 Window* Window::Create(const WindowProps& props)
@@ -164,7 +164,7 @@ bool WindowsWindow::IsVSync() const
 	return m_vSync;
 }
 
-void Trickster::WindowsWindow::Draw()
+void WindowsWindow::Draw()
 {
 	
 	//This will be in the RendererAPI
@@ -189,7 +189,7 @@ bool WindowsWindow::ShouldClose() const
 }
 
 
-void Trickster::WindowsWindow::SetKeyDown(int Key, bool a_bool)
+void WindowsWindow::SetKeyDown(int Key, bool a_bool)
 {
 	switch(Key)
 	{
@@ -356,7 +356,7 @@ void Trickster::WindowsWindow::SetKeyDown(int Key, bool a_bool)
 	}
 }
 
-void Trickster::WindowsWindow::SetFullscreen(bool a_Fullscreen)
+void WindowsWindow::SetFullscreen(bool a_Fullscreen)
 {
 	if (a_Fullscreen) {
 		glfwSetWindowMonitor(m_Window, glfwGetPrimaryMonitor(), 0, 0, static_cast<int>(GetWidth()), static_cast<int>(GetHeight()), GLFW_DONT_CARE);
@@ -368,7 +368,7 @@ void Trickster::WindowsWindow::SetFullscreen(bool a_Fullscreen)
 }
 
 
-void Trickster::WindowsWindow::SetClick(int MouseKey, bool value)
+void WindowsWindow::SetClick(int MouseKey, bool value)
 {
 
 	if (MouseKey >= 8)
@@ -398,7 +398,7 @@ void Trickster::WindowsWindow::SetClick(int MouseKey, bool value)
 	}
 }
 
-void Trickster::WindowsWindow::Resize(int a_Width, int a_Height)
+void WindowsWindow::Resize(int a_Width, int a_Height)
 {
 	m_Width = static_cast<unsigned int>(a_Width);
 	m_Height = static_cast<unsigned int>(a_Height);
@@ -408,11 +408,11 @@ void Trickster::WindowsWindow::Resize(int a_Width, int a_Height)
 	//Uncomment below for opengl?
 	//glViewport(0, 0, m_Width, m_Height);
 }
-void* Trickster::WindowsWindow::GetRaw()
+void* WindowsWindow::GetRaw()
 {
 	return m_Window;
 }
-void Trickster::WindowsWindow::CaptureMouse(bool yoinkMouse)
+void WindowsWindow::CaptureMouse(bool yoinkMouse)
 {
 	if (yoinkMouse) {
 		glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);

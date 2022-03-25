@@ -21,7 +21,7 @@
 		limitations under the License.
 =================================================================================
  */
-namespace Trickster {
+namespace TE {
 	class Window;
 	class AudioPlayer;
 	class Application

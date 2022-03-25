@@ -16,7 +16,7 @@
 		limitations under the License.
 =================================================================================
  */
-namespace Trickster {
+namespace TE {
 	class Drawable2D;
 	class SpriteManager
 	{

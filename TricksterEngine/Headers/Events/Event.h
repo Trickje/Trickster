@@ -21,7 +21,7 @@
 #include <functional>
 #include <list>
 
-namespace Trickster
+namespace TE
 {
 
 	enum class EventType

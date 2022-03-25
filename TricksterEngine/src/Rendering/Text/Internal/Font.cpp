@@ -7,13 +7,13 @@
 #include "Rendering/Shader.h"
 #include "Rendering/Window.h"
 #include <glm/gtc/type_ptr.hpp>
-using namespace Trickster;
+using namespace TE;
 
 
 #ifdef TRICKSTER_OPENGL
 
 
-void Trickster::Font::Initialize()
+void Font::Initialize()
 {
 
     // configure VAO/VBO for texture quads
@@ -40,7 +40,7 @@ void Trickster::Font::Initialize()
 
 }
 
-void Trickster::Font::LoadFromFile(const std::string& a_FileName)
+void Font::LoadFromFile(const std::string& a_FileName)
 {
 
     FT_Error m_Error;
@@ -117,7 +117,7 @@ void Trickster::Font::LoadFromFile(const std::string& a_FileName)
     FT_Done_FreeType(m_Library);
 }
 
-void Trickster::Font::Render()
+void Font::Render()
 {
     Shader* shader = ShaderManager::GetShader("BasicFont");
     shader->Bind();
@@ -183,12 +183,12 @@ void Font::AddVertexData(std::string text, float x, float y, float scale, glm::v
 {
 }
 
-void Trickster::Font::Initialize()
+void Font::Initialize()
 {
 }
 
 
-void Trickster::Font::LoadFromFile(const std::string& a_FileName)
+void Font::LoadFromFile(const std::string& a_FileName)
 {
 
 }
@@ -205,11 +205,11 @@ bool Font::operator==(const Font& other)
 
 #endif
 
-Trickster::Font::Font()
+Font::Font()
 {
     Initialize();
 }
 
-Trickster::Font::~Font()
+Font::~Font()
 {
 }

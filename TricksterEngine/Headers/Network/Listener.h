@@ -17,7 +17,7 @@
 =================================================================================
  */
 
-namespace Trickster {
+namespace TE {
 
 	enum { max_length = 1024 };
 	class Listener

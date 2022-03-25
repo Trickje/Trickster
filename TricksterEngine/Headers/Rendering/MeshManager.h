@@ -18,7 +18,7 @@
  */
 
 
-namespace Trickster {
+namespace TE {
 	class Camera;
 	class Drawable3D;
 	class MeshManager

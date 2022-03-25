@@ -19,7 +19,7 @@
 #include <cstdint>
 #include <vector>
 #include <string>
-namespace Trickster {
+namespace TE {
 	enum MessageTypes
 	{
 		

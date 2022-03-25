@@ -20,7 +20,7 @@
 
 #include "Core/Application.h"
 
-namespace Trickster {
+namespace TE {
 
 	Shader::Shader(const std::string& a_ShaderName)
 		: m_FilePath(a_ShaderName), m_RendererID(0)

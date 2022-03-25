@@ -20,7 +20,7 @@
 
 #include "Events/EventManager.h"
 #include "Rendering/Drawable2D.h"
-using namespace Trickster;
+using namespace TE;
 UIClickable::~UIClickable()
 {
 	
@@ -29,7 +29,7 @@ UIClickable::~UIClickable()
 UIClickable::UIClickable(const std::string& a_FilePath, const glm::vec2& a_Pos, const float& a_Width, const float& a_Height)
 	: ClickableBox(a_Pos.x, a_Pos.y, a_Width, a_Height)
 {
-	m_Drawable = std::make_unique<Trickster::Drawable2D>(a_FilePath, a_Pos);
+	m_Drawable = std::make_unique<Drawable2D>(a_FilePath, a_Pos);
 	glm::vec2 size = m_Drawable->GetSize();
 	m_Drawable->SetScale(a_Width / size.x, a_Height / size.y);
 	
@@ -38,7 +38,7 @@ UIClickable::UIClickable(const std::string& a_FilePath, const glm::vec2& a_Pos, 
 UIClickable::UIClickable(float X, float Y, float a_Width, float a_Height): ClickableBox(X, Y, a_Width, a_Height)
 {
 	
-	Trickster::EventManager::GetInstance()->GameLoopEvents.OnUpdate.AddListener(std::bind(&UIClickable::OnUpdate, this));
+	EventManager::GetInstance()->GameLoopEvents.OnUpdate.AddListener(std::bind(&UIClickable::OnUpdate, this));
 }
 
 void UIClickable::OnUpdate()
@@ -51,7 +51,7 @@ void UIClickable::OnClick()
 	ClickableBox::OnClick();
 }
 
-bool Trickster::UIClickable::isClicked()
+bool UIClickable::isClicked()
 {
 	return m_Clicked;
 }
@@ -62,7 +62,7 @@ void UIClickable::SetPosition(const glm::vec2& a_Position)
 	m_Drawable->SetPosition(a_Position.x, a_Position.y);
 }
 
-void Trickster::UIClickable::SetVisible(bool isVisible)
+void UIClickable::SetVisible(bool isVisible)
 {
 	m_Drawable->SetVisible(isVisible);
 }

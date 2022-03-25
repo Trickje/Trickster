@@ -19,7 +19,7 @@
 #include "Core/AudioPlayer.h"
 
 #include "Events/EventManager.h"
-using namespace Trickster;
+using namespace TE;
 AudioPlayer::AudioPlayer()
 {
 	SoundDir = "Resources/Sounds/";
@@ -80,7 +80,7 @@ int AudioPlayer::PlayInGroup(std::string a_FileName, FMOD::ChannelGroup* a_Group
 	}
 	return -1;
 }
-bool Trickster::AudioPlayer::ChangeVolume(int a_ID, float a_DeltaVolume)
+bool AudioPlayer::ChangeVolume(int a_ID, float a_DeltaVolume)
 {
 	if(m_SoundsPlaying.find(a_ID) != m_SoundsPlaying.end())
 	{
@@ -182,7 +182,7 @@ void AudioPlayer::Unpause(int a_ID)
 	g->setPaused(false);
 }
 
-bool Trickster::AudioPlayer::LoadSound(std::string a_FileName, bool a_3D, bool a_Looping, bool a_Stream)
+bool AudioPlayer::LoadSound(std::string a_FileName, bool a_3D, bool a_Looping, bool a_Stream)
 {
 	if (m_LoadedSounds.find(a_FileName) == m_LoadedSounds.end())
 	{
@@ -211,7 +211,7 @@ bool Trickster::AudioPlayer::LoadSound(std::string a_FileName, bool a_3D, bool a
 	}
 	return true;
 }
-bool Trickster::AudioPlayer::LoadSoundAsync(std::string a_FileName, bool a_3D, bool a_Looping, bool a_Stream)
+bool AudioPlayer::LoadSoundAsync(std::string a_FileName, bool a_3D, bool a_Looping, bool a_Stream)
 {
 	if (m_LoadedSounds.find(a_FileName) == m_LoadedSounds.end())
 	{

@@ -2,10 +2,10 @@
 #include "Rendering/Text/TextRenderer.h"
 
 #include "Events/EventManager.h"
-using namespace Trickster;
+using namespace TE;
 /* Null, because instance will be initialized on demand. */
 TextRenderer* TextRenderer::m_Instance = nullptr;
-TextRenderer* Trickster::TextRenderer::Get()
+TextRenderer* TextRenderer::Get()
 {
 	if(m_Instance == nullptr)
 	{
@@ -18,10 +18,10 @@ TextRenderer* Trickster::TextRenderer::Get()
 
 void TextRenderer::Initialize()
 {
-	EventManager::GetInstance()->GameLoopEvents.OnRenderTransparent.AddListener(std::bind(&Trickster::TextRenderer::FlushQueue, this));
+	EventManager::GetInstance()->GameLoopEvents.OnRenderTransparent.AddListener(std::bind(&TextRenderer::FlushQueue, this));
 }
 
-void Trickster::TextRenderer::RenderString(const std::string& a_String, glm::vec2 a_Position, float a_Scale, glm::vec4 a_Color, const std::string& a_FontName)
+void TextRenderer::RenderString(const std::string& a_String, glm::vec2 a_Position, float a_Scale, glm::vec4 a_Color, const std::string& a_FontName)
 {
 	if(m_Fonts.find(a_FontName) == m_Fonts.end())
 	{
@@ -55,12 +55,12 @@ TextRenderer::TextRenderer()
 {
 }
 
-Trickster::TextRenderer::~TextRenderer()
+TextRenderer::~TextRenderer()
 {
 	//m_Fonts.clear();
 }
 
-void Trickster::TextRenderer::LoadFont(std::string a_FontName)
+void TextRenderer::LoadFont(std::string a_FontName)
 {
 	m_Fonts.insert(std::pair<std::string, std::shared_ptr<Font>>(a_FontName, std::make_shared<Font>()));
 	m_Fonts.at(a_FontName)->LoadFromFile(a_FontName);

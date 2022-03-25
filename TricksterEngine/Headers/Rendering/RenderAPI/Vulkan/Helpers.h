@@ -1,7 +1,7 @@
 #pragma once
 #include "Rendering/Window.h"
 #include <glm/gtx/hash.hpp>
-namespace Trickster {
+namespace TE {
 	class Vulkan;
 	struct TricksterVertex
 	{
@@ -81,7 +81,7 @@ namespace Trickster {
 
 	struct TricksterWindow
 	{
-		std::shared_ptr<Trickster::Window> get;
+		std::shared_ptr<Window> get;
 		GLFWwindow* glfw = nullptr;
 	};
 	struct TricksterSemaphores

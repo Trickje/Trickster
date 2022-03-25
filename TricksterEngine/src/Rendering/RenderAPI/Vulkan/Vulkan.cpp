@@ -11,8 +11,8 @@
 
 #include "Core/FilePaths.h"
 
-using namespace Trickster;
-Trickster::Vulkan::Vulkan()
+using namespace TE;
+Vulkan::Vulkan()
     : m_Pipeline()
 {
     validationLayers = {"VK_LAYER_LUNARG_monitor"
@@ -22,7 +22,7 @@ Trickster::Vulkan::Vulkan()
     };
 }
 
-Trickster::Vulkan::~Vulkan()
+Vulkan::~Vulkan()
 {
     CleanSwapChain();
     vkDestroyDescriptorSetLayout(m_Device.get, m_Descriptor.set_layout, nullptr);
@@ -50,11 +50,11 @@ RenderAPI* RenderAPI::Create()
 {
     return new Vulkan();
 }
-void Trickster::Vulkan::Initialize()
+void Vulkan::Initialize()
 {
     LOG("Rendering API: Vulkan");
     m_Window.get = nullptr;
-    m_Window.get = Trickster::Application::Get()->GetWindow();
+    m_Window.get = Application::Get()->GetWindow();
     m_Window.glfw = static_cast<GLFWwindow*>(m_Window.get->GetRaw());
     if(m_Window.get == nullptr)
     {
@@ -1013,7 +1013,7 @@ void Vulkan::SetupDescriptorSets()
 
 void Vulkan::SetupSubscriptions()
 {
-    EventManager::GetInstance()->WindowEvents.OnWindowResize.AddListener(std::bind(&Trickster::Vulkan::Resize, this, std::placeholders::_1, std::placeholders::_2));
+    EventManager::GetInstance()->WindowEvents.OnWindowResize.AddListener(std::bind(&Vulkan::Resize, this, std::placeholders::_1, std::placeholders::_2));
 }
 
     
@@ -1056,7 +1056,7 @@ void Vulkan::UpdateUniformBuffer(uint32_t currentImage)
 
 void Vulkan::SetupImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling,
 	VkImageUsageFlags usage, VkMemoryPropertyFlags properties,
-    uint32_t mipLevels, Trickster::TricksterImage& image, VkSampleCountFlagBits numSamples)
+    uint32_t mipLevels, TricksterImage& image, VkSampleCountFlagBits numSamples)
 {
     VkImageCreateInfo imageInfo{};
     imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
@@ -1191,14 +1191,14 @@ void Vulkan::CleanSwapChain()
     vkDestroySwapchainKHR(m_Device.get, m_SwapChain.get, nullptr);
 }
 
-void Trickster::Vulkan::CleanBuffer(Trickster::TricksterBuffer& buffer)
+void Vulkan::CleanBuffer(TricksterBuffer& buffer)
 {
     vkDestroyBuffer(m_Device.get, buffer.get, nullptr);
     vkFreeMemory(m_Device.get, buffer.memory, nullptr);
 }
 
 //The filenames are already in the shader directory of Application:: ShaderPath
-Trickster::TricksterShader& Vulkan::AddShader(const std::string& filenameVertexShader, const std::string& filenameFragmentShader)
+TricksterShader& Vulkan::AddShader(const std::string& filenameVertexShader, const std::string& filenameFragmentShader)
 {
     m_Shaders.push_back(
         {
@@ -1246,7 +1246,7 @@ VkShaderModule Vulkan::CreateShaderModule(const std::vector<char>& code)
     return shader_module;
 }
 
-Trickster::TricksterSwapChain Vulkan::QuerySwapChainInfo()
+TricksterSwapChain Vulkan::QuerySwapChainInfo()
 {
     TricksterSwapChain info;
     std::vector<VkSurfaceFormatKHR> formats;
@@ -1635,14 +1635,14 @@ void Vulkan::CopyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, u
     EndSingleUseCommand(commandBuffer);
 }
 
-void Vulkan::CleanImage(Trickster::TricksterImage& image)
+void Vulkan::CleanImage(TricksterImage& image)
 {
     vkDestroyImageView(m_Device.get, image.view, nullptr);
     vkDestroyImage(m_Device.get, image.get, nullptr);
     vkFreeMemory(m_Device.get, image.memory, nullptr);
 }
 
-void Vulkan::SetupImageView(Trickster::TricksterImage& image, VkImageAspectFlags aspectFlags, uint32_t mipLevels)
+void Vulkan::SetupImageView(TricksterImage& image, VkImageAspectFlags aspectFlags, uint32_t mipLevels)
 {
     VkImageViewCreateInfo viewInfo{};
     viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;

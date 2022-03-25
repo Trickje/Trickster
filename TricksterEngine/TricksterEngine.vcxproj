@@ -310,7 +310,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;TRICKSTER_EXPORT;TRICKSTER_WINDOWS;TRICKSTER_OPENGL;TRICKSTER_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)/TricksterEngine/Include;$(ProjectDir)Headers</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)/TricksterEngine/Include;$(ProjectDir)Headers;$(ProjectDir)Include/Noesis/</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <AdditionalOptions>-D_WIN32_WINNT=0x0601 %(AdditionalOptions)</AdditionalOptions>
@@ -319,7 +319,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>glew32.lib;glfw3dll.lib;fmod_vc.lib;opengl32.lib;libcurl-d_imp.lib;freetype.lib;vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glew32.lib;glfw3dll.lib;fmod_vc.lib;opengl32.lib;libcurl-d_imp.lib;freetype.lib;vulkan-1.lib;Noesis.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
@@ -337,12 +337,12 @@
       <AdditionalLibraryDirectories>C:\Users\rick\source\repos\TricksterEngine\TricksterEngine\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
     <PostBuildEvent>
-      <Command>Xcopy /I /Y "$(OutDir)$(TargetName)$(TargetExt)" "$(SolutionDir)LatestVersion\TricksterEngine"
-Xcopy /I /Y "$(OutDir)$(TargetName).lib" "$(SolutionDir)LatestVersion\TricksterEngine"
-Xcopy /E /I /Y "$(ProjectDir)Headers" "$(SolutionDir)LatestVersion\TricksterEngine\include"</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
     <PreBuildEvent>
-      <Command>powershell.exe -ExecutionPolicy Bypass -NoProfile -NonInteractive -File update_version.ps1 "./Headers/Core/Version.h"</Command>
+      <Command>powershell.exe -ExecutionPolicy Bypass -NoProfile -NonInteractive -File update_version.ps1 "./Headers/Core/Version.h" &gt;nul
+</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='VulkanDebug|x64'">
@@ -354,7 +354,7 @@ Xcopy /E /I /Y "$(ProjectDir)Headers" "$(SolutionDir)LatestVersion\TricksterEngi
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;TRICKSTER_EXPORT;TRICKSTER_WINDOWS;TRICKSTER_VULKAN;TRICKSTER_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)/TricksterEngine/Include;$(ProjectDir)Headers</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)/TricksterEngine/Include;$(ProjectDir)Headers;$(ProjectDir)Include/Noesis/</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <AdditionalOptions>-D_WIN32_WINNT=0x0601 %(AdditionalOptions)</AdditionalOptions>
@@ -363,7 +363,7 @@ Xcopy /E /I /Y "$(ProjectDir)Headers" "$(SolutionDir)LatestVersion\TricksterEngi
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>glfw3dll.lib;fmod_vc.lib;libcurl-d_imp.lib;freetype.lib;vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glfw3dll.lib;fmod_vc.lib;Noesis.lib;freetype.lib;vulkan-1.lib;libcurl-d_imp.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
@@ -379,13 +379,11 @@ Xcopy /E /I /Y "$(ProjectDir)Headers" "$(SolutionDir)LatestVersion\TricksterEngi
       <AdditionalLibraryDirectories>C:\Users\rick\source\repos\TricksterEngine\TricksterEngine\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
     <PostBuildEvent>
-      <Command>Xcopy /I /Y "$(OutDir)$(TargetName)$(TargetExt)" "$(SolutionDir)LatestVersion\TricksterEngine" &gt;nul
-Xcopy /I /Y "$(OutDir)$(TargetName).lib" "$(SolutionDir)LatestVersion\TricksterEngine" &gt; nul
-Xcopy /E /I /Y "$(ProjectDir)Headers" "$(SolutionDir)LatestVersion\TricksterEngine\include" &gt; nul</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
     <PreBuildEvent>
-      <Command>"$(SolutionDir)Tools/compileshader.bat"
-powershell.exe -ExecutionPolicy Bypass -NoProfile -NonInteractive -File update_version.ps1 "./Headers/Core/Version.h" &gt;nul
+      <Command>powershell.exe -ExecutionPolicy Bypass -NoProfile -NonInteractive -File update_version.ps1 "./Headers/Core/Version.h" &gt;nul
 </Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
@@ -398,7 +396,7 @@ powershell.exe -ExecutionPolicy Bypass -NoProfile -NonInteractive -File update_v
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;TRICKSTER_WINDOWS;TRICKSTER_OPENGL;TRICKSTER_DEBUG;TRICKSTER_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)/TricksterEngine/Include;$(ProjectDir)Headers</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)/TricksterEngine/Include;$(ProjectDir)Headers;$(ProjectDir)Include/Noesis/</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <AdditionalOptions>-D_WIN32_WINNT=0x0601 %(AdditionalOptions)</AdditionalOptions>
@@ -422,12 +420,12 @@ powershell.exe -ExecutionPolicy Bypass -NoProfile -NonInteractive -File update_v
       <AdditionalLibraryDirectories>C:\Users\rick\source\repos\TricksterEngine\TricksterEngine\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
     <PostBuildEvent>
-      <Command>Xcopy /I /Y "$(OutDir)$(TargetName)$(TargetExt)" "$(SolutionDir)LatestVersion\TricksterEngine"
-Xcopy /I /Y "$(OutDir)$(TargetName).lib" "$(SolutionDir)LatestVersion\TricksterEngine"
-Xcopy /E /I /Y "$(ProjectDir)Headers" "$(SolutionDir)LatestVersion\TricksterEngine\include"</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
     <PreBuildEvent>
-      <Command>powershell.exe -ExecutionPolicy Bypass -NoProfile -NonInteractive -File update_version.ps1 "./Headers/Core/Version.h"</Command>
+      <Command>powershell.exe -ExecutionPolicy Bypass -NoProfile -NonInteractive -File update_version.ps1 "./Headers/Core/Version.h" &gt;nul
+</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -525,7 +523,7 @@ Xcopy /E /I /Y "$(ProjectDir)Headers" "$(SolutionDir)LatestVersion\TricksterEngi
       <PreprocessorDefinitions>TRICKSTER_EXPORT;_WINDOWS;TRICKSTER_WINDOWS;TRICKSTER_OPENGL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)/TricksterEngine/Include;$(ProjectDir)Headers</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)/TricksterEngine/Include;$(ProjectDir)Headers;$(ProjectDir)Include/Noesis/</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4244</DisableSpecificWarnings>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <AdditionalOptions>-D_WIN32_WINNT=0x0601 %(AdditionalOptions)</AdditionalOptions>
@@ -536,7 +534,7 @@ Xcopy /E /I /Y "$(ProjectDir)Headers" "$(SolutionDir)LatestVersion\TricksterEngi
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(SolutionDir)Lib;$(ProjectDir)Headers;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glew32.lib;glfw3dll.lib;fmod_vc.lib;opengl32.lib;libcurl_imp.lib;freetype.lib;vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glew32.lib;glfw3dll.lib;fmod_vc.lib;opengl32.lib;libcurl_imp.lib;freetype.lib;vulkan-1.lib;Noesis.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <EntryPointSymbol>
       </EntryPointSymbol>
       <IgnoreSpecificDefaultLibraries>
@@ -551,12 +549,12 @@ Xcopy /E /I /Y "$(ProjectDir)Headers" "$(SolutionDir)LatestVersion\TricksterEngi
       <AdditionalLibraryDirectories>C:\Users\rick\source\repos\TricksterEngine\TricksterEngine\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
     <PostBuildEvent>
-      <Command>Xcopy /I /Y "$(OutDir)$(TargetName)$(TargetExt)" "$(SolutionDir)LatestVersion\TricksterEngine"
-Xcopy /I /Y "$(OutDir)$(TargetName).lib" "$(SolutionDir)LatestVersion\TricksterEngine"
-Xcopy /E /I /Y "$(ProjectDir)Headers" "$(SolutionDir)LatestVersion\TricksterEngine\include"</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
     <PreBuildEvent>
-      <Command>powershell.exe -ExecutionPolicy Bypass -NoProfile -NonInteractive -File update_version.ps1 "./Headers/Core/Version.h"</Command>
+      <Command>powershell.exe -ExecutionPolicy Bypass -NoProfile -NonInteractive -File update_version.ps1 "./Headers/Core/Version.h" &gt;nul
+</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='VulkanRelease|x64'">
@@ -570,7 +568,7 @@ Xcopy /E /I /Y "$(ProjectDir)Headers" "$(SolutionDir)LatestVersion\TricksterEngi
       <PreprocessorDefinitions>TRICKSTER_EXPORT;_WINDOWS;TRICKSTER_WINDOWS;TRICKSTER_VULKAN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)/TricksterEngine/Include;$(ProjectDir)Headers</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)/TricksterEngine/Include;$(ProjectDir)Headers;$(ProjectDir)Include/Noesis/</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4244</DisableSpecificWarnings>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <AdditionalOptions>-D_WIN32_WINNT=0x0601 %(AdditionalOptions)</AdditionalOptions>
@@ -581,7 +579,7 @@ Xcopy /E /I /Y "$(ProjectDir)Headers" "$(SolutionDir)LatestVersion\TricksterEngi
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(SolutionDir)Lib;$(ProjectDir)Headers;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glfw3dll.lib;fmod_vc.lib;libcurl_imp.lib;freetype.lib;vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glfw3dll.lib;fmod_vc.lib;freetype.lib;vulkan-1.lib;Noesis.lib;libcurl_imp.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <EntryPointSymbol>
       </EntryPointSymbol>
       <IgnoreSpecificDefaultLibraries>
@@ -596,12 +594,12 @@ Xcopy /E /I /Y "$(ProjectDir)Headers" "$(SolutionDir)LatestVersion\TricksterEngi
       <AdditionalLibraryDirectories>C:\Users\rick\source\repos\TricksterEngine\TricksterEngine\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
     <PostBuildEvent>
-      <Command>Xcopy /I /Y "$(OutDir)$(TargetName)$(TargetExt)" "$(SolutionDir)LatestVersion\TricksterEngine"
-Xcopy /I /Y "$(OutDir)$(TargetName).lib" "$(SolutionDir)LatestVersion\TricksterEngine"
-Xcopy /E /I /Y "$(ProjectDir)Headers" "$(SolutionDir)LatestVersion\TricksterEngine\include"</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
     <PreBuildEvent>
-      <Command>powershell.exe -ExecutionPolicy Bypass -NoProfile -NonInteractive -File update_version.ps1 "./Headers/Core/Version.h"</Command>
+      <Command>powershell.exe -ExecutionPolicy Bypass -NoProfile -NonInteractive -File update_version.ps1 "./Headers/Core/Version.h" &gt;nul
+</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Static_Release|x64'">
@@ -615,7 +613,7 @@ Xcopy /E /I /Y "$(ProjectDir)Headers" "$(SolutionDir)LatestVersion\TricksterEngi
       <PreprocessorDefinitions>_WINDOWS;TRICKSTER_WINDOWS;TRICKSTER_OPENGL;TRICKSTER_STATIC;ASIO_NO_EXCEPTIONS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)/TricksterEngine/Include;$(ProjectDir)Headers</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)/TricksterEngine/Include;$(ProjectDir)Headers;$(ProjectDir)Include/Noesis/</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4244</DisableSpecificWarnings>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <AdditionalOptions>-D_WIN32_WINNT=0x0601 %(AdditionalOptions)</AdditionalOptions>
@@ -640,11 +638,12 @@ Xcopy /E /I /Y "$(ProjectDir)Headers" "$(SolutionDir)LatestVersion\TricksterEngi
       <AdditionalLibraryDirectories>C:\Users\rick\source\repos\TricksterEngine\TricksterEngine\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
     <PostBuildEvent>
-      <Command>Xcopy /I /Y "$(OutDir)$(TargetName)$(TargetExt)" "$(SolutionDir)LatestVersion\TricksterEngine\Static"
-Xcopy /E /I /Y "$(ProjectDir)Headers" "$(SolutionDir)LatestVersion\TricksterEngine\include"</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
     <PreBuildEvent>
-      <Command>powershell.exe -ExecutionPolicy Bypass -NoProfile -NonInteractive -File update_version.ps1 "./Headers/Core/Version.h"</Command>
+      <Command>powershell.exe -ExecutionPolicy Bypass -NoProfile -NonInteractive -File update_version.ps1 "./Headers/Core/Version.h" &gt;nul
+</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -688,6 +687,7 @@ Xcopy /E /I /Y "$(ProjectDir)Headers" "$(SolutionDir)LatestVersion\TricksterEngi
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Static_Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Static_Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="src\Rendering\RenderAPI\Vulkan\NoesisVulkan.cpp" />
     <ClCompile Include="src\Rendering\RenderAPI\Vulkan\Vulkan.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Static_Release|x64'">true</ExcludedFromBuild>
@@ -816,6 +816,7 @@ Xcopy /E /I /Y "$(ProjectDir)Headers" "$(SolutionDir)LatestVersion\TricksterEngi
     </ClCompile>
     <ClCompile Include="src\Core\Timer.cpp" />
     <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp" />
+    <ClCompile Include="src\UI\Providers.cpp" />
     <ClCompile Include="src\UI\UIClickable.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='VulkanRelease|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='VulkanDebug|x64'">true</ExcludedFromBuild>
@@ -909,6 +910,7 @@ Xcopy /E /I /Y "$(ProjectDir)Headers" "$(SolutionDir)LatestVersion\TricksterEngi
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Static_Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Static_Release|x64'">true</ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="Headers\Rendering\RenderAPI\Vulkan\NoesisVulkan.h" />
     <ClInclude Include="Headers\Rendering\RenderAPI\Vulkan\Vulkan.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
@@ -966,6 +968,7 @@ Xcopy /E /I /Y "$(ProjectDir)Headers" "$(SolutionDir)LatestVersion\TricksterEngi
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='VulkanDebug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='VulkanRelease|x64'">true</ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="Headers\UI\Providers.h" />
     <ClInclude Include="Headers\UI\UIClickable.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='VulkanDebug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='VulkanRelease|x64'">true</ExcludedFromBuild>

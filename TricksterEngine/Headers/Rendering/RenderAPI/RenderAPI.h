@@ -1,7 +1,7 @@
 #pragma once
 #include "Rendering/Window.h"
 
-namespace Trickster
+namespace TE
 {
 	class RenderAPI
 	{

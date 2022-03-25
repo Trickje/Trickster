@@ -24,10 +24,10 @@
 #include "glm/gtc/matrix_transform.hpp"
 
 
-using namespace Trickster;
-Trickster::Camera::Camera()
+using namespace TE;
+Camera::Camera()
 {
-	Trickster::EventManager::GetInstance()->GameLoopEvents.OnUpdate.AddListener(std::bind(&Camera::RecalculateViewProjection, this));
+	EventManager::GetInstance()->GameLoopEvents.OnUpdate.AddListener(std::bind(&Camera::RecalculateViewProjection, this));
 	m_View = glm::mat4(0.f);
 	m_Projection = glm::mat4(0.f);
 	m_ViewProjection = glm::mat4(0.f);
@@ -48,50 +48,50 @@ Trickster::Camera::Camera()
 }
 
 
-Trickster::Camera::~Camera()
+Camera::~Camera()
 {
 	//Delete any raw pointers here
 }
 
-void Trickster::Camera::LookAt(const glm::vec3& a_Target)
+void Camera::LookAt(const glm::vec3& a_Target)
 {
 	m_View = glm::lookAt(m_Position, a_Target, m_Up);
 	
 }
 
-void Trickster::Camera::SetPosition(const glm::vec3& a_Position)
+void Camera::SetPosition(const glm::vec3& a_Position)
 {
 	m_Position.x = a_Position.x;
 	m_Position.y = a_Position.y;
 	m_Position.z = a_Position.z;
 }
 
-glm::vec3 Trickster::Camera::GetPosition() const
+glm::vec3 Camera::GetPosition() const
 {
 	return m_Position;
 }
 
-void Trickster::Camera::SetScreenPos(const glm::vec2& a_Position)
+void Camera::SetScreenPos(const glm::vec2& a_Position)
 {
 	m_ScreenPos = a_Position;
 }
 
-const glm::vec2 & Trickster::Camera::GetScreenPos() const
+const glm::vec2 & Camera::GetScreenPos() const
 {
 	return m_ScreenPos;
 }
 
-void Trickster::Camera::SetLockRoll(const bool a_Bool)
+void Camera::SetLockRoll(const bool a_Bool)
 {
 	m_LockRoll = a_Bool;
 }
 
-bool Trickster::Camera::GetLockRoll() const
+bool Camera::GetLockRoll() const
 {
 	return m_LockRoll;
 }
 
-void Trickster::Camera::Move(const glm::vec3& a_Offset)
+void Camera::Move(const glm::vec3& a_Offset)
 {
 	//m_View[3][0] += a_Offset.x;
 	//m_View[3][1] += a_Offset.y;
@@ -100,89 +100,89 @@ void Trickster::Camera::Move(const glm::vec3& a_Offset)
 	LookAt(m_Position + m_Forward);
 }
 
-void Trickster::Camera::MoveScreen(const glm::vec2 & a_Offset)
+void Camera::MoveScreen(const glm::vec2 & a_Offset)
 {
 	m_ScreenPos.x += a_Offset.x;
 	m_ScreenPos.y += a_Offset.y;
 }
 
-void Trickster::Camera::SetFOV(const float a_FOV)
+void Camera::SetFOV(const float a_FOV)
 {
 	m_FOV = a_FOV;
 }
 
-float Trickster::Camera::GetFOV() const
+float Camera::GetFOV() const
 {
 	return m_FOV;
 }
 
-void Trickster::Camera::SetAspectRatio(const float a_AspectRatio)
+void Camera::SetAspectRatio(const float a_AspectRatio)
 {
 	m_AspectRatio = a_AspectRatio;
 }
 
-float Trickster::Camera::GetAspectRatio()const
+float Camera::GetAspectRatio()const
 {
 	return m_AspectRatio;
 }
 
-const glm::mat4 & Trickster::Camera::GetView() const
+const glm::mat4 & Camera::GetView() const
 {
 	return m_View;
 }
 
-glm::vec3 Trickster::Camera::GetUp() const
+glm::vec3 Camera::GetUp() const
 {
 	return m_Up;
 }
 
-glm::vec3 Trickster::Camera::GetRight() const
+glm::vec3 Camera::GetRight() const
 {
 	return m_Right;
 }
 
-glm::vec3 Trickster::Camera::GetForward() const
+glm::vec3 Camera::GetForward() const
 {
 	return m_Forward;
 }
 
-void Trickster::Camera::SetScreenSize(const glm::vec2 & a_Size)
+void Camera::SetScreenSize(const glm::vec2 & a_Size)
 {
 	m_Size = a_Size;
 }
 
-const glm::vec2& Trickster::Camera::GetScreenSize() const
+const glm::vec2& Camera::GetScreenSize() const
 {
 	return m_Size;
 }
 
-void Trickster::Camera::SetNearFar(const float a_Near, const float a_Far)
+void Camera::SetNearFar(const float a_Near, const float a_Far)
 {
 	m_Near = a_Near;
 	m_Far = a_Far;
 }
 
-void Trickster::Camera::SetNear(const float a_Near)
+void Camera::SetNear(const float a_Near)
 {
 	m_Near = a_Near;
 }
 
-void Trickster::Camera::SetFar(const float a_Far)
+void Camera::SetFar(const float a_Far)
 {
 	m_Far = a_Far;
 }
 
-void Trickster::Camera::RecalculateViewProjection()
+void Camera::RecalculateViewProjection()
 {
 	m_ViewProjection = this->CalculateProjection() * m_View ;
 }
 
-const glm::mat4& Trickster::Camera::GetViewProjection()const
+const glm::mat4& Camera::GetViewProjection()const
 {
 	return m_ViewProjection;
 }
 
-void Trickster::Camera::Rotate(const float a_DeltaYaw, const float a_DeltaPitch, const float a_DeltaRoll)
+void Camera::Rotate(const float a_DeltaYaw, const float a_DeltaPitch, const float a_DeltaRoll)
 {
 	glm::vec3 direction;
 	yaw += a_DeltaYaw;
@@ -202,13 +202,13 @@ void Trickster::Camera::Rotate(const float a_DeltaYaw, const float a_DeltaPitch,
 	
 }
 
-glm::mat4 Trickster::Camera::GetProjection()
+glm::mat4 Camera::GetProjection()
 {
 	this->CalculateProjection();
 	return m_Projection;
 }
 
-void Trickster::Camera::MouseMove(float a_X, float a_Y)
+void Camera::MouseMove(float a_X, float a_Y)
 {
 	if(Application::Get()->Paused())
 	{
@@ -229,7 +229,7 @@ void Trickster::Camera::MouseMove(float a_X, float a_Y)
 		Rotate(x * m_SensitivityX * 0.1f, y * m_SensitivityY * 0.1f);
 	}
 }
-glm::mat4  Trickster::Camera::CalculateProjection()
+glm::mat4  Camera::CalculateProjection()
 {
 	/*
 	const auto Scale = 1 / tan((m_FOV * 0.0174532925f) * 0.5f * m_PI / 180);
@@ -241,7 +241,7 @@ glm::mat4  Trickster::Camera::CalculateProjection()
 	m_Projection[3][2] = -1; // set w = -z
 	m_Projection[3][3] = 0;
 	*/
-	m_Projection = glm::perspective(m_FOV, static_cast<float>(Trickster::Application::Get()->GetWindow()->GetWidth()) / static_cast<float>(Trickster::Application::Get()->GetWindow()->GetHeight()), m_Near, m_Far);
+	m_Projection = glm::perspective(m_FOV, static_cast<float>(Application::Get()->GetWindow()->GetWidth()) / static_cast<float>(Application::Get()->GetWindow()->GetHeight()), m_Near, m_Far);
 	m_Projection[1] *= -1;
 	return m_Projection;
 }

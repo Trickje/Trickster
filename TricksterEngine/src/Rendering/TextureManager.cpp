@@ -18,7 +18,7 @@
 #include "pch.h"
 #include "Rendering/TextureManager.h"
 #include "Rendering/Texture.h"
-namespace Trickster {
+namespace TE {
 	TextureManager* TextureManager::instance = nullptr;
 
 
@@ -31,7 +31,7 @@ namespace Trickster {
 			//found
 			return it->second;
 		}
-		TextureManager::GetInstance()->map.insert(std::pair<std::string, Trickster::Texture*>(a_TextureName, new Texture(a_TextureName)));
+		TextureManager::GetInstance()->map.insert(std::pair<std::string, Texture*>(a_TextureName, new Texture(a_TextureName)));
 
 		return TextureManager::GetInstance()->map[a_TextureName];
 	}

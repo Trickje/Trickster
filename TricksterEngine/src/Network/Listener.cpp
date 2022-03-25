@@ -1,26 +1,11 @@
-/*
-================================================================================
-		Copyright 2021 Rick Pijpers
-
-		Licensed under the Apache License, Version 2.0 (the "License");
-		you may not use this file except in compliance with the License.
-		You may obtain a copy of the License at
-
-			http://www.apache.org/licenses/LICENSE-2.0
-
-		Unless required by applicable law or agreed to in writing, software
-		distributed under the License is distributed on an "AS IS" BASIS,
-		WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-		See the License for the specific language governing permissions and
-		limitations under the License.
-=================================================================================
- */
 #include "pch.h"
 #include "asio.hpp"
 #include "asio/ssl.hpp"
 #include "Network/Listener.h"
 
-Trickster::Listener::Listener(std::string a_Host, std::string a_Path, asio::io_context& io_context, asio::ssl::context& context, asio::ip::tcp::resolver::results_type endpoints)
+using namespace TE;
+
+Listener::Listener(std::string a_Host, std::string a_Path, asio::io_context& io_context, asio::ssl::context& context, asio::ip::tcp::resolver::results_type endpoints)
 	: m_Socket(io_context, context), m_Host(a_Host), m_Path(a_Path)
 {
 	m_Socket.set_verify_mode(asio::ssl::verify_peer);
@@ -32,7 +17,7 @@ Trickster::Listener::Listener(std::string a_Host, std::string a_Path, asio::io_c
 		std::bind(&Listener::HandleConnect, this, std::placeholders::_1));
 }
 
-TRICKSTER_API void Trickster::Listener::HandleConnect(const asio::error_code& error)
+TRICKSTER_API void Listener::HandleConnect(const asio::error_code& error)
 {
 	if (!error)
 	{
@@ -46,7 +31,7 @@ TRICKSTER_API void Trickster::Listener::HandleConnect(const asio::error_code& er
 	}
 }
 
-TRICKSTER_API void Trickster::Listener::HandleHandshake(const asio::error_code& error)
+TRICKSTER_API void Listener::HandleHandshake(const asio::error_code& error)
 {
 	if (!error)
 	{
@@ -68,7 +53,7 @@ TRICKSTER_API void Trickster::Listener::HandleHandshake(const asio::error_code& 
 	}
 }
 
-TRICKSTER_API void Trickster::Listener::HandleWrite(const asio::error_code& error, size_t bytes_transferred)
+TRICKSTER_API void Listener::HandleWrite(const asio::error_code& error, size_t bytes_transferred)
 {
 	if (!error)
 	{
@@ -84,7 +69,7 @@ TRICKSTER_API void Trickster::Listener::HandleWrite(const asio::error_code& erro
 	}
 }
 
-TRICKSTER_API void Trickster::Listener::HandleRead(const asio::error_code& error, size_t bytes_transferred)
+TRICKSTER_API void Listener::HandleRead(const asio::error_code& error, size_t bytes_transferred)
 {
 	if (!error)
 	{
@@ -96,7 +81,7 @@ TRICKSTER_API void Trickster::Listener::HandleRead(const asio::error_code& error
 	}
 }
 
-TRICKSTER_API bool Trickster::Listener::VerifyCertificate(bool preverified, asio::ssl::verify_context& ctx)
+TRICKSTER_API bool Listener::VerifyCertificate(bool preverified, asio::ssl::verify_context& ctx)
 {
 	// The verify callback can be used to check whether the certificate that is
    // being presented is valid for the peer. For example, RFC 2818 describes

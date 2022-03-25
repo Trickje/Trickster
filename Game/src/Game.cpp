@@ -18,12 +18,6 @@
 #include "pch.h"
 #include "Game.h"
 
-#ifndef TRICKSTER_VULKAN
-
-#include "UI/ClickableBox.h"
-#include "UI/UIClickable.h"
-#include "UI/ProgressBar.h"
-#endif
 #include "Rendering/Window.h"
 #include "Rendering/MeshManager.h"
 #include "Events/EventManager.h"
@@ -36,8 +30,8 @@
 
 #include "Rendering/RenderAPI/RenderAPI.h"
 #include "Rendering/Text/TextRenderer.h"
-using namespace Trickster;
-Trickster::Game::Game()
+using namespace TE;
+Game::Game()
 {
 	m_Camera = std::make_shared<Camera>();
 	MeshManager::GetInstance()->Initialize(m_Camera);
@@ -45,19 +39,16 @@ Trickster::Game::Game()
 //	bar = nullptr;
 }
 
-Trickster::Game::~Game()
+Game::~Game()
 {
 }
 
 
-void Trickster::Game::OnStart()
+void Game::OnStart()
 {
 	m_Window->SetTitle({ "Trickster Engine v" + TRICKSTER_VERSION_STRING });
 	m_MainMusic = m_AudioPlayer->Play("Music/MainMenu/minecraft.mp3");
 	m_AudioPlayer->SetVolume(m_MainMusic, 0.5f);
-#ifndef TRICKSTER_VULKAN
-	MeshManager::GetInstance()->Initialize(m_Camera);
-#endif
 	m_Camera->SetPosition({ 0.f, 0.f, 10.f });
 	m_Camera->LookAt({ 0.f,0.f,0.f });
 	
@@ -72,7 +63,7 @@ void Trickster::Game::OnStart()
 
 }
 
-void Trickster::Game::OnUpdate(float a_DeltaTime)
+void Game::OnUpdate(float a_DeltaTime)
 {
 	float volume = -1.f;
 	volume = m_AudioPlayer->GetVolume(m_MainMusic);
@@ -112,11 +103,6 @@ void Trickster::Game::OnUpdate(float a_DeltaTime)
 	
 	
 	
-//	m_IronMan->Rotate(45.f * a_DeltaTime);
-//	for(auto& p : m_Planets)
-//	{
-///		p->Rotate(45.f * a_DeltaTime);
-//	}
 	TextRenderer::Get()->RenderString("FPS: " + std::to_string((int)m_AverageFPS), { 0,GetWindow()->GetHeight() - 48.f },1.f, {0.2f, 0.2f, 0.2f, 0.5f});
 	TextRenderer::Get()->RenderString("1234567890", {100.f, 200.f});
 }
@@ -127,7 +113,7 @@ void Game::OnRender()
 	//this should be empty
 }
 
-void Trickster::Game::OnPause(bool isPaused)
+void Game::OnPause(bool isPaused)
 {
 	m_Sprites[0]->SetVisible(isPaused);
 }

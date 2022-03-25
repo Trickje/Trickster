@@ -1,6 +1,6 @@
 #pragma once
 #include "Internal/Font.h"
-namespace Trickster
+namespace TE
 {
 	struct TextRenderQueueObject
 	{

@@ -5,7 +5,7 @@
 #define GLM_FORCE_DEFAULT_ALIGNED_GENTYPES
 #define GLM_ENABLE_EXPERIMENTAL
 #include "Helpers.h"
-namespace Trickster
+namespace TE
 {
 	struct TricksterModel;
 	//TODO:
@@ -115,19 +115,19 @@ namespace Trickster
 			VkImageUsageFlags usage, 
 			VkMemoryPropertyFlags properties,
 			uint32_t mipLevels,
-			Trickster::TricksterImage& image, 
+			TricksterImage& image, 
 			VkSampleCountFlagBits numSamples = VK_SAMPLE_COUNT_1_BIT);
 		TRICKSTER_API void SetupBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
-		TRICKSTER_API void CopyBuffer(Trickster::TricksterBuffer& srcBuffer, Trickster::TricksterBuffer& dstBuffer, VkDeviceSize size);
+		TRICKSTER_API void CopyBuffer(TricksterBuffer& srcBuffer, TricksterBuffer& dstBuffer, VkDeviceSize size);
 		TRICKSTER_API void RecreateSwapChain();
 		TRICKSTER_API void CleanSwapChain();
 		TRICKSTER_API void CleanBuffer(TricksterBuffer& buffer);
 		//Combiner function to make code more readable
 		//Returns the shader so that you can change things to it
-		TRICKSTER_API Trickster::TricksterShader& AddShader(const std::string& filenameVertexShader, const std::string& filenameFragmentShader);
+		TRICKSTER_API TricksterShader& AddShader(const std::string& filenameVertexShader, const std::string& filenameFragmentShader);
 		TRICKSTER_API std::vector<char> ReadShaderFile(const std::string& filename);
 		TRICKSTER_API VkShaderModule CreateShaderModule(const std::vector<char>& code);
-		TRICKSTER_API Trickster::TricksterSwapChain QuerySwapChainInfo();
+		TRICKSTER_API TricksterSwapChain QuerySwapChainInfo();
 		/*
 		 @Args
 		 a_Data: the std::vector.data() that you want to flush
@@ -158,9 +158,9 @@ namespace Trickster
 			VkImageLayout newLayout,
 			uint32_t mipLevels);
 		TRICKSTER_API void CopyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height);
-		TRICKSTER_API void CleanImage(Trickster::TricksterImage& image);
+		TRICKSTER_API void CleanImage(TricksterImage& image);
 		TRICKSTER_API void SetupImageView(
-			Trickster::TricksterImage& image, 
+			TricksterImage& image, 
 			VkImageAspectFlags aspectFlags,
 			uint32_t mipLevels);
 		TRICKSTER_API void SetupTextureSampler();

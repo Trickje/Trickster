@@ -18,7 +18,7 @@
  */
 #include "Timer.h"
 
-namespace Trickster {
+namespace TE {
 	class Profiler
 	{
 	public:

@@ -1,20 +1,3 @@
-/*
-================================================================================
-		Copyright 2020 Rick Pijpers
-
-		Licensed under the Apache License, Version 2.0 (the "License");
-		you may not use this file except in compliance with the License.
-		You may obtain a copy of the License at
-
-			http://www.apache.org/licenses/LICENSE-2.0
-
-		Unless required by applicable law or agreed to in writing, software
-		distributed under the License is distributed on an "AS IS" BASIS,
-		WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-		See the License for the specific language governing permissions and
-		limitations under the License.
-=================================================================================
- */
 #include "pch.h"
 #include "UI/ClickableBox.h"
 
@@ -22,13 +5,14 @@
 #include "Core/Input.h"
 #include "Events/EventManager.h"
 #include "Rendering/Window.h"
+using namespace TE;
 
 ClickableBox::ClickableBox(float X, float Y, float a_Width, float a_Height)
 {
 	this->m_Pos = { X,Y };
 	m_Width = a_Width;
 	m_Height = a_Height;
-	Trickster::EventManager::GetInstance()->GameLoopEvents.OnUpdate.AddListener(std::bind(&ClickableBox::OnUpdate, this));
+	EventManager::GetInstance()->GameLoopEvents.OnUpdate.AddListener(std::bind(&ClickableBox::OnUpdate, this));
 }
 
 ClickableBox::~ClickableBox()
@@ -39,19 +23,19 @@ ClickableBox::~ClickableBox()
 void ClickableBox::OnUpdate()
 {
 	m_Clicked = false;
-	if (IsHovered() && Trickster::Input::GetClick(Trickster::Mouse::Left) && !IsAlreadyClicked && !AwaitingClick && m_Clickable)
+	if (IsHovered() && Input::GetClick(Mouse::Left) && !IsAlreadyClicked && !AwaitingClick && m_Clickable)
 	{
-		if(Trickster::Application::Get()->IsTickBased())
+		if(Application::Get()->IsTickBased())
 		{
 			IsAlreadyClicked = true;
 			AwaitingClick = true;
-			Trickster::EventManager::GetInstance()->GameLoopEvents.TickOnce.AddListener(std::bind(&ClickableBox::OnClick, this));
+			EventManager::GetInstance()->GameLoopEvents.TickOnce.AddListener(std::bind(&ClickableBox::OnClick, this));
 		}
 		else {
 			OnClick();
 		}
 	}
-	if(!Trickster::Input::GetClick(Trickster::Mouse::Left))
+	if(!Input::GetClick(Mouse::Left))
 	{
 		IsAlreadyClicked = false;
 	}
@@ -59,9 +43,9 @@ void ClickableBox::OnUpdate()
 
 bool ClickableBox::IsHovered()
 {
-	glm::vec2 mousePos = Trickster::Input::GetMousePos();
+	glm::vec2 mousePos = Input::GetMousePos();
 	
-	if(WidthContains(mousePos.x) && HeightContains(static_cast<float>(Trickster::Application::Get()->GetWindow()->GetHeight()) - mousePos.y))
+	if(WidthContains(mousePos.x) && HeightContains(static_cast<float>(Application::Get()->GetWindow()->GetHeight()) - mousePos.y))
 	{
 		return true;
 	}
@@ -119,7 +103,7 @@ void ClickableBox::OnClick()
 	m_Clicked = true;
 
 
-	if(Trickster::Application::Get()->IsTickBased())
+	if(Application::Get()->IsTickBased())
 	{
 		AwaitingClick = false;
 	}

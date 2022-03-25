@@ -22,7 +22,7 @@
 #include "Events/EventManager.h"
 #include "Rendering/RenderAPI/RenderAPI.h"
 
-namespace Trickster {
+namespace TE {
 	//Don't use this constructor!!
 	Drawable3D::Drawable3D()
 		: m_ModelMatrix(glm::mat4(1.0)), m_RotationMatrix(glm::mat4(1.0f)), m_TranslationMatrix(glm::mat4(1.0f))

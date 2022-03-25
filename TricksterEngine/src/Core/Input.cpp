@@ -20,9 +20,9 @@
 #include "Rendering/Window.h"
 #include "Core/Application.h"
 
-using namespace Trickster;
+using namespace TE;
 Input* Input::instance = new Input();
-bool Trickster::Input::GetKeyDownImpl(int Key)
+bool Input::GetKeyDownImpl(int Key)
 {
 	if (Key >= 54)
 	{
@@ -41,7 +41,7 @@ void Input::SetKeyDownImpl(int Key, bool a_bool)
 	}
 	Keys[Key] = a_bool;
 }
-bool Trickster::Input::GetClickImpl(int MouseKey)
+bool Input::GetClickImpl(int MouseKey)
 {
 	if (MouseKey >= 8)
 	{
@@ -50,7 +50,7 @@ bool Trickster::Input::GetClickImpl(int MouseKey)
 	}
 	return MouseKeys[MouseKey];
 }
-void Trickster::Input::SetClickImpl(int MouseKey, bool a_bool)
+void Input::SetClickImpl(int MouseKey, bool a_bool)
 {
 	if (MouseKey >= 8)
 	{
@@ -65,19 +65,19 @@ Input::Input() : Keys(), MouseKeys()
 	CursorInWindow = true;
 }
 
-Trickster::Input::~Input()
+Input::~Input()
 {
 }
 
-bool Trickster::Input::GetKeyDown(int Key)
+bool Input::GetKeyDown(int Key)
 {
 	return instance->GetKeyDownImpl(Key);
 }
-void Trickster::Input::SetKeyDown(int Key, bool a_bool)
+void Input::SetKeyDown(int Key, bool a_bool)
 {
 	instance->SetKeyDownImpl(Key, a_bool);
 }
-bool Trickster::Input::GetClick(int MouseKey)
+bool Input::GetClick(int MouseKey)
 {
 	if (instance->CursorInWindow) {
 		return instance->GetClickImpl(MouseKey);
@@ -86,7 +86,7 @@ bool Trickster::Input::GetClick(int MouseKey)
 		return false;
 	}
 }
-void Trickster::Input::SetClick(int MouseKey, bool a_bool)
+void Input::SetClick(int MouseKey, bool a_bool)
 {
 	if (instance->CursorInWindow) {
 		instance->SetClickImpl(MouseKey, a_bool);
@@ -95,14 +95,14 @@ void Trickster::Input::SetClick(int MouseKey, bool a_bool)
 		return;
 	}
 }
-glm::vec2 Trickster::Input::GetMousePos()
+glm::vec2 Input::GetMousePos()
 {
 	double x, y;
 	glfwGetCursorPos(static_cast<GLFWwindow*>(Application::Get()->GetWindow()->GetRaw()), &x, &y);
 	return { x,y };
 }
 
-void Trickster::Input::SetCursorInWindow(bool isInWindow)
+void Input::SetCursorInWindow(bool isInWindow)
 {
 	instance->CursorInWindow = isInWindow;
 }

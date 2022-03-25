@@ -17,7 +17,7 @@
  */
 #include "pch.h"
 #include "Core/Profiler.h"
-using namespace Trickster;
+using namespace TE;
 
 Profiler::Profiler(std::string a_Name) : m_Timer(), m_Name(a_Name)
 {

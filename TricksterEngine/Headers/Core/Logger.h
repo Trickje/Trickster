@@ -48,7 +48,7 @@
 #define LOG_ERROR(x)
 #define LOG_USELESS(x)
 #endif
-namespace Trickster {
+namespace TE {
 	/*
 	static void LOG(std::string a_Str)
 	{

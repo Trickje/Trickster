@@ -20,7 +20,7 @@
 #include "Rendering/VertexBuffer.h"
 #include "Rendering/VertexBufferLayout.h"
 #ifdef TRICKSTER_OPENGL
-namespace Trickster {
+namespace TE {
 	VertexArray::VertexArray()
 	{
 		GLCall(glGenVertexArrays(1, &m_RendererID));
